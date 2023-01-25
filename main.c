@@ -20,5 +20,14 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
+    int ch;
+    while ( ( ch = getc(fp) ) ) {
+        if (ch == EOF) {
+            return EXIT_SUCCESS;
+        }
+
+        printf("%c", ch);
+    }
+
     return EXIT_SUCCESS;
 }
