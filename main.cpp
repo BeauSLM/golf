@@ -3,8 +3,8 @@
 #include <string.h>
 #include <errno.h>
 
-#include "error.h"
-#include "lex.h"
+#include "error.hpp"
+#include "lex.hpp"
 
 int main(int argc, char *argv[]) {
     FILE *fp;

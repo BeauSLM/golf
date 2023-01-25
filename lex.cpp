@@ -1,5 +1,5 @@
-#include "lex.h"
-#include "error.h"
+#include "lex.hpp"
+#include "error.hpp"
 
 
 struct Tokinfo lex(FILE *fp) {

@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "error.h"
+#include "error.hpp"
 
 // TODO: routines that don't take line numbers?
 

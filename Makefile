@@ -1,4 +1,4 @@
-CC := clang
+CC := clang++
 OBJS := main.o error.o
 
 all: golf
@@ -8,7 +8,7 @@ golf: $(OBJS)
 
 -include $(OBJS:.o=.d)
 
-%.o: %.c
+%.o: %.cpp
 	$(CC) -o $@ -c $< -Wall -MMD -MF $*.d
 
 clean:
