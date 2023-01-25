@@ -4,6 +4,7 @@
 #include <errno.h>
 
 #include "error.h"
+#include "lex.h"
 
 int main(int argc, char *argv[]) {
     FILE *fp;
@@ -18,15 +19,6 @@ int main(int argc, char *argv[]) {
     if ( !(fp = fopen(argv[1], "r")) ) {
         fprintf(stderr, "Could not open file '%s': %s\n", argv[1], strerror(errno));
         return EXIT_FAILURE;
-    }
-
-    int ch;
-    while ( ( ch = getc(fp) ) ) {
-        if (ch == EOF) {
-            return EXIT_SUCCESS;
-        }
-
-        printf("%c", ch);
     }
 
     return EXIT_SUCCESS;
