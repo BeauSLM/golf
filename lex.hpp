@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string>
 
 enum Token {
     // TODO: fill
@@ -10,11 +11,11 @@ enum Token {
 };
 
 struct Tokinfo {
-    enum Token token;
+    Token token = TOKEN_UNSET;
 
     // attributes
-    int linenum      = 0;
-    char *lexeme     = NULL;
+    int linenum = 0;
+    std::string lexeme;
 };
 
-struct Tokinfo lex(FILE *fp);
+Tokinfo lex(FILE *fp);

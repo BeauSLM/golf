@@ -2,14 +2,21 @@
 #include "error.hpp"
 
 
-struct Tokinfo lex(FILE *fp) {
-    int ch, linenum = 0;
+Tokinfo lex(FILE *fp) {
+    // TODO: other attribute information (col number etc)?
+    int ch, linenum = 1;
+    Tokinfo result;
 
-    while ( ( ch = getc(fp) ) ) {
-        if (ch == EOF) {
-            return (struct Tokinfo) { .token = TOKEN_EOF, .linenum = linenum };
-        }
+    // spin until we find something interesting
+    while ( ( ch = getc(fp) ) != EOF && isspace(ch) )
+        if (ch == '\n') linenum++;
+
+    switch (ch) {
+        case EOF:
+            return Tokinfo { .token = TOKEN_EOF, .linenum = linenum };
+        default:
+            break;
     }
 
-    return (struct Tokinfo) {};
+    return result;
 }
