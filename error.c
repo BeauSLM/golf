@@ -5,7 +5,7 @@
 
 void error(const char *msg, int linenum) {
     fprintf(stderr, "Error: %s\nLine number: %d\nExiting...\n", msg, linenum);
-    exit(1);
+    exit(EXIT_FAILURE);
 }
 
 void warning(const char *msg, int linenum) {
@@ -16,6 +16,6 @@ void warning(const char *msg, int linenum) {
     const static int max_warnings = 15;
     if (num_warnings >= max_warnings) {
         fprintf(stderr, "Max warnings reached (that's %d warnings!). Exiting...\n", max_warnings);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 }
