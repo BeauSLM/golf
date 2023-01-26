@@ -50,6 +50,8 @@ enum TokenID {
     TOKEN_UNSET,
 };
 
+const char *token_to_string(TokenID token);
+
 struct Tokinfo {
     TokenID token = TOKEN_UNSET;
 

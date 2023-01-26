@@ -75,3 +75,41 @@ Tokinfo lex(FILE *fp) {
 
     return result;
 }
+
+const char *token_to_string(TokenID token) {
+    switch (token) {
+        case TOKEN_EOF:       return "EOF";
+        case TOKEN_BREAK:     return "break";
+        case TOKEN_ELSE:      return "else";
+        case TOKEN_FOR:       return "for";
+        case TOKEN_FUNC:      return "func";
+        case TOKEN_IF:        return "if";
+        case TOKEN_RETURN:    return "return";
+        case TOKEN_VAR:       return "var";
+        case TOKEN_PLUS:      return "+";
+        case TOKEN_MINUS:     return "-";
+        case TOKEN_STAR:      return "*";
+        case TOKEN_SLASH:     return "/";
+        case TOKEN_PERCENT:   return "%";
+        case TOKEN_LOGIC_AND: return "&&";
+        case TOKEN_LOGIC_OR:  return "||";
+        case TOKEN_EQ:        return "==";
+        case TOKEN_LT:        return "<";
+        case TOKEN_GT:        return ">";
+        case TOKEN_ASSIGN:    return "=";
+        case TOKEN_BANG:      return "!";
+        case TOKEN_NEQ:       return "!=";
+        case TOKEN_LEQ:       return "<=";
+        case TOKEN_GEQ:       return ">=";
+        case TOKEN_LPAREN:    return "(";
+        case TOKEN_RPAREN:    return ")";
+        case TOKEN_LBRACE:    return "{";
+        case TOKEN_RBRACE:    return "}";
+        case TOKEN_COMMA:     return ",";
+        case TOKEN_SEMICOLON: return ";";
+        case TOKEN_ID:        return "id";
+        case TOKEN_INT:       return "int";
+        case TOKEN_STRING:    return "string";
+        case TOKEN_UNSET:     return "DEBUG";
+    }
+}
