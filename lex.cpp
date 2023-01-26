@@ -13,6 +13,7 @@ Tokinfo lex(FILE *fp) {
     auto & lexeme  = result.lexeme;
 
 
+    spin:
     int ch;
     // spin until we find something interesting
     while ( ( ch = getc(fp) ) != EOF && is_space(ch) )
