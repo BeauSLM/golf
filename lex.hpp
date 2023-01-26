@@ -57,7 +57,7 @@ struct Tokinfo {
 
     // TODO: other attribute information (col number etc)?
     // attributes
-    int linenum = 1;
+    int linenum = -1;
     std::string lexeme;
 };
 

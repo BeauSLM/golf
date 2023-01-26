@@ -11,6 +11,7 @@ std::queue<Tokinfo> tokens;
 
 void unlex(Tokinfo t) { tokens.push(t); }
 
+int g_linenum = 1;
 Tokinfo lex(FILE *fp) {
 
     Tokinfo result;
@@ -23,22 +24,21 @@ Tokinfo lex(FILE *fp) {
     }
 
     // put result's members in local scope
-    auto & linenum = result.linenum;
-    auto & token   = result.token;
-    auto & lexeme  = result.lexeme;
+    auto & token  = result.token;
 
     spin:
     int ch;
     // spin until we find something interesting
     while ( ( ch = getc(fp) ) != EOF && is_space(ch) )
-        if (ch == '\n') linenum++;
+        if (ch == '\n') g_linenum++;
 
-    lexeme = ch; // first (and possibly only) character of the lexeme
+    result.linenum = g_linenum;
+    result.lexeme  = ch; // first (and possibly only) character of the lexeme
 
     switch (ch) {
         // NULL character isn't allowed in input
         case NULL:
-            error("NULL character found - not permitted", linenum);
+            error("NULL character found - not permitted", g_linenum);
         case EOF:
             // TODO: insert semicolon where appropriate
             token = TOKEN_EOF;
@@ -63,7 +63,7 @@ Tokinfo lex(FILE *fp) {
 
             // peek next char to see if its a newline. if so, insert a semicolon
             if ( ( ch = getc(fp) ) == '\n' )
-                unlex(Tokinfo {TOKEN_SEMICOLON, linenum, "",});
+                unlex(Tokinfo {TOKEN_SEMICOLON, g_linenum, "",});
 
             // put back to mimick "peeking"
             ungetc(ch, fp);
@@ -76,7 +76,7 @@ Tokinfo lex(FILE *fp) {
 
             // peek next char to see if its a newline. if so, insert a semicolon
             if ( ( ch = getc(fp) ) == '\n' )
-                unlex(Tokinfo {TOKEN_SEMICOLON, linenum, "",});
+                unlex(Tokinfo {TOKEN_SEMICOLON, g_linenum, "",});
 
             // put back to mimick "peeking"
             ungetc(ch, fp);
@@ -89,22 +89,22 @@ Tokinfo lex(FILE *fp) {
             break;
         case '&':
             // no unary & operator
-            if ( (ch = getc(fp)) != '&' ) error("& operator not supported - maybe you wanted &&?", linenum);
+            if ( (ch = getc(fp)) != '&' ) error("& operator not supported - maybe you wanted &&?", g_linenum);
             token = TOKEN_LOGIC_AND;
-            lexeme.push_back(ch);
+            result.lexeme.push_back(ch);
             break;
         case '|':
             // no unary | operator
-            if ( (ch = getc(fp)) != '|' ) error("| operator not supported- maybe you wanted ||?", linenum);
+            if ( (ch = getc(fp)) != '|' ) error("| operator not supported- maybe you wanted ||?", g_linenum);
             token = TOKEN_LOGIC_AND;
-            lexeme.push_back(ch);
+            result.lexeme.push_back(ch);
             break;
         // TODO: fix line number bug with these cases
         case '=':
             // if '=' is next, then it's == comparison, else =
             if ((ch = getc(fp)) == '=') {
               token = TOKEN_EQ;
-              lexeme.push_back(ch);
+              result.lexeme.push_back(ch);
             } else {
               token = TOKEN_ASSIGN;
               ungetc(ch, fp);
@@ -114,7 +114,7 @@ Tokinfo lex(FILE *fp) {
             // if '=' is next, then it's <= comparison, else =
             if ((ch = getc(fp)) == '=') {
               token = TOKEN_LEQ;
-              lexeme.push_back(ch);
+              result.lexeme.push_back(ch);
             } else {
               token = TOKEN_LT;
               ungetc(ch, fp);
@@ -124,7 +124,7 @@ Tokinfo lex(FILE *fp) {
             // if '=' is next, then it's >= comparison, else =
             if ((ch = getc(fp)) == '=') {
               token = TOKEN_GEQ;
-              lexeme.push_back(ch);
+              result.lexeme.push_back(ch);
             } else {
               token = TOKEN_GT;
               ungetc(ch, fp);
@@ -134,7 +134,7 @@ Tokinfo lex(FILE *fp) {
             // if '=' is next, then it's >= comparison, else =
             if ((ch = getc(fp)) == '=') {
               token = TOKEN_NEQ;
-              lexeme.push_back(ch);
+              result.lexeme.push_back(ch);
             } else {
               token = TOKEN_BANG;
               ungetc(ch, fp);
@@ -155,25 +155,25 @@ Tokinfo lex(FILE *fp) {
             goto spin;
         case '"':
             while ( ( ch = getc(fp) ) != EOF && ch != '"' ) {
-                if (ch == '\n') error("Newline in string literal", linenum);
+                if (ch == '\n') error("Newline in string literal", g_linenum);
                 // on backslash: check for valid escape sequences
                 if (ch == '\\') {
                     ch = getc(fp);
                     if ( !(ch == 'b' || ch == 'f' ||ch == 'n' ||ch == 'r' ||ch == 't' ||ch == '\\' ||ch == '"') )
-                        error("Invalid escape sequence", linenum);
+                        error("Invalid escape sequence", g_linenum);
                 }
-                lexeme += ch;
+                result.lexeme += ch;
             }
-            if (ch == EOF) error("EOF in string literal", linenum);
+            if (ch == EOF) error("EOF in string literal", g_linenum);
             token = TOKEN_STRING;
             break;
         default:
             if (is_space(ch)) goto spin;
             if (is_letter(ch)) {
                 while ( ( ch = getc(fp) ) != EOF && isalnum(ch) )
-                    lexeme += ch;
+                    result.lexeme += ch;
             }
-            warning("skipping unknown character", linenum);
+            warning("skipping unknown character", g_linenum);
             goto spin;
             break;
     }
