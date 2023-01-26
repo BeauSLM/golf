@@ -13,6 +13,9 @@ Tokinfo lex(FILE *fp) {
         if (ch == '\n') linenum++;
 
     switch (ch) {
+        // NULL character isn't allowed in input
+        case NULL:
+            error("NULL character found - not permitted", linenum);
         case EOF:
             return Tokinfo { .token = TOKEN_EOF, .linenum = linenum };
         default:
