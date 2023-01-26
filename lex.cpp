@@ -141,9 +141,11 @@ Tokinfo lex(FILE *fp) {
             }
             break;
         case '/':
+            // REVIEW: maybe make this look better?
             // single slash
             if ( ( ch = getc(fp) ) != '/' ) {
                 token = TOKEN_SLASH;
+                ungetc(ch, fp);
                 break;
             }
             // comment - spin until we hit newline or EOF then lex at that newline/EOF
