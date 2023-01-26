@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string>
 
-enum Token {
+enum TokenID {
     // TODO: fill
     TOKEN_EOF = 0,
 
@@ -51,7 +51,7 @@ enum Token {
 };
 
 struct Tokinfo {
-    Token token = TOKEN_UNSET;
+    TokenID token = TOKEN_UNSET;
 
     // TODO: other attribute information (col number etc)?
     // attributes
