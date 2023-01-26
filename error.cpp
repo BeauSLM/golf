@@ -6,12 +6,12 @@
 // TODO: routines that don't take line numbers?
 
 void error(const char *msg, int linenum) {
-    fprintf(stderr, "Error: %s\nLine number: %d\nExiting...\n", msg, linenum);
+    fprintf(stderr, "Error: %s at line number: %d\n", msg, linenum);
     exit(EXIT_FAILURE);
 }
 
 void warning(const char *msg, int linenum) {
-    fprintf(stderr, "Warning: %s\nLine number: %d\n", msg, linenum);
+    fprintf(stderr, "Warning: %s at line number: %d\n", msg, linenum);
 
     // fail on warning cascade
     static int num_warnings = 0;
