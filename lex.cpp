@@ -59,6 +59,16 @@ Tokinfo lex(FILE *fp) {
         case ';':
             token = TOKEN_SEMICOLON;
             break;
+        case '&':
+            // no unary & operator
+            if ( (ch = getc(fp)) != '&' ) error("& operator not supported - maybe you wanted &&?", linenum);
+            token = TOKEN_LOGIC_AND;
+            break;
+        case '|':
+            // no unary | operator
+            if ( (ch = getc(fp)) != '|' ) error("| operator not supported- maybe you wanted ||?", linenum);
+            token = TOKEN_LOGIC_AND;
+            break;
         default:
             break;
     }
