@@ -14,6 +14,8 @@ void unlex(Tokinfo t) { tokens.push(t); }
 Tokinfo lex(FILE *fp) {
 
     Tokinfo result;
+
+    // prioritize tokens in the queue
     if (!tokens.empty()) {
         result = tokens.front();
         tokens.pop();
@@ -58,13 +60,11 @@ Tokinfo lex(FILE *fp) {
             break;
         case ')':
             token = TOKEN_RPAREN;
+
             // peek next char to see if its a newline. if so, insert a semicolon
             if ( ( ch = getc(fp) ) == '\n' )
-                unlex(Tokinfo {
-                        TOKEN_SEMICOLON,
-                        linenum,
-                        "",
-                    });
+                unlex(Tokinfo {TOKEN_SEMICOLON, linenum, "",});
+
             // put back to mimick "peeking"
             ungetc(ch, fp);
             break;
@@ -73,13 +73,11 @@ Tokinfo lex(FILE *fp) {
             break;
         case '}':
             token = TOKEN_RBRACE;
+
             // peek next char to see if its a newline. if so, insert a semicolon
             if ( ( ch = getc(fp) ) == '\n' )
-                unlex(Tokinfo {
-                        TOKEN_SEMICOLON,
-                        linenum,
-                        "",
-                    });
+                unlex(Tokinfo {TOKEN_SEMICOLON, linenum, "",});
+
             // put back to mimick "peeking"
             ungetc(ch, fp);
             break;
