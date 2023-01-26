@@ -58,12 +58,30 @@ Tokinfo lex(FILE *fp) {
             break;
         case ')':
             token = TOKEN_RPAREN;
+            // peek next char to see if its a newline. if so, insert a semicolon
+            if ( ( ch = getc(fp) ) == '\n' )
+                unlex(Tokinfo {
+                        TOKEN_SEMICOLON,
+                        linenum,
+                        "",
+                    });
+            // put back to mimick "peeking"
+            ungetc(ch, fp);
             break;
         case '{':
             token = TOKEN_LBRACE;
             break;
         case '}':
             token = TOKEN_RBRACE;
+            // peek next char to see if its a newline. if so, insert a semicolon
+            if ( ( ch = getc(fp) ) == '\n' )
+                unlex(Tokinfo {
+                        TOKEN_SEMICOLON,
+                        linenum,
+                        "",
+                    });
+            // put back to mimick "peeking"
+            ungetc(ch, fp);
             break;
         case ',':
             token = TOKEN_COMMA;
