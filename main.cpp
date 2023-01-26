@@ -20,5 +20,9 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
+    for (Tokinfo t = lex(fp); t.token != TOKEN_EOF; t = lex(fp)) {
+        printf("[%s] @ line %d\n", t.lexeme.data(), t.linenum);
+    }
+
     return EXIT_SUCCESS;
 }
