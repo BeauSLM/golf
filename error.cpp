@@ -11,7 +11,7 @@ void error(const char *msg, int linenum) {
 }
 
 void warning(const char *msg, int linenum) {
-    fprintf(stderr, "Warning: %s\nLine number: %d\n\n", msg, linenum);
+    fprintf(stderr, "Warning: %s\nLine number: %d\n", msg, linenum);
 
     // fail on warning cascade
     static int num_warnings = 0;
