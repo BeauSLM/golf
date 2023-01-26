@@ -93,11 +93,14 @@ Tokinfo lex(FILE *fp) {
             // no unary & operator
             if ( (ch = getc(fp)) != '&' ) error("& operator not supported - maybe you wanted &&?", linenum);
             token = TOKEN_LOGIC_AND;
+            lexeme.push_back(ch);
             break;
         case '|':
             // no unary | operator
             if ( (ch = getc(fp)) != '|' ) error("| operator not supported- maybe you wanted ||?", linenum);
             token = TOKEN_LOGIC_AND;
+            lexeme.push_back(ch);
+            break;
             break;
         default:
             break;
