@@ -24,7 +24,7 @@ Tokinfo lex(FILE *fp) {
     }
 
     // put result's members in local scope
-    auto & token  = result.token;
+    auto & token = result.token;
 
     spin:
     int ch;
