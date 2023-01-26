@@ -1,3 +1,4 @@
+#include <assert.h>
 #include "lex.hpp"
 #include "error.hpp"
 #include <queue>
@@ -23,7 +24,6 @@ Tokinfo lex(FILE *fp) {
     auto & linenum = result.linenum;
     auto & token   = result.token;
     auto & lexeme  = result.lexeme;
-
 
     spin:
     int ch;
@@ -101,8 +101,80 @@ Tokinfo lex(FILE *fp) {
             token = TOKEN_LOGIC_AND;
             lexeme.push_back(ch);
             break;
+        // TODO: fix line number bug with these cases
+        case '=':
+            // if '=' is next, then it's == comparison, else =
+            if ((ch = getc(fp)) == '=') {
+              token = TOKEN_EQ;
+              lexeme.push_back(ch);
+            } else {
+              token = TOKEN_ASSIGN;
+              ungetc(ch, fp);
+            }
+            break;
+        case '<':
+            // if '=' is next, then it's <= comparison, else =
+            if ((ch = getc(fp)) == '=') {
+              token = TOKEN_LEQ;
+              lexeme.push_back(ch);
+            } else {
+              token = TOKEN_LT;
+              ungetc(ch, fp);
+            }
+            break;
+        case '>':
+            // if '=' is next, then it's >= comparison, else =
+            if ((ch = getc(fp)) == '=') {
+              token = TOKEN_GEQ;
+              lexeme.push_back(ch);
+            } else {
+              token = TOKEN_GT;
+              ungetc(ch, fp);
+            }
+            break;
+        case '!':
+            // if '=' is next, then it's >= comparison, else =
+            if ((ch = getc(fp)) == '=') {
+              token = TOKEN_NEQ;
+              lexeme.push_back(ch);
+            } else {
+              token = TOKEN_BANG;
+              ungetc(ch, fp);
+            }
+            break;
+        case '/':
+            // single slash
+            if ( ( ch = getc(fp) ) != '/' ) {
+                token = TOKEN_SLASH;
+                break;
+            }
+            // comment - spin until we hit newline or EOF then lex at that newline/EOF
+            while ( ( ch = getc(fp) ) != EOF && ch != '\n' )
+                ;
+            ungetc(ch, fp);
+            goto spin;
+        case '"':
+            while ( ( ch = getc(fp) ) != EOF && ch != '"' ) {
+                if (ch == '\n') error("Newline in string literal", linenum);
+                // on backslash: check for valid escape sequences
+                if (ch == '\\') {
+                    ch = getc(fp);
+                    if ( !(ch == 'b' || ch == 'f' ||ch == 'n' ||ch == 'r' ||ch == 't' ||ch == '\\' ||ch == '"') )
+                        error("Invalid escape sequence", linenum);
+                }
+                lexeme += ch;
+            }
+            if (ch == EOF) error("EOF in string literal", linenum);
+            token = TOKEN_STRING;
             break;
         default:
+            if (is_space(ch)) goto spin;
+            if (is_letter(ch)) {
+                while ( ( ch = getc(fp) ) != EOF && isalnum(ch) )
+                    lexeme += ch;
+            }
+            warning("skipping unknown character", linenum);
+            goto spin;
             break;
     }
 
