@@ -3,6 +3,8 @@
 
 bool is_space(int c) { return c == '\n' || c == '\t' || c == ' ' || c == '\r'; }
 
+bool is_letter(int c) { return isalpha(c) || c == '_'; }
+
 Tokinfo lex(FILE *fp) {
     // TODO: other attribute information (col number etc)?
     int ch, linenum = 1;
