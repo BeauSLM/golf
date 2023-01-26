@@ -1,3 +1,4 @@
 golf
 *.o
 *.d
+my_output.txt
