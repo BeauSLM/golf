@@ -1,13 +1,25 @@
 #include "lex.hpp"
 #include "error.hpp"
+#include <queue>
 
 bool is_space(int c) { return c == '\n' || c == '\t' || c == ' ' || c == '\r'; }
 
 bool is_letter(int c) { return isalpha(c) || c == '_'; }
 
+std::queue<Tokinfo> tokens;
+
+void unlex(Tokinfo t) { tokens.push(t); }
+
 Tokinfo lex(FILE *fp) {
-    // init result and put its members in local scope
+
     Tokinfo result;
+    if (!tokens.empty()) {
+        result = tokens.front();
+        tokens.pop();
+        return result;
+    }
+
+    // put result's members in local scope
     auto & linenum = result.linenum;
     auto & token   = result.token;
     auto & lexeme  = result.lexeme;
