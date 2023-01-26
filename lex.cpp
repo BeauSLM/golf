@@ -26,7 +26,39 @@ Tokinfo lex(FILE *fp) {
         case NULL:
             error("NULL character found - not permitted", linenum);
         case EOF:
-            return Tokinfo { .token = TOKEN_EOF, .linenum = linenum };
+            // TODO: insert semicolon where appropriate
+            token = TOKEN_EOF;
+            break;
+        case '+':
+            token = TOKEN_PLUS;
+            break;
+        case '-':
+            token = TOKEN_MINUS;
+            break;
+        case '*':
+            token = TOKEN_STAR;
+            break;
+        case '%':
+            token = TOKEN_PERCENT;
+            break;
+        case '(':
+            token = TOKEN_LPAREN;
+            break;
+        case ')':
+            token = TOKEN_RPAREN;
+            break;
+        case '{':
+            token = TOKEN_LBRACE;
+            break;
+        case '}':
+            token = TOKEN_RBRACE;
+            break;
+        case ',':
+            token = TOKEN_COMMA;
+            break;
+        case ';':
+            token = TOKEN_SEMICOLON;
+            break;
         default:
             break;
     }
