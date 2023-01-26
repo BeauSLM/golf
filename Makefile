@@ -1,5 +1,5 @@
 CC := clang++
-OBJS := main.o error.o
+OBJS := main.o error.o lex.o
 
 all: golf
 
