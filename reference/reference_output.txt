@@ -1,0 +1,363 @@
+REFERENCE OUTPUT
+================
+
+
+BEGIN OUTPUT FOR scan.t1
+================
+================
+END OUTPUT FOR scan.t1
+
+
+
+BEGIN OUTPUT FOR scan.t2
+================
+================
+END OUTPUT FOR scan.t2
+
+
+
+BEGIN OUTPUT FOR scan.t3
+================
+================
+END OUTPUT FOR scan.t3
+
+
+
+BEGIN OUTPUT FOR scan.t4
+================
+warning: skipping unknown character '\v' at or near line 2
+warning: skipping unknown character '\f' at or near line 3
+================
+END OUTPUT FOR scan.t4
+
+
+
+BEGIN OUTPUT FOR scan.t5
+================
+================
+END OUTPUT FOR scan.t5
+
+
+
+BEGIN OUTPUT FOR scan.t6
+================
+}	[}] @ line 1
+;	[] @ line 1
+================
+END OUTPUT FOR scan.t6
+
+
+
+BEGIN OUTPUT FOR scan.t7
+================
+warning: skipping unknown character '^' at or near line 2
+warning: skipping unknown character '^' at or near line 3
+warning: skipping unknown character '^' at or near line 4
+warning: skipping unknown character '^' at or near line 5
+warning: skipping unknown character '^' at or near line 6
+warning: skipping unknown character '^' at or near line 7
+warning: skipping unknown character '^' at or near line 8
+warning: skipping unknown character '^' at or near line 9
+warning: skipping unknown character '^' at or near line 10
+warning: skipping unknown character '^' at or near line 11
+warning: skipping unknown character '^' at or near line 12
+error: too many warnings at or near line 12
+================
+END OUTPUT FOR scan.t7
+
+
+
+BEGIN OUTPUT FOR scan.t8
+================
+warning: skipping NUL character at or near line 2
+================
+END OUTPUT FOR scan.t8
+
+
+
+BEGIN OUTPUT FOR scan.t9
+================
+warning: skipping non-ASCII input character at or near line 2
+warning: skipping non-ASCII input character at or near line 2
+warning: skipping non-ASCII input character at or near line 2
+warning: skipping non-ASCII input character at or near line 2
+================
+END OUTPUT FOR scan.t9
+
+
+
+BEGIN OUTPUT FOR scan.t10
+================
+error: bitwise AND not supported in GoLF at or near line 2
+================
+END OUTPUT FOR scan.t10
+
+
+
+BEGIN OUTPUT FOR scan.t11
+================
+error: bitwise OR not supported in GoLF at or near line 2
+================
+END OUTPUT FOR scan.t11
+
+
+
+BEGIN OUTPUT FOR scan.t12
+================
+int	[0600] @ line 2
+;	[] @ line 2
+================
+END OUTPUT FOR scan.t12
+
+
+
+BEGIN OUTPUT FOR scan.t13
+================
+error: bitwise AND not supported in GoLF at or near line 3
+================
+END OUTPUT FOR scan.t13
+
+
+
+BEGIN OUTPUT FOR scan.t14
+================
+warning: skipping unknown character '\\' at or near line 3
+warning: skipping unknown character '^' at or near line 3
+warning: skipping unknown character '#' at or near line 3
+================
+END OUTPUT FOR scan.t14
+
+
+
+BEGIN OUTPUT FOR scan.t15
+================
++	[+] @ line 3
+-	[-] @ line 4
+*	[*] @ line 5
+/	[/] @ line 6
+%	[%] @ line 7
+(	[(] @ line 8
+)	[)] @ line 9
+;	[] @ line 9
+{	[{] @ line 10
+;	[] @ line 11
+}	[}] @ line 11
+;	[] @ line 11
+;	[;] @ line 12
+,	[,] @ line 13
+!	[!] @ line 17
+!=	[!=] @ line 17
+=	[=] @ line 18
+==	[==] @ line 18
+<	[<] @ line 19
+<=	[<=] @ line 19
+>	[>] @ line 20
+>=	[>=] @ line 20
+>	[>] @ line 22
+=	[=] @ line 22
+&&	[&&] @ line 26
+||	[||] @ line 27
+break	[break] @ line 31
+;	[] @ line 31
+else	[else] @ line 32
+for	[for] @ line 33
+func	[func] @ line 34
+if	[if] @ line 35
+return	[return] @ line 36
+;	[] @ line 36
+var	[var] @ line 37
+id	[Break] @ line 41
+;	[] @ line 41
+id	[switch] @ line 42
+;	[] @ line 42
+id	[case] @ line 43
+;	[] @ line 43
+id	[goto] @ line 44
+;	[] @ line 44
+id	[continue] @ line 45
+;	[] @ line 45
+id	[while] @ line 46
+;	[] @ line 46
+id	[prints] @ line 47
+;	[] @ line 47
+id	[printi] @ line 48
+;	[] @ line 48
+id	[printb] @ line 49
+;	[] @ line 49
+id	[printc] @ line 50
+;	[] @ line 50
+id	[halt] @ line 51
+;	[] @ line 51
+id	[getchar] @ line 52
+;	[] @ line 52
+id	[true] @ line 53
+;	[] @ line 53
+id	[bool] @ line 54
+;	[] @ line 54
+id	[false] @ line 55
+;	[] @ line 55
+id	[string] @ line 56
+;	[] @ line 56
+id	[int] @ line 57
+;	[] @ line 57
+id	[main] @ line 58
+;	[] @ line 58
+id	[abcdef] @ line 59
+;	[] @ line 59
+id	[abc123] @ line 60
+;	[] @ line 60
+id	[_] @ line 61
+;	[] @ line 61
+id	[_abc_0] @ line 62
+;	[] @ line 62
+id	[_42] @ line 63
+;	[] @ line 63
+int	[0] @ line 67
+;	[] @ line 67
+int	[12345678901234567890] @ line 68
+;	[] @ line 68
+================
+END OUTPUT FOR scan.t15
+
+
+
+BEGIN OUTPUT FOR scan.t16
+================
+break	[break] @ line 2
+;	[] @ line 2
+================
+END OUTPUT FOR scan.t16
+
+
+
+BEGIN OUTPUT FOR scan.t17
+================
+return	[return] @ line 2
+;	[] @ line 2
+================
+END OUTPUT FOR scan.t17
+
+
+
+BEGIN OUTPUT FOR scan.t18
+================
+id	[asdf] @ line 2
+;	[] @ line 2
+================
+END OUTPUT FOR scan.t18
+
+
+
+BEGIN OUTPUT FOR scan.t19
+================
+int	[12345] @ line 2
+;	[] @ line 2
+================
+END OUTPUT FOR scan.t19
+
+
+
+BEGIN OUTPUT FOR scan.t20
+================
+string	[asdf] @ line 2
+;	[] @ line 2
+================
+END OUTPUT FOR scan.t20
+
+
+
+BEGIN OUTPUT FOR scan.t21
+================
+)	[)] @ line 2
+;	[] @ line 2
+================
+END OUTPUT FOR scan.t21
+
+
+
+BEGIN OUTPUT FOR scan.t22
+================
+}	[}] @ line 2
+;	[] @ line 2
+================
+END OUTPUT FOR scan.t22
+
+
+
+BEGIN OUTPUT FOR scan.t23
+================
+error: string terminated by EOF at or near line 2
+================
+END OUTPUT FOR scan.t23
+
+
+
+BEGIN OUTPUT FOR scan.t24
+================
+error: string contains newline at or near line 2
+================
+END OUTPUT FOR scan.t24
+
+
+
+BEGIN OUTPUT FOR scan.t25
+================
+error: string contains newline at or near line 2
+================
+END OUTPUT FOR scan.t25
+
+
+
+BEGIN OUTPUT FOR scan.t26
+================
+string	[abc] @ line 2
+id	[def] @ line 2
+error: string contains newline at or near line 2
+================
+END OUTPUT FOR scan.t26
+
+
+
+BEGIN OUTPUT FOR scan.t27
+================
+error: string terminated by EOF at or near line 2
+================
+END OUTPUT FOR scan.t27
+
+
+
+BEGIN OUTPUT FOR scan.t28
+================
+error: string contains newline at or near line 2
+================
+END OUTPUT FOR scan.t28
+
+
+
+BEGIN OUTPUT FOR scan.t29
+================
+string	[abc] @ line 3
+;	[] @ line 3
+string	[ab\t\ndef] @ line 4
+;	[] @ line 4
+string	[ab\"cd] @ line 5
+;	[] @ line 5
+string	[ab\\\"cd] @ line 6
+;	[] @ line 6
+string	[a\b\r\fcd] @ line 7
+;	[] @ line 7
+string	[abc'def] @ line 8
+;	[] @ line 8
+string	[abcdef] @ line 9
+;	[] @ line 9
+================
+END OUTPUT FOR scan.t29
+
+
+
+BEGIN OUTPUT FOR scan.t30
+================
+error: bad string escape 'x' at or near line 3
+================
+END OUTPUT FOR scan.t30
+
