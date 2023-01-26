@@ -1,3 +1,5 @@
+#pragma once
+
 // error and warning routines
 
 // fail routine for fatal errors
