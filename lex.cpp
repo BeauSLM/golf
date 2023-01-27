@@ -181,10 +181,13 @@ Tokinfo lex(FILE *fp) {
                 if (ch == '\\') {
                     result.lexeme += ch;
                     ch = getc(fp);
+
+                    // error if newline or EOF encountered within string
+                    if ( ch == '\n' ) error("Newline in string literal", g_linenum);
                     if ( ch == EOF  ) error("EOF in string literal", g_linenum);
+
                     if ( ch != 'b' && ch != 'f' &&ch != 'n' &&ch != 'r' &&ch != 't' &&ch != '\\' &&ch != '"' )
-                        // TODO: show the bad escape sequence
-                        error("Invalid escape sequence", g_linenum);
+                        bad_char_error("Invalid escape sequence - can't escape the character", ch, g_linenum);
                 }
                 result.lexeme += ch;
             }
