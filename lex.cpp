@@ -1,5 +1,3 @@
-// TODO: insert semicolons before EOF too (i'm just doing lines atm)
-
 #include <assert.h>
 #include "lex.hpp"
 #include "error.hpp"
@@ -19,6 +17,7 @@ Tokinfo lex(FILE *fp) {
     // static to preserve value across calls.
     // this allows me to inspect result's token before I set it in a given call
     // to check what the previous token was
+    // HACK: can I do what this does in a clearer way?
     static Tokinfo result;
 
     // prioritize tokens in the queue
@@ -168,26 +167,33 @@ Tokinfo lex(FILE *fp) {
                 ;
             ungetc(ch, fp);
             goto spin;
-        case '"':
-            while ( ( ch = getc(fp) ) != EOF && ch != '"' ) {
-                if (ch == '\n') error("Newline in string literal", g_linenum);
+        case '"': // beginning of string literal
+            // TODO: cleanup
+            result.lexeme.clear(); // don't include the quote in the lexeme
+            // spin until we hit a terminating quote
+            while ( ( ch = getc(fp) ) && ch != '"' ) {
+
+                // error if newline or EOF encountered within string
+                if ( ch == '\n' ) error("Newline in string literal", g_linenum);
+                if ( ch == EOF  ) error("EOF in string literal", g_linenum);
+
                 // on backslash: check for valid escape sequences
                 if (ch == '\\') {
+                    result.lexeme += ch;
                     ch = getc(fp);
-                    if ( !(ch == 'b' || ch == 'f' ||ch == 'n' ||ch == 'r' ||ch == 't' ||ch == '\\' ||ch == '"') )
+                    if ( ch != 'b' && ch != 'f' &&ch != 'n' &&ch != 'r' &&ch != 't' &&ch != '\\' &&ch != '"' )
+                        // TODO: show the bad escape sequence
                         error("Invalid escape sequence", g_linenum);
                 }
                 result.lexeme += ch;
             }
 
-            // EOF not allowed in string literal
-            if (ch == EOF) error("EOF in string literal", g_linenum);
             // add semicolon if this thing is the last thing on the line or in file
-            if (ch == '\n' || ch == EOF) unlex(Tokinfo {TOKEN_SEMICOLON, g_linenum, "",});
-
-            ungetc(ch, fp);
+            if (( ch = getc(fp) ) == '\n' || ch == EOF)
+                unlex(Tokinfo{TOKEN_SEMICOLON, g_linenum, "",});
 
             token = TOKEN_STRING;
+            ungetc(ch, fp);
             break;
         default:
             // spin on whitespace
@@ -233,6 +239,7 @@ Tokinfo lex(FILE *fp) {
             }
 
             // skip unknown character with warning
+            // TODO: show the bad character
             warning("skipping unknown character", g_linenum);
             goto spin;
             break;
