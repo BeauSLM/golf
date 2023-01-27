@@ -193,8 +193,8 @@ Tokinfo lex(FILE *fp) {
 
             // letter means identifier or reserved word
             if (is_letter(ch)) {
-                while ( ( ch = getc(fp) ) != EOF && isalnum(ch) )
                 // spin until we hit a non-letter
+                while ( ( ch = getc(fp) ) != EOF && ( is_letter(ch) || isdigit(ch)) )
                     result.lexeme += ch;
             }
 
