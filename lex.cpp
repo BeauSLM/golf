@@ -104,13 +104,13 @@ Tokinfo lex(FILE *fp) {
             break;
         case '&':
             // no unary & operator
-            if ( (ch = getc(fp)) != '&' ) error("& operator not supported - maybe you wanted &&?", g_linenum);
+            if ( (ch = getc(fp)) != '&' ) error("'&' operator not supported - maybe you wanted '&&'?", g_linenum);
             token = TOKEN_LOGIC_AND;
             result.lexeme.push_back(ch);
             break;
         case '|':
             // no unary | operator
-            if ( (ch = getc(fp)) != '|' ) error("| operator not supported- maybe you wanted ||?", g_linenum);
+            if ( (ch = getc(fp)) != '|' ) error("'|' operator not supported - maybe you wanted '||'?", g_linenum);
             token = TOKEN_LOGIC_OR;
             result.lexeme.push_back(ch);
             break;
