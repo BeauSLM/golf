@@ -68,8 +68,8 @@ Tokinfo lex(FILE *fp) {
         case ')':
             token = TOKEN_RPAREN;
 
-            // peek next char to see if its a newline. if so, insert a semicolon
-            if ( ( ch = getc(fp) ) == '\n' )
+            // peek next char to see if its a newline or EOF. if so, insert a semicolon
+            if ( ( ch = getc(fp) ) == '\n' || ch == EOF )
                 unlex(Tokinfo {TOKEN_SEMICOLON, g_linenum, "",});
 
             // put back to mimick "peeking"
@@ -80,9 +80,9 @@ Tokinfo lex(FILE *fp) {
             break;
         case '}':
             // if last token wasn't a semicolon, insert a semicolon into the token stream
-            if (result.token != TOKEN_SEMICOLON) {
+            if (result.token != TOKEN_SEMICOLON && result.token != TOKEN_UNSET) {
                 result.token  = TOKEN_SEMICOLON;
-                result.lexeme = ""; // REVIEW: do I put a lexeme for a token I inserted?
+                result.lexeme = "";
                 ungetc(ch, fp);
                 return result;
             }
@@ -90,7 +90,7 @@ Tokinfo lex(FILE *fp) {
             token = TOKEN_RBRACE;
 
             // peek next char to see if its a newline. if so, insert a semicolon
-            if ( ( ch = getc(fp) ) == '\n' )
+            if ( ( ch = getc(fp) ) == '\n' || ch == EOF )
                 unlex(Tokinfo {TOKEN_SEMICOLON, g_linenum, "",});
 
             // put back to mimick "peeking"
@@ -182,8 +182,8 @@ Tokinfo lex(FILE *fp) {
 
             // EOF not allowed in string literal
             if (ch == EOF) error("EOF in string literal", g_linenum);
-            // add semicolon if this thing is the last thing on the line
-            if (ch == '\n') unlex(Tokinfo {TOKEN_SEMICOLON, g_linenum, "",});
+            // add semicolon if this thing is the last thing on the line or in file
+            if (ch == '\n' || ch == EOF) unlex(Tokinfo {TOKEN_SEMICOLON, g_linenum, "",});
 
             ungetc(ch, fp);
 
@@ -211,11 +211,10 @@ Tokinfo lex(FILE *fp) {
                 else                                result.token = TOKEN_ID;
 
                 // if end of line and token is break, return, or an identifier, insert a semicolon
-                if (ch == '\n' && ( result.token == TOKEN_BREAK || result.token == TOKEN_RETURN || result.token == TOKEN_ID ))
+                if ( ( ch == EOF || ch == '\n' ) && ( result.token == TOKEN_BREAK || result.token == TOKEN_RETURN || result.token == TOKEN_ID ) )
                     unlex(Tokinfo {TOKEN_SEMICOLON, g_linenum, "",});
 
                 ungetc(ch, fp);
-
                 break;
             }
 
