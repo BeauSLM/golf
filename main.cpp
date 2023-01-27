@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
     }
 
     for (Tokinfo t = lex(fp); t.token != TOKEN_EOF; t = lex(fp)) {
-        printf("%s [%s] @ line %d\n", token_to_string(t.token), t.lexeme.data(), t.linenum);
+        printf("%s\t[%s] @ line %d\n", token_to_string(t.token), t.lexeme.data(), t.linenum);
     }
 
     return EXIT_SUCCESS;
