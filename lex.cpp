@@ -193,6 +193,20 @@ Tokinfo lex(FILE *fp) {
             // spin on whitespace
             if (is_space(ch)) goto spin;
 
+            // number means integer literal
+            if (isdigit(ch)) {
+                // spin until we hit a non-num
+                while ( isdigit( ( ch = getc(fp) ) ) )
+                    result.lexeme += ch;
+
+                // add semicolon if this thing is the last thing on the line or in file
+                if (ch == '\n' || ch == EOF) unlex(Tokinfo {TOKEN_SEMICOLON, g_linenum, "",});
+
+                result.token = TOKEN_INT;
+                ungetc(ch, fp);
+                break;
+            }
+
             // letter means identifier or reserved word
             if (is_letter(ch)) {
                 // spin until we hit a non-letter
