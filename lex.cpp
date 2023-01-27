@@ -196,6 +196,25 @@ Tokinfo lex(FILE *fp) {
                 // spin until we hit a non-letter
                 while ( ( ch = getc(fp) ) != EOF && ( is_letter(ch) || isdigit(ch)) )
                     result.lexeme += ch;
+
+                // check if token is a reserved work and act accordingly
+                if      (result.lexeme == "break")  result.token = TOKEN_BREAK;
+                else if (result.lexeme == "else")   result.token = TOKEN_ELSE;
+                else if (result.lexeme == "for")    result.token = TOKEN_FOR;
+                else if (result.lexeme == "func")   result.token = TOKEN_FUNC;
+                else if (result.lexeme == "if")     result.token = TOKEN_IF;
+                else if (result.lexeme == "return") result.token = TOKEN_RETURN;
+                else if (result.lexeme == "var")    result.token = TOKEN_VAR;
+                //otherwise, result is a generic identifier
+                else                                result.token = TOKEN_ID;
+
+                // if end of line and token is break, return, or an identifier, insert a semicolon
+                if (ch == '\n' && ( result.token == TOKEN_BREAK || result.token == TOKEN_RETURN || result.token == TOKEN_ID ))
+                    unlex(Tokinfo {TOKEN_SEMICOLON, g_linenum, "",});
+
+                ungetc(ch, fp);
+
+                break;
             }
 
             // skip unknown character with warning
