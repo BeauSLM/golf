@@ -3,7 +3,6 @@
 #include <string>
 
 enum TokenID {
-    // TODO: fill
     TOKEN_EOF = 0,
 
     // keywords
@@ -41,7 +40,6 @@ enum TokenID {
     // identifiers
     TOKEN_ID,
 
-    // TODO: literals
     TOKEN_INT,
     TOKEN_STRING,
 
@@ -54,7 +52,6 @@ const char *token_to_string(TokenID token);
 struct Tokinfo {
     TokenID token = TOKEN_UNSET;
 
-    // TODO: other attribute information (col number etc)?
     // attributes
     int linenum = -1;
     std::string lexeme;

@@ -116,7 +116,6 @@ Tokinfo lex(FILE *fp) {
             token = TOKEN_LOGIC_OR;
             result.lexeme.push_back(ch);
             break;
-        // TODO: fix line number bug with these cases
         case '=':
             // if '=' is next, then it's == comparison, else =
             if ((ch = getc(fp)) == '=') {
