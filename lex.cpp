@@ -14,7 +14,10 @@ void unlex(Tokinfo t) { tokens.push(t); }
 int g_linenum = 1;
 Tokinfo lex(FILE *fp) {
 
-    Tokinfo result;
+    // static to preserve value across calls.
+    // this allows me to inspect result's token before I set it in a given call
+    // to check what the previous token was
+    static Tokinfo result;
 
     // prioritize tokens in the queue
     if (!tokens.empty()) {
