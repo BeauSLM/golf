@@ -111,7 +111,7 @@ Tokinfo lex(FILE *fp) {
         case '|':
             // no unary | operator
             if ( (ch = getc(fp)) != '|' ) error("| operator not supported- maybe you wanted ||?", g_linenum);
-            token = TOKEN_LOGIC_AND;
+            token = TOKEN_LOGIC_OR;
             result.lexeme.push_back(ch);
             break;
         // TODO: fix line number bug with these cases
