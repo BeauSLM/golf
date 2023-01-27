@@ -39,8 +39,6 @@ Tokinfo lex(FILE *fp) {
     while ( ( ch = getc(fp) ) != EOF && is_space(ch) )
         if (ch == '\n') g_linenum++;
 
-    // TODO: disallow non-ascii input (or whatever it was)
-
     result.linenum = g_linenum;
     result.lexeme  = ch; // first (and possibly only) character of the lexeme
 
@@ -244,6 +242,10 @@ Tokinfo lex(FILE *fp) {
             // skip unknown character with warning
             // TODO: show the bad character
             warning("skipping unknown character", g_linenum);
+            if (ch > 127) {
+                warning("skipping non-ASCII character", g_linenum);
+                goto spin;
+            }
             goto spin;
             break;
     }
