@@ -180,6 +180,11 @@ Tokinfo lex(FILE *fp) {
 
             // EOF not allowed in string literal
             if (ch == EOF) error("EOF in string literal", g_linenum);
+            // add semicolon if this thing is the last thing on the line
+            if (ch == '\n') unlex(Tokinfo {TOKEN_SEMICOLON, g_linenum, "",});
+
+            ungetc(ch, fp);
+
             token = TOKEN_STRING;
             break;
         default:
@@ -189,6 +194,7 @@ Tokinfo lex(FILE *fp) {
             // letter means identifier or reserved word
             if (is_letter(ch)) {
                 while ( ( ch = getc(fp) ) != EOF && isalnum(ch) )
+                // spin until we hit a non-letter
                     result.lexeme += ch;
             }
 
