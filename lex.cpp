@@ -35,6 +35,8 @@ Tokinfo lex(FILE *fp) {
     while ( ( ch = getc(fp) ) != EOF && is_space(ch) )
         if (ch == '\n') g_linenum++;
 
+    // TODO: disallow non-ascii input (or whatever it was)
+
     result.linenum = g_linenum;
     result.lexeme  = ch; // first (and possibly only) character of the lexeme
 
@@ -175,15 +177,22 @@ Tokinfo lex(FILE *fp) {
                 }
                 result.lexeme += ch;
             }
+
+            // EOF not allowed in string literal
             if (ch == EOF) error("EOF in string literal", g_linenum);
             token = TOKEN_STRING;
             break;
         default:
+            // spin on whitespace
             if (is_space(ch)) goto spin;
+
+            // letter means identifier or reserved word
             if (is_letter(ch)) {
                 while ( ( ch = getc(fp) ) != EOF && isalnum(ch) )
                     result.lexeme += ch;
             }
+
+            // skip unknown character with warning
             warning("skipping unknown character", g_linenum);
             goto spin;
             break;
