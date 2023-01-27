@@ -75,7 +75,14 @@ Tokinfo lex(FILE *fp) {
             token = TOKEN_LBRACE;
             break;
         case '}':
-            // TODO: if this closes an open brace and the last token wasn't a semicolon, insert a semicolon???
+            // if last token wasn't a semicolon, insert a semicolon into the token stream
+            if (result.token != TOKEN_SEMICOLON) {
+                result.token  = TOKEN_SEMICOLON;
+                result.lexeme = ""; // REVIEW: do I put a lexeme for a token I inserted?
+                ungetc(ch, fp);
+                return result;
+            }
+
             token = TOKEN_RBRACE;
 
             // peek next char to see if its a newline. if so, insert a semicolon
