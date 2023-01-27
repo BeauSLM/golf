@@ -1,3 +1,5 @@
+// TODO: insert semicolons before EOF too (i'm just doing lines atm)
+
 #include <assert.h>
 #include "lex.hpp"
 #include "error.hpp"
@@ -45,7 +47,7 @@ Tokinfo lex(FILE *fp) {
         case NULL:
             error("NULL character found - not permitted", g_linenum);
         case EOF:
-            // TODO: insert semicolon where appropriate
+            // TODO: insert semicolon if last token was ident, int/string, break/return, or '}'/')'
             token = TOKEN_EOF;
             break;
         case '+':
