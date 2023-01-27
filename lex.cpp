@@ -30,6 +30,9 @@ Tokinfo lex(FILE *fp) {
     // put result's members in local scope
     auto & token = result.token;
 
+    // CITATION-ish: the following code draws heavily from the FSM example given to us
+    // by Dr. Aycock in class -
+    // linked here -https://d2l.ucalgary.ca/d2l/le/content/500748/viewContent/5744437/View
     spin:
     int ch;
     // spin until we find something interesting
