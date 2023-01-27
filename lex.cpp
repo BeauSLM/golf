@@ -184,6 +184,7 @@ Tokinfo lex(FILE *fp) {
                 if (ch == '\\') {
                     result.lexeme += ch;
                     ch = getc(fp);
+                    if ( ch == EOF  ) error("EOF in string literal", g_linenum);
                     if ( ch != 'b' && ch != 'f' &&ch != 'n' &&ch != 'r' &&ch != 't' &&ch != '\\' &&ch != '"' )
                         // TODO: show the bad escape sequence
                         error("Invalid escape sequence", g_linenum);
