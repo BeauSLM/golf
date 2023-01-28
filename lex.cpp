@@ -16,7 +16,6 @@ Tokinfo lex(FILE *fp) {
     // static to preserve value across calls.
     // this allows me to inspect result's token before I set it in a given call
     // to check what the previous token was
-    // HACK: can I do what this does in a clearer way?
     static Tokinfo result;
 
     // prioritize tokens in the queue
@@ -27,8 +26,10 @@ Tokinfo lex(FILE *fp) {
     }
 
     // put result's members in local scope
-    auto & token = result.token;
-    auto & linenum = result.linenum;
+    // NOTE: these values are those of the last token returned, until we overwrite them
+    auto & result_token   = result.token;
+    auto & result_linenum = result.linenum;
+    auto & result_lexeme  = result.lexeme;
 
     // CITATION-ish: the following code draws heavily from the FSM example given to us
     // by Dr. Aycock in class -
@@ -37,119 +38,119 @@ Tokinfo lex(FILE *fp) {
     int ch;
     // spin until we find something interesting
     while ( ( ch = getc(fp) ) != EOF && is_space(ch) )
-        if (ch == '\n') linenum++;
+        if (ch == '\n') result_linenum++;
 
     result.lexeme  = ch; // first (and possibly only) character of the lexeme
 
     switch (ch) {
         // NULL character isn't allowed in input
         case NULL:
-            warning("skipping NULL character", linenum);
+            warning("skipping NULL character", result_linenum);
         case EOF:
             // TODO: insert semicolon if last token was ident, int/string, break/return, or '}'/')'
-            token = TOKEN_EOF;
+            result_token = TOKEN_EOF;
             break;
         case '+':
-            token = TOKEN_PLUS;
+            result_token = TOKEN_PLUS;
             break;
         case '-':
-            token = TOKEN_MINUS;
+            result_token = TOKEN_MINUS;
             break;
         case '*':
-            token = TOKEN_STAR;
+            result_token = TOKEN_STAR;
             break;
         case '%':
-            token = TOKEN_PERCENT;
+            result_token = TOKEN_PERCENT;
             break;
         case '(':
-            token = TOKEN_LPAREN;
+            result_token = TOKEN_LPAREN;
             break;
         case ')':
-            token = TOKEN_RPAREN;
+            result_token = TOKEN_RPAREN;
 
             // peek next char to see if its a newline or EOF. if so, insert a semicolon
             if ( ( ch = getc(fp) ) == '\n' || ch == EOF )
-                unlex(Tokinfo {TOKEN_SEMICOLON, linenum, "",});
+                unlex(Tokinfo {TOKEN_SEMICOLON, result_linenum, "",});
 
             // put back to mimick "peeking"
             ungetc(ch, fp);
             break;
         case '{':
-            token = TOKEN_LBRACE;
+            result_token = TOKEN_LBRACE;
             break;
         case '}':
             // if last token wasn't a semicolon, insert a semicolon into the token stream
-            if (result.token != TOKEN_SEMICOLON && result.token != TOKEN_UNSET) {
-                result.token  = TOKEN_SEMICOLON;
-                result.lexeme = "";
+            if (result_token != TOKEN_SEMICOLON && result_token != TOKEN_UNSET) {
+                result_token  = TOKEN_SEMICOLON;
+                result_lexeme = "";
                 ungetc(ch, fp);
                 return result;
             }
 
-            token = TOKEN_RBRACE;
+            result_token = TOKEN_RBRACE;
 
             // peek next char to see if its a newline. if so, insert a semicolon
             if ( ( ch = getc(fp) ) == '\n' || ch == EOF )
-                unlex(Tokinfo {TOKEN_SEMICOLON, linenum, "",});
+                unlex(Tokinfo {TOKEN_SEMICOLON, result_linenum, "",});
 
             // put back to mimick "peeking"
             ungetc(ch, fp);
             break;
         case ',':
-            token = TOKEN_COMMA;
+            result_token = TOKEN_COMMA;
             break;
         case ';':
-            token = TOKEN_SEMICOLON;
+            result_token = TOKEN_SEMICOLON;
             break;
         case '&':
             // no unary & operator
-            if ( (ch = getc(fp)) != '&' ) error("bitwise AND not supported in GoLF", linenum);
-            token = TOKEN_LOGIC_AND;
-            result.lexeme.push_back(ch);
+            if ( (ch = getc(fp)) != '&' ) error("bitwise AND not supported in GoLF", result_linenum);
+            result_token = TOKEN_LOGIC_AND;
+            result_lexeme.push_back(ch);
             break;
         case '|':
             // no unary | operator
-            if ( (ch = getc(fp)) != '|' ) error("bitwise OR not supported in GoLF", linenum);
-            token = TOKEN_LOGIC_OR;
-            result.lexeme.push_back(ch);
+            if ( (ch = getc(fp)) != '|' ) error("bitwise OR not supported in GoLF", result_linenum);
+            result_token = TOKEN_LOGIC_OR;
+            result_lexeme.push_back(ch);
             break;
         case '=':
             // if '=' is next, then it's == comparison, else =
             if ((ch = getc(fp)) == '=') {
-              token = TOKEN_EQ;
-              result.lexeme.push_back(ch);
+              result_token = TOKEN_EQ;
+              result_lexeme.push_back(ch);
             } else {
-              token = TOKEN_ASSIGN;
+              result_token = TOKEN_ASSIGN;
               ungetc(ch, fp);
             }
             break;
         case '<':
             // if '=' is next, then it's <= comparison, else =
             if ((ch = getc(fp)) == '=') {
-              token = TOKEN_LEQ;
-              result.lexeme.push_back(ch);
+              result_token = TOKEN_LEQ;
+              result_lexeme.push_back(ch);
             } else {
-              token = TOKEN_LT;
+              result_token = TOKEN_LT;
               ungetc(ch, fp);
             }
             break;
         case '>':
             // if '=' is next, then it's >= comparison, else =
             if ((ch = getc(fp)) == '=') {
-              token = TOKEN_GEQ;
-              result.lexeme.push_back(ch);
+              result_token = TOKEN_GEQ;
+              result_lexeme.push_back(ch);
             } else {
-              token = TOKEN_GT;
+              result_token = TOKEN_GT;
               ungetc(ch, fp);
             }
             break;
         case '!':
             // if '=' is next, then it's >= comparison, else =
             if ((ch = getc(fp)) == '=') {
-              token = TOKEN_NEQ;
-              result.lexeme.push_back(ch);
+              result_token = TOKEN_NEQ;
+              result_lexeme.push_back(ch);
             } else {
-              token = TOKEN_BANG;
+              result_token = TOKEN_BANG;
               ungetc(ch, fp);
             }
             break;
@@ -157,7 +158,7 @@ Tokinfo lex(FILE *fp) {
             // REVIEW: maybe make this look better?
             // single slash
             if ( ( ch = getc(fp) ) != '/' ) {
-                token = TOKEN_SLASH;
+                result_token = TOKEN_SLASH;
                 ungetc(ch, fp);
                 break;
             }
@@ -168,34 +169,34 @@ Tokinfo lex(FILE *fp) {
             goto spin;
         case '"': // beginning of string literal
             // TODO: cleanup
-            result.lexeme.clear(); // don't include the quote in the lexeme
+            result_lexeme.clear(); // don't include the quote in the lexeme
             // spin until we hit a terminating quote
             while ( ( ch = getc(fp) ) && ch != '"' ) {
 
                 // error if newline or EOF encountered within string
-                if ( ch == '\n' ) error("string contains newline", linenum);
-                if ( ch == EOF  ) error("string terminated by EOF", linenum);
+                if ( ch == '\n' ) error("string contains newline", result_linenum);
+                if ( ch == EOF  ) error("string terminated by EOF", result_linenum);
 
                 // on backslash: check for valid escape sequences
                 if (ch == '\\') {
-                    result.lexeme += ch;
+                    result_lexeme += ch;
                     ch = getc(fp);
 
                     // error if newline or EOF encountered within string
-                    if ( ch == '\n' ) error("string contains newline", linenum);
-                    if ( ch == EOF  ) error("string terminated by EOF", linenum);
+                    if ( ch == '\n' ) error("string contains newline", result_linenum);
+                    if ( ch == EOF  ) error("string terminated by EOF", result_linenum);
 
                     if ( ch != 'b' && ch != 'f' &&ch != 'n' &&ch != 'r' &&ch != 't' &&ch != '\\' &&ch != '"' )
-                        bad_char_error("bad string escape", ch, linenum);
+                        bad_char_error("bad string escape", ch, result_linenum);
                 }
-                result.lexeme += ch;
+                result_lexeme += ch;
             }
 
             // add semicolon if this thing is the last thing on the line or in file
             if (( ch = getc(fp) ) == '\n' || ch == EOF)
-                unlex(Tokinfo{TOKEN_SEMICOLON, linenum, "",});
+                unlex(Tokinfo{TOKEN_SEMICOLON, result_linenum, "",});
 
-            token = TOKEN_STRING;
+            result_token = TOKEN_STRING;
             ungetc(ch, fp);
             break;
         default:
@@ -206,12 +207,12 @@ Tokinfo lex(FILE *fp) {
             if (isdigit(ch)) {
                 // spin until we hit a non-num
                 while ( isdigit( ( ch = getc(fp) ) ) )
-                    result.lexeme += ch;
+                    result_lexeme += ch;
 
                 // add semicolon if this thing is the last thing on the line or in file
-                if (ch == '\n' || ch == EOF) unlex(Tokinfo {TOKEN_SEMICOLON, linenum, "",});
+                if (ch == '\n' || ch == EOF) unlex(Tokinfo {TOKEN_SEMICOLON, result_linenum, "",});
 
-                result.token = TOKEN_INT;
+                result_token = TOKEN_INT;
                 ungetc(ch, fp);
                 break;
             }
@@ -220,22 +221,22 @@ Tokinfo lex(FILE *fp) {
             if (is_letter(ch)) {
                 // spin until we hit a non-letter
                 while ( ( ch = getc(fp) ) != EOF && ( is_letter(ch) || isdigit(ch)) )
-                    result.lexeme += ch;
+                    result_lexeme += ch;
 
                 // check if token is a reserved work and act accordingly
-                if      (result.lexeme == "break")  result.token = TOKEN_BREAK;
-                else if (result.lexeme == "else")   result.token = TOKEN_ELSE;
-                else if (result.lexeme == "for")    result.token = TOKEN_FOR;
-                else if (result.lexeme == "func")   result.token = TOKEN_FUNC;
-                else if (result.lexeme == "if")     result.token = TOKEN_IF;
-                else if (result.lexeme == "return") result.token = TOKEN_RETURN;
-                else if (result.lexeme == "var")    result.token = TOKEN_VAR;
+                if      (result_lexeme == "break")  result_token = TOKEN_BREAK;
+                else if (result_lexeme == "else")   result_token = TOKEN_ELSE;
+                else if (result_lexeme == "for")    result_token = TOKEN_FOR;
+                else if (result_lexeme == "func")   result_token = TOKEN_FUNC;
+                else if (result_lexeme == "if")     result_token = TOKEN_IF;
+                else if (result_lexeme == "return") result_token = TOKEN_RETURN;
+                else if (result_lexeme == "var")    result_token = TOKEN_VAR;
                 //otherwise, result is a generic identifier
-                else                                result.token = TOKEN_ID;
+                else                                result_token = TOKEN_ID;
 
                 // if end of line and token is break, return, or an identifier, insert a semicolon
-                if ( ( ch == EOF || ch == '\n' ) && ( token == TOKEN_BREAK || token == TOKEN_RETURN || token == TOKEN_ID ) )
-                    unlex(Tokinfo {TOKEN_SEMICOLON, linenum, "",});
+                if ( ( ch == EOF || ch == '\n' ) && ( result_token == TOKEN_BREAK || result_token == TOKEN_RETURN || result_token == TOKEN_ID ) )
+                    unlex(Tokinfo {TOKEN_SEMICOLON, result_linenum, "",});
 
                 ungetc(ch, fp);
                 break;
@@ -243,11 +244,11 @@ Tokinfo lex(FILE *fp) {
 
             // skip non-ascii with a warning
             if (ch > 127) {
-                warning("skipping non-ASCII input character", linenum);
+                warning("skipping non-ASCII input character", result_linenum);
                 goto spin;
             }
             // skip unknown character with warning
-            bad_char_warning("skipping unknown character", ch, linenum);
+            bad_char_warning("skipping unknown character", ch, result_linenum);
             goto spin;
             break;
     }
