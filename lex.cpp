@@ -47,7 +47,19 @@ Tokinfo lex(FILE *fp) {
         case NULL:
             warning("skipping NULL character", result_linenum);
         case EOF:
-            // TODO: insert semicolon if last token was ident, int/string, break/return, or '}'/')'
+            if (   result_token == TOKEN_ID
+                || result_token == TOKEN_INT
+                || result_token == TOKEN_STRING
+                || result_token == TOKEN_BREAK
+                || result_token == TOKEN_RETURN
+                || result_token == TOKEN_RBRACE
+                || result_token == TOKEN_RPAREN
+            ) {
+                result_token  = TOKEN_SEMICOLON;
+                result_lexeme = "";
+                ungetc(ch, fp);
+                break;
+            }
             result_token = TOKEN_EOF;
             break;
         case '+':
@@ -68,8 +80,8 @@ Tokinfo lex(FILE *fp) {
         case ')':
             result_token = TOKEN_RPAREN;
 
-            // peek next char to see if its a newline or EOF. if so, insert a semicolon
-            if ( ( ch = getc(fp) ) == '\n' || ch == EOF )
+            // peek next char to see if its a newline. if so, insert a semicolon
+            if ( ( ch = getc(fp) ) == '\n' )
                 unlex(Tokinfo {TOKEN_SEMICOLON, result_linenum, "",});
 
             // put back to mimick "peeking"
@@ -90,7 +102,7 @@ Tokinfo lex(FILE *fp) {
             result_token = TOKEN_RBRACE;
 
             // peek next char to see if its a newline. if so, insert a semicolon
-            if ( ( ch = getc(fp) ) == '\n' || ch == EOF )
+            if ( ( ch = getc(fp) ) == '\n' )
                 unlex(Tokinfo {TOKEN_SEMICOLON, result_linenum, "",});
 
             // put back to mimick "peeking"
@@ -193,7 +205,7 @@ Tokinfo lex(FILE *fp) {
             }
 
             // add semicolon if this thing is the last thing on the line or in file
-            if (( ch = getc(fp) ) == '\n' || ch == EOF)
+            if (( ch = getc(fp) ) == '\n' )
                 unlex(Tokinfo{TOKEN_SEMICOLON, result_linenum, "",});
 
             result_token = TOKEN_STRING;
@@ -210,7 +222,7 @@ Tokinfo lex(FILE *fp) {
                     result_lexeme += ch;
 
                 // add semicolon if this thing is the last thing on the line or in file
-                if (ch == '\n' || ch == EOF) unlex(Tokinfo {TOKEN_SEMICOLON, result_linenum, "",});
+                if (ch == '\n' ) unlex(Tokinfo {TOKEN_SEMICOLON, result_linenum, "",});
 
                 result_token = TOKEN_INT;
                 ungetc(ch, fp);
@@ -235,7 +247,7 @@ Tokinfo lex(FILE *fp) {
                 else                                result_token = TOKEN_ID;
 
                 // if end of line and token is break, return, or an identifier, insert a semicolon
-                if ( ( ch == EOF || ch == '\n' ) && ( result_token == TOKEN_BREAK || result_token == TOKEN_RETURN || result_token == TOKEN_ID ) )
+                if ( ( ch == '\n' ) && ( result_token == TOKEN_BREAK || result_token == TOKEN_RETURN || result_token == TOKEN_ID ) )
                     unlex(Tokinfo {TOKEN_SEMICOLON, result_linenum, "",});
 
                 ungetc(ch, fp);
