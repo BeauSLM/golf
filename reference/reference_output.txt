@@ -6,6 +6,7 @@ BEGIN OUTPUT FOR scan.t1
 ================
 ================
 END OUTPUT FOR scan.t1
+Exit when run on scan.t1: 0
 
 
 
@@ -13,6 +14,7 @@ BEGIN OUTPUT FOR scan.t2
 ================
 ================
 END OUTPUT FOR scan.t2
+Exit when run on scan.t2: 0
 
 
 
@@ -20,6 +22,7 @@ BEGIN OUTPUT FOR scan.t3
 ================
 ================
 END OUTPUT FOR scan.t3
+Exit when run on scan.t3: 0
 
 
 
@@ -29,6 +32,7 @@ warning: skipping unknown character '\v' at or near line 2
 warning: skipping unknown character '\f' at or near line 3
 ================
 END OUTPUT FOR scan.t4
+Exit when run on scan.t4: 0
 
 
 
@@ -36,6 +40,7 @@ BEGIN OUTPUT FOR scan.t5
 ================
 ================
 END OUTPUT FOR scan.t5
+Exit when run on scan.t5: 0
 
 
 
@@ -45,6 +50,7 @@ BEGIN OUTPUT FOR scan.t6
 ;	[] @ line 1
 ================
 END OUTPUT FOR scan.t6
+Exit when run on scan.t6: 0
 
 
 
@@ -64,6 +70,7 @@ warning: skipping unknown character '^' at or near line 12
 error: too many warnings at or near line 12
 ================
 END OUTPUT FOR scan.t7
+Exit when run on scan.t7: 1
 
 
 
@@ -72,6 +79,7 @@ BEGIN OUTPUT FOR scan.t8
 warning: skipping NUL character at or near line 2
 ================
 END OUTPUT FOR scan.t8
+Exit when run on scan.t8: 0
 
 
 
@@ -83,6 +91,7 @@ warning: skipping non-ASCII input character at or near line 2
 warning: skipping non-ASCII input character at or near line 2
 ================
 END OUTPUT FOR scan.t9
+Exit when run on scan.t9: 0
 
 
 
@@ -91,6 +100,7 @@ BEGIN OUTPUT FOR scan.t10
 error: bitwise AND not supported in GoLF at or near line 2
 ================
 END OUTPUT FOR scan.t10
+Exit when run on scan.t10: 1
 
 
 
@@ -99,6 +109,7 @@ BEGIN OUTPUT FOR scan.t11
 error: bitwise OR not supported in GoLF at or near line 2
 ================
 END OUTPUT FOR scan.t11
+Exit when run on scan.t11: 1
 
 
 
@@ -108,6 +119,7 @@ int	[0600] @ line 2
 ;	[] @ line 2
 ================
 END OUTPUT FOR scan.t12
+Exit when run on scan.t12: 0
 
 
 
@@ -116,6 +128,7 @@ BEGIN OUTPUT FOR scan.t13
 error: bitwise AND not supported in GoLF at or near line 3
 ================
 END OUTPUT FOR scan.t13
+Exit when run on scan.t13: 1
 
 
 
@@ -126,6 +139,7 @@ warning: skipping unknown character '^' at or near line 3
 warning: skipping unknown character '#' at or near line 3
 ================
 END OUTPUT FOR scan.t14
+Exit when run on scan.t14: 0
 
 
 
@@ -218,6 +232,7 @@ int	[12345678901234567890] @ line 68
 ;	[] @ line 68
 ================
 END OUTPUT FOR scan.t15
+Exit when run on scan.t15: 0
 
 
 
@@ -227,6 +242,7 @@ break	[break] @ line 2
 ;	[] @ line 2
 ================
 END OUTPUT FOR scan.t16
+Exit when run on scan.t16: 0
 
 
 
@@ -236,6 +252,7 @@ return	[return] @ line 2
 ;	[] @ line 2
 ================
 END OUTPUT FOR scan.t17
+Exit when run on scan.t17: 0
 
 
 
@@ -245,6 +262,7 @@ id	[asdf] @ line 2
 ;	[] @ line 2
 ================
 END OUTPUT FOR scan.t18
+Exit when run on scan.t18: 0
 
 
 
@@ -254,6 +272,7 @@ int	[12345] @ line 2
 ;	[] @ line 2
 ================
 END OUTPUT FOR scan.t19
+Exit when run on scan.t19: 0
 
 
 
@@ -263,6 +282,7 @@ string	[asdf] @ line 2
 ;	[] @ line 2
 ================
 END OUTPUT FOR scan.t20
+Exit when run on scan.t20: 0
 
 
 
@@ -272,6 +292,7 @@ BEGIN OUTPUT FOR scan.t21
 ;	[] @ line 2
 ================
 END OUTPUT FOR scan.t21
+Exit when run on scan.t21: 0
 
 
 
@@ -281,6 +302,7 @@ BEGIN OUTPUT FOR scan.t22
 ;	[] @ line 2
 ================
 END OUTPUT FOR scan.t22
+Exit when run on scan.t22: 0
 
 
 
@@ -289,6 +311,7 @@ BEGIN OUTPUT FOR scan.t23
 error: string terminated by EOF at or near line 2
 ================
 END OUTPUT FOR scan.t23
+Exit when run on scan.t23: 1
 
 
 
@@ -297,6 +320,7 @@ BEGIN OUTPUT FOR scan.t24
 error: string contains newline at or near line 2
 ================
 END OUTPUT FOR scan.t24
+Exit when run on scan.t24: 1
 
 
 
@@ -305,6 +329,7 @@ BEGIN OUTPUT FOR scan.t25
 error: string contains newline at or near line 2
 ================
 END OUTPUT FOR scan.t25
+Exit when run on scan.t25: 1
 
 
 
@@ -315,6 +340,7 @@ id	[def] @ line 2
 error: string contains newline at or near line 2
 ================
 END OUTPUT FOR scan.t26
+Exit when run on scan.t26: 1
 
 
 
@@ -323,6 +349,7 @@ BEGIN OUTPUT FOR scan.t27
 error: string terminated by EOF at or near line 2
 ================
 END OUTPUT FOR scan.t27
+Exit when run on scan.t27: 1
 
 
 
@@ -331,6 +358,7 @@ BEGIN OUTPUT FOR scan.t28
 error: string contains newline at or near line 2
 ================
 END OUTPUT FOR scan.t28
+Exit when run on scan.t28: 1
 
 
 
@@ -352,6 +380,7 @@ string	[abcdef] @ line 9
 ;	[] @ line 9
 ================
 END OUTPUT FOR scan.t29
+Exit when run on scan.t29: 0
 
 
 
@@ -360,4 +389,5 @@ BEGIN OUTPUT FOR scan.t30
 error: bad string escape 'x' at or near line 3
 ================
 END OUTPUT FOR scan.t30
+Exit when run on scan.t30: 1
 
