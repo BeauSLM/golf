@@ -40,7 +40,7 @@ Tokinfo lex( FILE *fp ) {
     while ( ( ch = getc( fp ) ) != EOF && is_space( ch ) )
         if ( ch == '\n' ) result_linenum++;
 
-    result.lexeme  = ch; // first (and possibly only) character of the lexeme
+    result.lexeme = ch; // first (and possibly only) character of the lexeme
 
     switch ( ch ) {
         // NULL character isn't allowed in input
@@ -117,12 +117,14 @@ Tokinfo lex( FILE *fp ) {
         case '&':
             // no unary & operator
             if ( ( ch = getc( fp ) ) != '&' ) error( "bitwise AND not supported in GoLF", result_linenum );
+
             result_token = TOKEN_LOGIC_AND;
             result_lexeme.push_back( ch );
             break;
         case '|':
             // no unary | operator
             if ( ( ch = getc( fp ) ) != '|' ) error( "bitwise OR not supported in GoLF", result_linenum );
+
             result_token = TOKEN_LOGIC_OR;
             result_lexeme.push_back( ch );
             break;
@@ -167,27 +169,27 @@ Tokinfo lex( FILE *fp ) {
             }
             break;
         case '/':
-            // REVIEW: maybe make this look better?
             // single slash
             if ( ( ch = getc( fp ) ) != '/' ) {
                 result_token = TOKEN_SLASH;
                 ungetc( ch, fp );
                 break;
             }
+
             // comment - spin until we hit newline or EOF then lex at that newline/EOF
             while ( ( ch = getc( fp ) ) != EOF && ch != '\n' )
                 ;
             ungetc( ch, fp );
             goto spin;
         case '"': // beginning of string literal
-            // TODO: cleanup
             result_lexeme.clear(); // don't include the quote in the lexeme
+
             // spin until we hit a terminating quote
             while ( ( ch = getc( fp ) ) && ch != '"' ) {
 
                 // error if newline or EOF encountered within string
                 if ( ch == '\n' ) error( "string contains newline", result_linenum );
-                if ( ch == EOF  ) error( "string terminated by EOF", result_linenum );
+                if ( ch ==  EOF ) error( "string terminated by EOF", result_linenum );
 
                 // on backslash: check for valid escape sequences
                 if ( ch == '\\' ) {
@@ -196,7 +198,7 @@ Tokinfo lex( FILE *fp ) {
 
                     // error if newline or EOF encountered within string
                     if ( ch == '\n' ) error( "string contains newline", result_linenum );
-                    if ( ch == EOF  ) error( "string terminated by EOF", result_linenum );
+                    if ( ch ==  EOF ) error( "string terminated by EOF", result_linenum );
 
                     if ( ch != 'b' && ch != 'f' &&ch != 'n' &&ch != 'r' &&ch != 't' &&ch != '\\' &&ch != '"' )
                         bad_char_error( "bad string escape", ch, result_linenum );
@@ -236,15 +238,15 @@ Tokinfo lex( FILE *fp ) {
                     result_lexeme += ch;
 
                 // check if token is a reserved work and act accordingly
-                if      ( result_lexeme == "break" )  result_token = TOKEN_BREAK;
-                else if ( result_lexeme == "else" )   result_token = TOKEN_ELSE;
-                else if ( result_lexeme == "for" )    result_token = TOKEN_FOR;
-                else if ( result_lexeme == "func" )   result_token = TOKEN_FUNC;
-                else if ( result_lexeme == "if" )     result_token = TOKEN_IF;
+                if      ( result_lexeme == "break"  ) result_token = TOKEN_BREAK;
+                else if ( result_lexeme == "else"   ) result_token = TOKEN_ELSE;
+                else if ( result_lexeme == "for"    ) result_token = TOKEN_FOR;
+                else if ( result_lexeme == "func"   ) result_token = TOKEN_FUNC;
+                else if ( result_lexeme == "if"     ) result_token = TOKEN_IF;
                 else if ( result_lexeme == "return" ) result_token = TOKEN_RETURN;
-                else if ( result_lexeme == "var" )    result_token = TOKEN_VAR;
+                else if ( result_lexeme == "var"    ) result_token = TOKEN_VAR;
                 //otherwise, result is a generic identifier
-                else                                result_token = TOKEN_ID;
+                else                                  result_token = TOKEN_ID;
 
                 // if end of line and token is break, return, or an identifier, insert a semicolon
                 if ( ( ch == '\n' ) && ( result_token == TOKEN_BREAK || result_token == TOKEN_RETURN || result_token == TOKEN_ID ) )

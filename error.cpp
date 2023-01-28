@@ -37,7 +37,7 @@ void bad_char_error( const char *msg, char badchar, int linenum ) {
 }
 
 // track number of warnings given
-static int num_warnings = 0;
+static int num_warnings       =  0;
 const static int max_warnings = 10;
 
 void handle_warning_cascade( int linenum ) {
