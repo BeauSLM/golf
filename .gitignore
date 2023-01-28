@@ -4,3 +4,7 @@ golf
 my_output.txt
 my_stderr.txt
 my_stdout.txt
+
+# symlinks for reference_output.sh
+golf_reference
+ms1
