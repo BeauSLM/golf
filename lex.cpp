@@ -45,7 +45,7 @@ Tokinfo lex(FILE *fp) {
     switch (ch) {
         // NULL character isn't allowed in input
         case NULL:
-            error("NULL character found - not permitted", g_linenum);
+            warning("skipping NULL character", g_linenum);
         case EOF:
             // TODO: insert semicolon if last token was ident, int/string, break/return, or '}'/')'
             token = TOKEN_EOF;
@@ -104,13 +104,13 @@ Tokinfo lex(FILE *fp) {
             break;
         case '&':
             // no unary & operator
-            if ( (ch = getc(fp)) != '&' ) error("'&' operator not supported - maybe you wanted '&&'?", g_linenum);
+            if ( (ch = getc(fp)) != '&' ) error("bitwise AND not supported in GoLF", g_linenum);
             token = TOKEN_LOGIC_AND;
             result.lexeme.push_back(ch);
             break;
         case '|':
             // no unary | operator
-            if ( (ch = getc(fp)) != '|' ) error("'|' operator not supported - maybe you wanted '||'?", g_linenum);
+            if ( (ch = getc(fp)) != '|' ) error("bitwise OR not supported in GoLF", g_linenum);
             token = TOKEN_LOGIC_OR;
             result.lexeme.push_back(ch);
             break;
@@ -174,8 +174,8 @@ Tokinfo lex(FILE *fp) {
             while ( ( ch = getc(fp) ) && ch != '"' ) {
 
                 // error if newline or EOF encountered within string
-                if ( ch == '\n' ) error("Newline in string literal", g_linenum);
-                if ( ch == EOF  ) error("EOF in string literal", g_linenum);
+                if ( ch == '\n' ) error("string contains newline", g_linenum);
+                if ( ch == EOF  ) error("string terminated by EOF", g_linenum);
 
                 // on backslash: check for valid escape sequences
                 if (ch == '\\') {
@@ -183,11 +183,11 @@ Tokinfo lex(FILE *fp) {
                     ch = getc(fp);
 
                     // error if newline or EOF encountered within string
-                    if ( ch == '\n' ) error("Newline in string literal", g_linenum);
-                    if ( ch == EOF  ) error("EOF in string literal", g_linenum);
+                    if ( ch == '\n' ) error("string contains newline", g_linenum);
+                    if ( ch == EOF  ) error("string terminated by EOF", g_linenum);
 
                     if ( ch != 'b' && ch != 'f' &&ch != 'n' &&ch != 'r' &&ch != 't' &&ch != '\\' &&ch != '"' )
-                        bad_char_error("Invalid escape sequence - can't escape the character", ch, g_linenum);
+                        bad_char_error("bad string escape", ch, g_linenum);
                 }
                 result.lexeme += ch;
             }
@@ -242,13 +242,13 @@ Tokinfo lex(FILE *fp) {
                 break;
             }
 
-            // skip unknown character with warning
-            // TODO: show the bad character
-            warning("skipping unknown character", g_linenum);
+            // skip non-ascii with a warning
             if (ch > 127) {
-                warning("skipping non-ASCII character", g_linenum);
+                warning("skipping non-ASCII input character", g_linenum);
                 goto spin;
             }
+            // skip unknown character with warning
+            bad_char_warning("skipping unknown character", ch, g_linenum);
             goto spin;
             break;
     }
