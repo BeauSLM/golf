@@ -43,7 +43,6 @@ enum TokenID {
     TOKEN_INT,
     TOKEN_STRING,
 
-    // for my own debugging purposes
     TOKEN_UNSET,
 };
 

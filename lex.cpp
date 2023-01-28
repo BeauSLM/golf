@@ -42,11 +42,16 @@ Tokinfo lex( FILE *fp ) {
 
     result.lexeme = ch; // first (and possibly only) character of the lexeme
 
+    // FSM based on our character that chooses what token to return
+    // note that after the statement nothing happens except returning `result`
+    // this means that calling `break` inside the statement is effectively a
+    // return
     switch ( ch ) {
         // NULL character isn't allowed in input
         case NULL:
             warning( "skipping NULL character", result_linenum );
         case EOF:
+            // insert semicolon according to spec
             if (   result_token == TOKEN_ID
                 || result_token == TOKEN_INT
                 || result_token == TOKEN_STRING
