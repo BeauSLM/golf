@@ -9,6 +9,8 @@ do
     printf "\n\nBEGIN OUTPUT FOR %s\n" "$filename"
     echo "================"
     ./golf "reference/ms1/$filename"
+    exitcode=$?
     echo "================"
-    printf "END OUTPUT FOR %s\n\n" "$filename"
+    printf "END OUTPUT FOR %s\n" "$filename"
+    printf "Exit when run on %s: %s\n\n" "$filename" "$exitcode"
 done
