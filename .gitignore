@@ -2,3 +2,5 @@ golf
 *.o
 *.d
 my_output.txt
+my_stderr.txt
+my_stdout.txt
