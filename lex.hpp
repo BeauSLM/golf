@@ -47,7 +47,7 @@ enum TokenID {
     TOKEN_UNSET,
 };
 
-const char *token_to_string(TokenID token);
+const char *token_to_string( TokenID token );
 
 struct Tokinfo {
     TokenID token = TOKEN_UNSET;
@@ -57,4 +57,4 @@ struct Tokinfo {
     std::string lexeme;
 };
 
-Tokinfo lex(FILE *fp);
+Tokinfo lex( FILE *fp );
