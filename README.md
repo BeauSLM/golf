@@ -1,4 +1,15 @@
+# Setup
+
+please checkout the `milestone-1` branch as I may be developing on master. I'll make sure
+this branch is a working scanner as specified in the milestone 1 spec.
+
+``` bash
+git checkout milestone-1
+```
+
 # Build
+
+Short version: run `make` in the root of the project
 
 ``` sh
 # from root directory of project
@@ -20,10 +31,11 @@ I'll re-iterate the last note - SWITCHING BETWEEN RELEASE AND DEBUG BUILDS MEANS
 # Usage
 
 ``` sh
-$ ./golf
-$ Usage: ./golf <filename>
+$ ./golf                   # incorrect usage - provide one filename argument that points to your source file
+> Usage: ./golf <filename> # output of above
+$ ./golf <your_golf_file>  # correct usage
 ```
 
-`golf` accepts one filename argument. To use, simply build as shown above and run `./golf <your_golf_file>`
+Short version: `golf` accepts one filename argument. To use, simply build as shown above and run `./golf <your_golf_file>`
 
 Note that you must build and run `golf` from the root directory of the project
