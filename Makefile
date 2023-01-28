@@ -1,17 +1,20 @@
-CC := clang++
-CFLAGS := -Wall -Wextra -Werror -pedantic -g
-OBJS := main.o error.o lex.o
+CXX      := clang++
+CXXFLAGS := -Wall -Wextra
+OBJS     := main.o error.o lex.o
 
-# TODO: debug and release targets
-all: golf
+release: CXXFLAGS += -O3
+release: golf
+
+debug: CXXFLAGS += -g
+debug: golf
 
 golf: $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $^
+	$(CXX) $(CXXFLAGS) -o $@ $^
 
 -include $(OBJS:.o=.d)
 
 %.o: %.cpp
-	$(CC) -o $@ -c $< $(CFLAGS) -MMD -MF $*.d
+	$(CXX) -o $@ -c $< $(CXXFLAGS) -MMD -MF $*.d
 
 clean:
 	rm -f *.o *.d golf
