@@ -11,7 +11,6 @@ std::queue<Tokinfo> tokens;
 
 void unlex(Tokinfo t) { tokens.push(t); }
 
-int g_linenum = 1;
 Tokinfo lex(FILE *fp) {
 
     // static to preserve value across calls.
@@ -29,6 +28,7 @@ Tokinfo lex(FILE *fp) {
 
     // put result's members in local scope
     auto & token = result.token;
+    auto & linenum = result.linenum;
 
     // CITATION-ish: the following code draws heavily from the FSM example given to us
     // by Dr. Aycock in class -
@@ -37,15 +37,14 @@ Tokinfo lex(FILE *fp) {
     int ch;
     // spin until we find something interesting
     while ( ( ch = getc(fp) ) != EOF && is_space(ch) )
-        if (ch == '\n') g_linenum++;
+        if (ch == '\n') linenum++;
 
-    result.linenum = g_linenum;
     result.lexeme  = ch; // first (and possibly only) character of the lexeme
 
     switch (ch) {
         // NULL character isn't allowed in input
         case NULL:
-            warning("skipping NULL character", g_linenum);
+            warning("skipping NULL character", linenum);
         case EOF:
             // TODO: insert semicolon if last token was ident, int/string, break/return, or '}'/')'
             token = TOKEN_EOF;
@@ -70,7 +69,7 @@ Tokinfo lex(FILE *fp) {
 
             // peek next char to see if its a newline or EOF. if so, insert a semicolon
             if ( ( ch = getc(fp) ) == '\n' || ch == EOF )
-                unlex(Tokinfo {TOKEN_SEMICOLON, g_linenum, "",});
+                unlex(Tokinfo {TOKEN_SEMICOLON, linenum, "",});
 
             // put back to mimick "peeking"
             ungetc(ch, fp);
@@ -91,7 +90,7 @@ Tokinfo lex(FILE *fp) {
 
             // peek next char to see if its a newline. if so, insert a semicolon
             if ( ( ch = getc(fp) ) == '\n' || ch == EOF )
-                unlex(Tokinfo {TOKEN_SEMICOLON, g_linenum, "",});
+                unlex(Tokinfo {TOKEN_SEMICOLON, linenum, "",});
 
             // put back to mimick "peeking"
             ungetc(ch, fp);
@@ -104,13 +103,13 @@ Tokinfo lex(FILE *fp) {
             break;
         case '&':
             // no unary & operator
-            if ( (ch = getc(fp)) != '&' ) error("bitwise AND not supported in GoLF", g_linenum);
+            if ( (ch = getc(fp)) != '&' ) error("bitwise AND not supported in GoLF", linenum);
             token = TOKEN_LOGIC_AND;
             result.lexeme.push_back(ch);
             break;
         case '|':
             // no unary | operator
-            if ( (ch = getc(fp)) != '|' ) error("bitwise OR not supported in GoLF", g_linenum);
+            if ( (ch = getc(fp)) != '|' ) error("bitwise OR not supported in GoLF", linenum);
             token = TOKEN_LOGIC_OR;
             result.lexeme.push_back(ch);
             break;
@@ -174,8 +173,8 @@ Tokinfo lex(FILE *fp) {
             while ( ( ch = getc(fp) ) && ch != '"' ) {
 
                 // error if newline or EOF encountered within string
-                if ( ch == '\n' ) error("string contains newline", g_linenum);
-                if ( ch == EOF  ) error("string terminated by EOF", g_linenum);
+                if ( ch == '\n' ) error("string contains newline", linenum);
+                if ( ch == EOF  ) error("string terminated by EOF", linenum);
 
                 // on backslash: check for valid escape sequences
                 if (ch == '\\') {
@@ -183,18 +182,18 @@ Tokinfo lex(FILE *fp) {
                     ch = getc(fp);
 
                     // error if newline or EOF encountered within string
-                    if ( ch == '\n' ) error("string contains newline", g_linenum);
-                    if ( ch == EOF  ) error("string terminated by EOF", g_linenum);
+                    if ( ch == '\n' ) error("string contains newline", linenum);
+                    if ( ch == EOF  ) error("string terminated by EOF", linenum);
 
                     if ( ch != 'b' && ch != 'f' &&ch != 'n' &&ch != 'r' &&ch != 't' &&ch != '\\' &&ch != '"' )
-                        bad_char_error("bad string escape", ch, g_linenum);
+                        bad_char_error("bad string escape", ch, linenum);
                 }
                 result.lexeme += ch;
             }
 
             // add semicolon if this thing is the last thing on the line or in file
             if (( ch = getc(fp) ) == '\n' || ch == EOF)
-                unlex(Tokinfo{TOKEN_SEMICOLON, g_linenum, "",});
+                unlex(Tokinfo{TOKEN_SEMICOLON, linenum, "",});
 
             token = TOKEN_STRING;
             ungetc(ch, fp);
@@ -210,7 +209,7 @@ Tokinfo lex(FILE *fp) {
                     result.lexeme += ch;
 
                 // add semicolon if this thing is the last thing on the line or in file
-                if (ch == '\n' || ch == EOF) unlex(Tokinfo {TOKEN_SEMICOLON, g_linenum, "",});
+                if (ch == '\n' || ch == EOF) unlex(Tokinfo {TOKEN_SEMICOLON, linenum, "",});
 
                 result.token = TOKEN_INT;
                 ungetc(ch, fp);
@@ -235,8 +234,8 @@ Tokinfo lex(FILE *fp) {
                 else                                result.token = TOKEN_ID;
 
                 // if end of line and token is break, return, or an identifier, insert a semicolon
-                if ( ( ch == EOF || ch == '\n' ) && ( result.token == TOKEN_BREAK || result.token == TOKEN_RETURN || result.token == TOKEN_ID ) )
-                    unlex(Tokinfo {TOKEN_SEMICOLON, g_linenum, "",});
+                if ( ( ch == EOF || ch == '\n' ) && ( token == TOKEN_BREAK || token == TOKEN_RETURN || token == TOKEN_ID ) )
+                    unlex(Tokinfo {TOKEN_SEMICOLON, linenum, "",});
 
                 ungetc(ch, fp);
                 break;
@@ -244,11 +243,11 @@ Tokinfo lex(FILE *fp) {
 
             // skip non-ascii with a warning
             if (ch > 127) {
-                warning("skipping non-ASCII input character", g_linenum);
+                warning("skipping non-ASCII input character", linenum);
                 goto spin;
             }
             // skip unknown character with warning
-            bad_char_warning("skipping unknown character", ch, g_linenum);
+            bad_char_warning("skipping unknown character", ch, linenum);
             goto spin;
             break;
     }

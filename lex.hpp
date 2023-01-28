@@ -53,7 +53,7 @@ struct Tokinfo {
     TokenID token = TOKEN_UNSET;
 
     // attributes
-    int linenum = -1;
+    int linenum = 1;
     std::string lexeme;
 };
 
