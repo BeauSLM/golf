@@ -1,12 +1,3 @@
-# Setup
-
-please checkout the `milestone-1` branch as I may be developing on master. I'll make sure
-this branch is a working scanner as specified in the milestone 1 spec.
-
-``` bash
-git checkout milestone-1
-```
-
 # Build
 
 Short version: run `make` in the root of the project
