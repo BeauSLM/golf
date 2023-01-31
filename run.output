@@ -1,6 +1,6 @@
-Run started on Fri Jan 27 21:31:22 2023
+Run started on Tue Jan 31 19:12:21 2023
 
-Hostname: csx3.cs.ucalgary.ca
+Hostname: csx.cs.ucalgary.ca
 
 -------------------------------------------------------------------------------
 Running make |
@@ -674,5 +674,5 @@ error: bad string escape 'u' at or near line 3
 
 RETURN CODE: 65
 
-Run ended on Fri Jan 27 21:31:23 2023
+Run ended on Tue Jan 31 19:12:23 2023
 
