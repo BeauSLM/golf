@@ -42,10 +42,8 @@ static int num_warnings       =  0;
 const static int max_warnings = 10;
 
 void handle_warning_cascade( int linenum ) {
-    if ( num_warnings >= max_warnings ) {
+    if ( num_warnings >= max_warnings )
         error( "too many warnings", linenum );
-        exit( EX_DATAERR );
-    }
 }
 
 void warning( const char *msg, int linenum ) {

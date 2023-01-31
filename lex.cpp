@@ -40,7 +40,7 @@ Tokinfo lex( FILE *fp ) {
     while ( ( ch = getc( fp ) ) != EOF && is_space( ch ) )
         if ( ch == '\n' ) result_linenum++;
 
-    result.lexeme = ch; // first (and possibly only) character of the lexeme
+    result_lexeme = ch; // first (and possibly only) character of the lexeme
 
     // FSM based on our character that chooses what token to return
     // note that after the statement nothing happens except returning `result`
@@ -101,7 +101,7 @@ Tokinfo lex( FILE *fp ) {
                 result_token  = TOKEN_SEMICOLON;
                 result_lexeme = "";
                 ungetc( ch, fp );
-                return result;
+                break;
             }
 
             result_token = TOKEN_RBRACE;
