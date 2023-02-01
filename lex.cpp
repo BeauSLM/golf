@@ -50,6 +50,7 @@ Tokinfo lex( FILE *fp ) {
         // NULL character isn't allowed in input
         case NULL:
             warning( "skipping NULL character", result_linenum );
+            goto spin;
         case EOF:
             // insert semicolon according to spec
             if (   result_token == TOKEN_ID
