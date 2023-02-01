@@ -56,11 +56,11 @@ Tokinfo lex( FILE *fp ) {
                 || result.token == TOKEN_RPAREN
             ) {
                 result.token  = TOKEN_SEMICOLON;
-                result.lexeme = "";
                 ungetc( ch, fp );
-                break;
             }
-            result.token = TOKEN_EOF;
+            else result.token = TOKEN_EOF;
+
+            result.lexeme = "";
             break;
         case '+':
             result.token = TOKEN_PLUS;
