@@ -8,3 +8,6 @@ my_stdout.txt
 # symlinks for reference_output.sh
 golf_reference
 ms1
+
+# symlink to provided test script
+run
