@@ -6,9 +6,6 @@
 
 #include "error.hpp"
 
-// NOTE: this is the upper bound for an error messages length, after formatting (!!!)
-#define ERROR_LEN 1024
-
 const std::string ascii_char_to_string( int c ) {
     switch ( c ) {
         // escaped characters
@@ -29,9 +26,11 @@ const std::string ascii_char_to_string( int c ) {
     }
 }
 
+// NOTE: this is the upper bound for an error messages length, after formatting (!!!)
+#define ERROR_LEN 1024
 void printf_wrapper( int linenum, const char *prefix, const char *msg, va_list args ) {
     char formatted[ERROR_LEN];
-    bzero( formatted, sizeof(formatted) );
+    bzero( formatted, ERROR_LEN );
     vsnprintf(formatted, ERROR_LEN, msg, args);
     fprintf( stderr, "%s: %s at or near line %d\n", prefix, formatted, linenum );
 }
