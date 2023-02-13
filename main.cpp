@@ -4,7 +4,8 @@
 #include <sysexits.h>
 
 #include "error.hpp"
-#include "lex.hpp"
+// #include "lex.hpp"
+#include "parse.hpp"
 
 int main( int argc, char *argv[] ) {
     FILE *fp;
@@ -24,8 +25,11 @@ int main( int argc, char *argv[] ) {
     }
 
     // print each token except EOF
-    for ( Tokinfo t = lex( fp ); t.token != TOKEN_EOF; t = lex( fp ) )
-        printf( "%s\t[%s] @ line %d\n", token_to_string( t.token ), t.lexeme.data(), t.linenum );
+    // for ( Tokinfo t = lex( fp ); t.token != TOKEN_EOF; t = lex( fp ) )
+    //     printf( "%s\t[%s] @ line %d\n", token_to_string( t.token ), t.lexeme.data(), t.linenum );
+
+    auto root = parse( fp );
+    // TODO: print the tree
 
     return EX_OK;
 }
