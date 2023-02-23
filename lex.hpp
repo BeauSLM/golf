@@ -57,5 +57,3 @@ struct Tokinfo {
 };
 
 Tokinfo lex();
-
-void give_file_ptr_to_lexer( FILE *fp );

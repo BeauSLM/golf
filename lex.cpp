@@ -4,7 +4,6 @@
 #include <queue>
 
 FILE *fp = nullptr;
-void give_file_ptr_to_lexer( FILE *f ) { fp = f; }
 
 bool is_space( int c ) { return c == '\n' || c == '\t' || c == ' ' || c == '\r'; }
 

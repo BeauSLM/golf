@@ -17,21 +17,19 @@ int main( int argc, char *argv[] ) {
     {
         // NOTE: if I need to close this instead of letting OS take care of it, I'll have to move this declaration
         // to a scope where I can close it after all lexing is done. For now, OS can clean up at the end.
-        FILE *fp;
+        extern FILE *fp; // in `lex.cpp` - only lexer cares abt it after this
 
         if ( !( fp = fopen( argv[1], "r" ) ) ) {
             fprintf( stderr, "Could not open file '%s': %s\n", argv[1], strerror( errno ) );
             return EXIT_FAILURE;
         }
-
-        give_file_ptr_to_lexer( fp );
     }
 
     // print each token except EOF
     for ( Tokinfo t = lex(); t.token != TOKEN_EOF; t = lex() )
         printf( "%s\t[%s] @ line %d\n", token_to_string( t.token ), t.lexeme.data(), t.linenum );
 
-    // auto root = parse( fp );
+    // auto root = parse();
     // TODO: print the tree
 
     return EXIT_SUCCESS;
