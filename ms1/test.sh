@@ -8,7 +8,7 @@ do
     filename="scan.t$testnum"
     printf "\n\nBEGIN OUTPUT FOR %s\n" "$filename"
     echo "================"
-    ./golf "reference/ms1/$filename"
+    ../golf "$filename"
     exitcode=$?
     echo "================"
     printf "END OUTPUT FOR %s\n" "$filename"
