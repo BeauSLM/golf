@@ -4,7 +4,7 @@
 
 #include "error.hpp"
 #include "lex.hpp"
-// #include "parse.hpp"
+#include "parse.hpp"
 
 int main( int argc, char *argv[] ) {
     if ( argc != 2 ) {
@@ -26,10 +26,10 @@ int main( int argc, char *argv[] ) {
     }
 
     // print each token except EOF
-    for ( Tokinfo t = lex(); t.token != TOKEN_EOF; t = lex() )
-        printf( "%s\t[%s] @ line %d\n", token_to_string( t.token ), t.lexeme.data(), t.linenum );
+    // for ( Tokinfo t = lex(); t.token != TOKEN_EOF; t = lex() )
+    //     printf( "%s\t[%s] @ line %d\n", token_to_string( t.token ), t.lexeme.data(), t.linenum );
 
-    // auto root = parse();
+    auto root = parse();
     // TODO: print the tree
 
     return EXIT_SUCCESS;

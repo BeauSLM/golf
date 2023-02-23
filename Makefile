@@ -1,6 +1,6 @@
 CXX      := clang++
-CXXFLAGS := -Wall -Wextra
-OBJS     := main.o error.o lex.o # parse.o
+CXXFLAGS := -Wall -Wextra -std=c++17
+OBJS     := main.o error.o lex.o parse.o
 
 release: CXXFLAGS += -O3
 release: golf

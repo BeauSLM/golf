@@ -57,3 +57,4 @@ struct Tokinfo {
 };
 
 Tokinfo lex();
+void unlex( Tokinfo t );

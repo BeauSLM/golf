@@ -2,27 +2,75 @@
 
 #include <stdio.h>
 #include <vector>
+#include <optional>
 
 #include "lex.hpp"
 
 enum ASTNodeID {
     // TODO: populate
     AST_PROGRAM,
-    AST_FUNCTION,
-    AST_NEWID,
-    AST_SIG,
+    AST_SIGNATURE,
+    AST_FORMAL,
     AST_FORMALS,
-    AST_TYPEID,
     AST_BLOCK,
+    AST_ACTUALS,
+
+    // keywords
+    AST_BREAK,
+    AST_ELSE,
+    AST_FOR,
+    AST_FUNC,
+    AST_IF,
+    AST_IFELSE,
+    AST_RETURN,
+    AST_VAR,
+    AST_GLOBVAR,
+    AST_EXPR,
+    AST_EXPRSTMT,
+    AST_EMPTYSTMT,
+
+    // operators and punctuation
+    AST_PLUS,
+    AST_MINUS,
+    AST_UMINUS,
+    AST_STAR,
+    AST_SLASH,
+    AST_PERCENT,
+    AST_LOGIC_AND,
+    AST_LOGIC_OR,
+    AST_EQ,     // ==
+    AST_LT,
+    AST_GT,
+    AST_ASSIGN, // =
+    AST_LOGIC_NOT,
+    AST_NEQ,
+    AST_LEQ,    // <=
+    AST_GEQ,    // >=
+
+    // identifiers
+    AST_ID,
+    AST_NEWID,
+    AST_TYPEID,
+
+    AST_INT,
+    AST_STRING,
+
+    AST_UNSET,
 };
 
 struct ASTNode {
-    // TODO: figure out what this should be
-    // do i not store a tokinfo and just have a string of some kind in here???
-    // REVIEW: maybe i just need a token and its children????
-    ASTNodeID type;
-    Tokinfo tok;
+    // REVIEW: has linenum and lexeme like Token, should I factor them out?
+    ASTNodeID type = AST_UNSET;
+    int linenum = -1;
+    std::string lexeme;
     std::vector<ASTNode> children;
+
+    ASTNode( ASTNodeID type = AST_UNSET, int linenum = -1, std::string lexeme = "" ): type(type), linenum(linenum), lexeme(lexeme) {}
+
+    inline void add_child( ASTNode kid )                  { children.push_back(kid); }
+    inline void set_children( std::vector<ASTNode> kids ) { children = kids; }
 };
 
-ASTNode parse( FILE *fp );
+ASTNode parse();
+
+const char * ASTNode_to_string( ASTNodeID n );
