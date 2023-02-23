@@ -1,7 +1,6 @@
 // TODO: remove use of std::string
 #include <stdio.h>
 #include <stdlib.h>
-#include <sysexits.h>
 #include <strings.h>
 
 #include "error.hpp"
@@ -41,7 +40,7 @@ void error( int linenum, const char *msg, ... ) {
     printf_wrapper( linenum, "error", msg, args );
     va_end(args);
 
-    exit( EX_DATAERR );
+    exit( EXIT_FAILURE );
 }
 
 // track number of warnings given

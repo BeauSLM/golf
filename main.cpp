@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
-#include <sysexits.h>
 
 #include "error.hpp"
 #include "lex.hpp"
@@ -10,7 +9,7 @@
 int main( int argc, char *argv[] ) {
     if ( argc != 2 ) {
         fprintf( stderr, "Usage: %s <filename>\n\n", argv[0] );
-        return EX_USAGE;
+        return EXIT_FAILURE;
     }
 
 
@@ -22,7 +21,7 @@ int main( int argc, char *argv[] ) {
 
         if ( !( fp = fopen( argv[1], "r" ) ) ) {
             fprintf( stderr, "Could not open file '%s': %s\n", argv[1], strerror( errno ) );
-            return EX_NOINPUT;
+            return EXIT_FAILURE;
         }
 
         give_file_ptr_to_lexer( fp );
@@ -35,5 +34,5 @@ int main( int argc, char *argv[] ) {
     // auto root = parse( fp );
     // TODO: print the tree
 
-    return EX_OK;
+    return EXIT_SUCCESS;
 }
