@@ -1,4 +1,4 @@
-Run started on Tue Jan 31 19:12:21 2023
+Run started on Wed Feb 22 17:41:27 2023
 
 Hostname: csx.cs.ucalgary.ca
 
@@ -40,7 +40,7 @@ Usage: ./golf <filename>
 
 
 
-RETURN CODE: 64
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: too many arguments |
@@ -56,7 +56,7 @@ Usage: ./golf <filename>
 
 
 
-RETURN CODE: 64
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: nonexistent file |
@@ -71,7 +71,7 @@ STDERR:
 Could not open file '/i/do/not/exist': No such file or directory
 
 
-RETURN CODE: 66
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: empty file |
@@ -184,7 +184,7 @@ warning: skipping unknown character '^' at or near line 11
 error: too many warnings at or near line 11
 
 
-RETURN CODE: 65
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: NUL character |
@@ -232,7 +232,7 @@ STDERR:
 error: bitwise AND not supported in GoLF at or near line 2
 
 
-RETURN CODE: 65
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: whitespace inside || token pair |
@@ -247,7 +247,7 @@ STDERR:
 error: bitwise OR not supported in GoLF at or near line 2
 
 
-RETURN CODE: 65
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: leading 0 on number |
@@ -278,7 +278,7 @@ STDERR:
 error: bitwise AND not supported in GoLF at or near line 3
 
 
-RETURN CODE: 65
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: illegal characters |
@@ -521,7 +521,7 @@ STDERR:
 error: string terminated by EOF at or near line 2
 
 
-RETURN CODE: 65
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: partial string containing newline |
@@ -536,7 +536,7 @@ STDERR:
 error: string contains newline at or near line 2
 
 
-RETURN CODE: 65
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: string containing newline |
@@ -551,7 +551,7 @@ STDERR:
 error: string contains newline at or near line 2
 
 
-RETURN CODE: 65
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: unescaped double quote in string |
@@ -568,7 +568,7 @@ STDERR:
 error: string contains newline at or near line 2
 
 
-RETURN CODE: 65
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: string escape at EOF |
@@ -583,7 +583,7 @@ STDERR:
 error: string terminated by EOF at or near line 2
 
 
-RETURN CODE: 65
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: string escape then newline |
@@ -598,7 +598,7 @@ STDERR:
 error: string contains newline at or near line 2
 
 
-RETURN CODE: 65
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: legal strings |
@@ -642,7 +642,7 @@ STDERR:
 error: bad string escape 'x' at or near line 3
 
 
-RETURN CODE: 65
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: illegal "a" string escape |
@@ -657,7 +657,7 @@ STDERR:
 error: bad string escape 'a' at or near line 3
 
 
-RETURN CODE: 65
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: illegal "u" string escape |
@@ -672,7 +672,7 @@ STDERR:
 error: bad string escape 'u' at or near line 3
 
 
-RETURN CODE: 65
+RETURN CODE: 1
 
-Run ended on Tue Jan 31 19:12:23 2023
+Run ended on Wed Feb 22 17:41:31 2023
 
