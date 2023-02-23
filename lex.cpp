@@ -3,6 +3,9 @@
 #include "error.hpp"
 #include <queue>
 
+FILE *fp = nullptr;
+void give_file_ptr_to_lexer( FILE *f ) { fp = f; }
+
 bool is_space( int c ) { return c == '\n' || c == '\t' || c == ' ' || c == '\r'; }
 
 bool is_letter( int c ) { return isalpha( c ) || c == '_'; }
@@ -11,7 +14,7 @@ std::queue<Tokinfo> tokens;
 
 void unlex( Tokinfo t ) { tokens.push( t ); }
 
-Tokinfo lex( FILE *fp ) {
+Tokinfo lex() {
 
     // static to preserve value across calls.
     // this allows me to inspect result's token before I set it in a given call
