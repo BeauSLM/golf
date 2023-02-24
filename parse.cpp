@@ -60,11 +60,17 @@ ASTNode IfStmt() {
 
     ASTNode result( AST_IF, tok.linenum, tok.lexeme );
 
-    result.add_child( Expression() );
+    {
+        auto expr = Expression();
+        result.add_child( expr );
+    }
 
     check_for_bad_semicolon();
 
-    result.add_child( Block() );
+    {
+        auto blk = Block();
+        result.add_child( blk );
+    }
 
     tok = lex();
 
@@ -254,7 +260,10 @@ ASTNode FunctionDecl() {
 
     ASTNode result ( AST_FUNC, tok.linenum, tok.lexeme );
 
-    result.add_child( newidentifier() ); // FunctionName
+    {
+        auto ident = newidentifier();
+        result.add_child( ident ); // FunctionName
+    }
 
     expect( TOKEN_LPAREN );
 
@@ -268,7 +277,10 @@ ASTNode FunctionDecl() {
     if ( tok.token == TOKEN_ID ) {
         // ParameterList
 
-        formals.add_child( ParameterDecl() );
+        {
+            auto params = ParameterDecl();
+            formals.add_child( params );
+        }
         while ( ( tok = lex() ).token == TOKEN_COMMA )
             formals.add_child( ParameterDecl() );
         check_for_bad_semicolon();
