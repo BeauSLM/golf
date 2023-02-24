@@ -467,17 +467,21 @@ ASTNode Statement() {
             return ForStmt();
         default:
             if ( !is_expression_next() ) return { AST_EMPTYSTMT };
+
             auto result = Expression();
+
             if ( ( tok = lex() ).token == TOKEN_ASSIGN ) {
                 auto right = Expression();
+
                 auto left = result;
-                left.type = AST_EXPR;
+
                 result = ASTNode ( AST_ASSIGN, tok.linenum, tok.lexeme );
                 result.add_child( left );
                 result.add_child( right );
+
+                if ( ( tok = lex() ).token == TOKEN_ASSIGN ) error( tok.linenum, "syntax error on \"=\"" );
             }
 
-            if ( tok.token == TOKEN_ASSIGN ) error(tok.linenum, "syntax error on \"=\"");
             unlex( tok );
 
             return result;
@@ -576,5 +580,6 @@ std::string ASTNode_to_string( ASTNode n ) {
             return "foo";
     }
 
+    // TODO: kill
     return "bar";
 }
