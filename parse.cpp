@@ -316,7 +316,10 @@ ASTNode FunctionDecl() {
         auto params = ParameterDecl();
         formals.add_child( params );
 
-        while ( ( tok = lex() ).token == TOKEN_COMMA ) {
+        while ( ( tok = lex() ).token == TOKEN_COMMA
+             && ( tok = lex() ).token == TOKEN_ID ) {
+            unlex( tok );
+
             params = ParameterDecl();
             formals.add_child( params );
         }
@@ -419,13 +422,14 @@ ASTNode Arguments() {
         result.add_child( expr );
 
         Tokinfo tok;
-        while ( ( tok = lex() ).token == TOKEN_COMMA ){
+        while ( ( tok = lex() ).token == TOKEN_COMMA && is_expression_next() ) {
             expr = Expression();
             result.add_child( expr );
         }
         unlex( tok );
 
         check_for_bad_semicolon();
+
         // consume trailing comma in params list if there is one
         if ( ( tok = lex() ).token != TOKEN_COMMA ) unlex( tok );
     }
