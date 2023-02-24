@@ -74,12 +74,13 @@ ASTNode IfStmt() {
 
     tok = lex();
 
-    if ( tok.token != TOKEN_ELSE ) return result;
-
+    if ( tok.token != TOKEN_ELSE ) {
+        unlex( tok );
+        return result;
+    }
 
     result.type = AST_IFELSE;
 
-    unlex( tok );
     if ( tok.token == TOKEN_LBRACE ) {
         result.add_child( Block() );
     } else if ( tok.token == TOKEN_IF ) {
@@ -212,7 +213,7 @@ ASTNode Expression() {
 }
 
 ASTNode Block() {
-    expect(TOKEN_LBRACE);
+    expect( TOKEN_LBRACE );
 
     ASTNode result;
     result.type = AST_BLOCK;
@@ -223,11 +224,9 @@ ASTNode Block() {
         auto stmt = Statement();
         result.add_child( stmt );
         expect( TOKEN_SEMICOLON );
-
-        tok = lex();
     }
-
     unlex( tok );
+
     expect( TOKEN_RBRACE );
 
     return result;
@@ -235,8 +234,6 @@ ASTNode Block() {
 
 // "formal" in the reference compiler I think
 ASTNode ParameterDecl() {
-    auto tok = expect( TOKEN_ID );
-
     ASTNode result ( AST_FORMAL );
     result.add_child( newidentifier() );
     result.add_child( typeidentifier() );
@@ -283,6 +280,8 @@ ASTNode FunctionDecl() {
         }
         while ( ( tok = lex() ).token == TOKEN_COMMA )
             formals.add_child( ParameterDecl() );
+        unlex( tok );
+
         check_for_bad_semicolon();
 
         // consume trailing comma in params list if there is one
@@ -378,6 +377,7 @@ ASTNode Arguments() {
         Tokinfo tok;
         while ( ( tok = lex() ).token == TOKEN_COMMA )
             result.add_child( Expression() );
+        unlex( tok );
 
         check_for_bad_semicolon();
         // consume trailing comma in params list if there is one
@@ -423,8 +423,7 @@ ASTNode Statement() {
         default:
             if ( !is_expression_next() ) return { AST_EMPTYSTMT };
             auto result = ExpresstionStmt();
-            tok = lex();
-            if ( tok.token == TOKEN_ASSIGN ) {
+            if ( ( tok = lex() ).token == TOKEN_ASSIGN ) {
                 auto right = Expression();
                 auto left = result;
                 left.type = AST_EXPR;
@@ -432,11 +431,6 @@ ASTNode Statement() {
                 result.add_child( left );
                 result.add_child( right );
             }
-            unlex( tok );
-            return result;
-    }
-}
-
 
             if ( tok.token == TOKEN_ASSIGN ) error(tok.linenum, "syntax error on \"=\"");
             unlex( tok );
