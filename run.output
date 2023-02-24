@@ -1,4 +1,4 @@
-Run started on Fri Feb 24 03:06:50 2023
+Run started on Fri Feb 24 11:22:26 2023
 
 Hostname: csx2.cs.ucalgary.ca
 
@@ -244,19 +244,23 @@ program
             formals
             typeid [int] @ line 9
         block
-            id [blarg] @ line 10
-                actuals
-                    + @ line 11
-                        int [123] @ line 11
-                        int [456] @ line 11
-                    id [garble] @ line 12
-                        actuals
-                            int [789] @ line 12
-                    id [true] @ line 13
-                    id [greep] @ line 14
-                        actuals
-                            id [false] @ line 14
-                            string [eek] @ line 14
+            exprstmt
+                funccall
+                    id [blarg] @ line 10
+                    actuals
+                        + @ line 11
+                            int [123] @ line 11
+                            int [456] @ line 11
+                        funccall
+                            id [garble] @ line 12
+                            actuals
+                                int [789] @ line 12
+                        id [true] @ line 13
+                        funccall
+                            id [greep] @ line 14
+                            actuals
+                                id [false] @ line 14
+                                string [eek] @ line 14
 
 
 
@@ -281,53 +285,53 @@ program
         block
             = @ line 4
                 id [x] @ line 4
-thing is: 19 '-'
+thing is: 20 '-'
                 foo
                     id [a] @ line 4
-thing is: 20 ''
+thing is: 21 ''
                     foo
                         int [123] @ line 4
             = @ line 5
                 id [x] @ line 5
-thing is: 19 '-'
+thing is: 20 '-'
                 foo
                     id [a] @ line 5
-thing is: 20 ''
+thing is: 21 ''
                     foo
                         int [123] @ line 5
             = @ line 6
                 id [x] @ line 6
-thing is: 19 '-'
+thing is: 20 '-'
                 foo
                     id [a] @ line 6
-thing is: 20 ''
+thing is: 21 ''
                     foo
-thing is: 20 ''
+thing is: 21 ''
                         foo
                             int [123] @ line 6
             = @ line 7
                 id [x] @ line 7
-thing is: 19 '-'
+thing is: 20 '-'
                 foo
                     id [a] @ line 7
-thing is: 20 ''
+thing is: 21 ''
                     foo
                         id [b] @ line 7
             = @ line 8
                 id [x] @ line 8
-thing is: 20 ''
+thing is: 21 ''
                 foo
-thing is: 20 ''
+thing is: 21 ''
                     foo
-thing is: 20 ''
+thing is: 21 ''
                         foo
-thing is: 20 ''
+thing is: 21 ''
                             foo
-thing is: 20 ''
+thing is: 21 ''
                                 foo
-thing is: 20 ''
+thing is: 21 ''
                                     foo
-thing is: 20 ''
+thing is: 21 ''
                                         foo
                                             id [x] @ line 8
 
@@ -532,48 +536,50 @@ program
             formals
             typeid [$void] 
         block
-thing is: 13 'var'
+thing is: 14 'var'
             foo
                 newid [a] @ line 4
                 typeid [int] @ line 4
-thing is: 13 'var'
+thing is: 14 'var'
             foo
                 newid [b] @ line 5
                 typeid [int] @ line 5
-thing is: 13 'var'
+thing is: 14 'var'
             foo
                 newid [c] @ line 6
                 typeid [int] @ line 6
-thing is: 13 'var'
+thing is: 14 'var'
             foo
                 newid [d] @ line 7
                 typeid [int] @ line 7
-thing is: 13 'var'
+thing is: 14 'var'
             foo
                 newid [e] @ line 8
                 typeid [int] @ line 8
-            + @ line 10
+            exprstmt
                 + @ line 10
                     + @ line 10
                         + @ line 10
-                            id [a] @ line 10
-                            id [b] @ line 10
-                        id [c] @ line 10
-                    id [d] @ line 10
-                id [e] @ line 10
-thing is: 22 '/'
-            foo
-thing is: 22 '/'
+                            + @ line 10
+                                id [a] @ line 10
+                                id [b] @ line 10
+                            id [c] @ line 10
+                        id [d] @ line 10
+                    id [e] @ line 10
+            exprstmt
+thing is: 23 '/'
                 foo
-thing is: 22 '/'
+thing is: 23 '/'
                     foo
-thing is: 22 '/'
+thing is: 23 '/'
                         foo
-                            id [a] @ line 11
-                            id [b] @ line 11
+thing is: 23 '/'
+                            foo
+                                id [a] @ line 11
+                                id [b] @ line 11
+                            id [d] @ line 11
                         id [d] @ line 11
-                    id [d] @ line 11
-                id [e] @ line 11
+                    id [e] @ line 11
 
 
 
@@ -597,5 +603,5 @@ error: expected token of type ; at or near line 20
 
 RETURN CODE: 1
 
-Run ended on Fri Feb 24 03:06:50 2023
+Run ended on Fri Feb 24 11:22:26 2023
 
