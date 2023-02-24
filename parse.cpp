@@ -163,7 +163,7 @@ ASTNode PL3() {
 
     Tokinfo tok;
     while ( ( tok = lex() )
-                  .token == TOKEN_ASSIGN
+                  .token == TOKEN_EQ
             || tok.token == TOKEN_NEQ
             || tok.token == TOKEN_GEQ
             || tok.token == TOKEN_LEQ
@@ -173,8 +173,8 @@ ASTNode PL3() {
         auto left = result;
         result = ASTNode ( AST_UNSET, tok.linenum, tok.lexeme );
         switch ( tok.token ) {
-            case TOKEN_ASSIGN:
-                result.type = AST_ASSIGN;
+            case TOKEN_EQ:
+                result.type = AST_EQ;
                 break;
             case TOKEN_NEQ:
                 result.type = AST_NEQ;
