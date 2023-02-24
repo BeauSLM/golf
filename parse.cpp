@@ -480,6 +480,10 @@ ASTNode Statement() {
                 result.add_child( right );
 
                 if ( ( tok = lex() ).token == TOKEN_ASSIGN ) error( tok.linenum, "syntax error on \"=\"" );
+            } else {
+                auto tmp = result;
+                result   = ASTNode( AST_EXPRSTMT );
+                result.add_child( tmp );
             }
 
             unlex( tok );
@@ -567,6 +571,7 @@ std::string ASTNode_to_string( ASTNode n ) {
         case AST_FOR:       return "for " + numstring;
         case AST_ID:        return "id " + lexstring + numstring;
         case AST_EMPTYSTMT: return "emptystmt";
+        case AST_EXPRSTMT:  return "exprstmt";
         case AST_IF:        return "if " + numstring;
         case AST_EQ:        return "== "  + numstring;
         case AST_PLUS:      return "+ "   + numstring;
