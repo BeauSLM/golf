@@ -10,3 +10,4 @@ golf_reference
 
 # symlink to provided test script
 run
+/.vscode/
