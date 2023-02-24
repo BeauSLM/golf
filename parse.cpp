@@ -509,11 +509,18 @@ ASTNode UnaryExpr() {
             break;
         }
         case TOKEN_MINUS: {
-                result.type = AST_UMINUS;
-                result.linenum = tok.linenum;
+            result.type = AST_UMINUS;
+            result.linenum = tok.linenum;
 
-                auto exp = UnaryExpr();
-                result.add_child( exp );
+            auto exp = UnaryExpr();
+
+            // negative int literals
+            // HACK: if negative int comes back, its the child of a sub.
+            // REVIEW: I think its possible to do the negative int case better
+            if ( exp.type == AST_INT && exp.lexeme[0] != '-' ) {
+                result = exp;
+                result.lexeme = "-" + result.lexeme;
+            } else result.add_child( exp );
 
             break;
         }
