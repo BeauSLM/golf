@@ -521,11 +521,16 @@ ASTNode UnaryExpr() {
 
             result = Operand();
 
+            // REVIEW: why multiple sets of arguments???
             while ( ( tok = lex() ).token == TOKEN_LPAREN ) {
                 unlex( tok );
 
-                auto args = Arguments();
-                result.add_child( args );
+                auto left  = result;
+                result     = ASTNode( AST_FUNCCALL );
+                auto right = Arguments();
+
+                result.add_child( left );
+                result.add_child( right );
             }
             unlex( tok );
             break;
@@ -580,6 +585,7 @@ std::string ASTNode_to_string( ASTNode n ) {
         case AST_STAR:      return "* " + numstring;
         case AST_FORMAL:    return "formal";
         case AST_FORMALS:   return "formals";
+        case AST_FUNCCALL:  return "funccall";
         case AST_ACTUALS:   return "actuals";
         case AST_STRING:    return "string " + lexstring + numstring;
         default:

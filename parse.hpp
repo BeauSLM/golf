@@ -14,6 +14,7 @@ enum ASTNodeID {
     AST_FORMALS,
     AST_BLOCK,
     AST_ACTUALS,
+    AST_FUNCCALL,
 
     // keywords
     AST_BREAK,
