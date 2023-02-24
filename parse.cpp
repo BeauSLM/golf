@@ -18,6 +18,14 @@ Tokinfo expect( TokenID type ) {
     return tok;
 }
 
+void check_for_bad_newline() {
+    // check if we inserted semicolon for a newline for more specific error message
+    auto tok = lex();
+    unlex( tok );
+    if ( tok.token == TOKEN_SEMICOLON && tok.lexeme == "" )
+        error( tok.linenum, "unexpected newline"  );
+}
+
 ASTNode newidentifier() {
     auto tok = expect( TOKEN_ID );
 
@@ -80,9 +88,18 @@ ASTNode ForStmt() {
     ASTNode result;
 
     // [ Condition ]
-    if ( ( tok = lex() ).token != TOKEN_LBRACE ) result.add_child( Expression() );
-
+    tok = lex();
     unlex( tok );
+    if ( tok.token != TOKEN_LBRACE ) {
+        auto expr = Expression();
+        result.add_child( expr );
+    }
+
+    tok = lex();
+    unlex( tok );
+
+    check_for_bad_newline();
+
     result.add_child( Block() );
 
     return result;
@@ -185,14 +202,16 @@ ASTNode Expression() {
 }
 
 ASTNode Block() {
-    expect( TOKEN_LBRACE );
+    expect(TOKEN_LBRACE);
 
     ASTNode result;
     result.type = AST_BLOCK;
 
-    Tokinfo tok = lex();
-    while ( tok.token != TOKEN_RBRACE ) {
-        result.add_child( Statement() );
+    Tokinfo tok;
+    while ( ( tok = lex() ).token != TOKEN_RBRACE ) {
+        unlex( tok );
+        auto stmt = Statement();
+        result.add_child( stmt );
         expect( TOKEN_SEMICOLON );
 
         tok = lex();
@@ -240,9 +259,7 @@ ASTNode FunctionDecl() {
     ASTNode formals ( AST_FORMALS );
 
     tok = lex();
-    // printf("token's lexeme: %s\n", tok.lexeme.data() );
     unlex( tok );
-    // printf("token's lexeme: %s, %d\n", (tok = lex()).lexeme.data(), tok.token );
 
     if ( tok.token == TOKEN_ID ) {
         // ParameterList
@@ -271,6 +288,8 @@ ASTNode FunctionDecl() {
     }
 
     result.add_child( sig );
+
+    check_for_bad_newline();
 
     result.add_child( Block() ); // FunctionBody
 
@@ -310,6 +329,7 @@ ASTNode Operand() {
             return ASTNode ( AST_ID, tok.linenum, tok.lexeme );
         default: {
 
+            unlex( tok );
             expect( TOKEN_LPAREN );
             auto result = Expression();
             expect( TOKEN_RPAREN );
@@ -406,7 +426,7 @@ ASTNode PrimaryExpr() {
     auto operand = Operand();
     result.add_child( operand );
 
-    auto tok = lex();
+    Tokinfo tok;
     while ( ( tok = lex() ).token == TOKEN_LPAREN ) {
         unlex( tok );
         result.add_child( Arguments() );
