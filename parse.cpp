@@ -1,4 +1,5 @@
 // TODO: use newid and not new id in the right places
+// TODO: factor out switches in expressions
 
 #include "parse.hpp"
 #include "lex.hpp"
@@ -482,9 +483,33 @@ ASTNode parse() {
     return root;
 }
 
-const char * ASTNode_to_string( ASTNodeID n ) {
-    switch (n) {
-        default: return "foo";
+// it's 11 at night and i've been coding since 7 am. forgive me
+std::string ASTNode_to_string( ASTNode n ) {
+    std::string numstring = std::to_string( n.linenum );
+
+    std::string lexstring;
+    if ( n.lexeme.size() > 0)
+        lexstring = "[" + n.lexeme + "]";
+
+    switch ( n.type ) {
+        case AST_PROGRAM:   return "program";
+        case AST_FUNC:      return "func @ line " + numstring;
+        case AST_NEWID:     return "newid " + lexstring + " @ line " + numstring;
+        case AST_SIGNATURE: return "sig";
+        case AST_FORMALS:   return "formals";
+        case AST_TYPEID:    return "typeid " + lexstring;
+        case AST_BLOCK:     return "block";
+        case AST_FOR:       return "for @ line " + numstring;
+        case AST_ID:        return "id " + lexstring;
+        case AST_EMPTYSTMT: return "emptystmt";
+        case AST_IF:        return "if @ line " + numstring;
+        case AST_EQ:        return "== @ line "  + numstring;
+        case AST_PLUS:      return "+ @ line "   + numstring;
+        case AST_INT:       return "int " + lexstring + " @ line " + numstring;
+        case AST_EXPR:      return "expr";
+        default:
+            printf( "thing is: %d '%s'\n", n.type, n.lexeme.data() );
+            return "foo";
     }
 
     return "bar";

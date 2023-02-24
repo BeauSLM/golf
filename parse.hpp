@@ -73,4 +73,4 @@ struct ASTNode {
 
 ASTNode parse();
 
-const char * ASTNode_to_string( ASTNodeID n );
+std::string ASTNode_to_string( ASTNode n );

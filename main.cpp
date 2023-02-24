@@ -6,6 +6,17 @@
 #include "lex.hpp"
 #include "parse.hpp"
 
+void printast( const ASTNode & root, int depth ) {
+    // HACK: this is cursed. like actually
+    std::string indent;
+    for ( int i = 0; i < depth; i++ ) indent += "    ";
+
+    printf( "%s%s\n", indent.data(), ASTNode_to_string( root ).data() );
+
+    for ( const auto & kid : root.children )
+        printast( kid, depth + 1);
+}
+
 int main( int argc, char *argv[] ) {
     if ( argc != 2 ) {
         fprintf( stderr, "Usage: %s <filename>\n\n", argv[0] );
@@ -30,7 +41,7 @@ int main( int argc, char *argv[] ) {
     //     printf( "%s\t[%s] @ line %d\n", token_to_string( t.token ), t.lexeme.data(), t.linenum );
 
     auto root = parse();
-    // TODO: print the tree
+    printast( root, 0 );
 
     return EXIT_SUCCESS;
 }
