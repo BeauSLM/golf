@@ -1,4 +1,4 @@
-Run started on Fri Feb 24 02:52:40 2023
+Run started on Fri Feb 24 03:06:50 2023
 
 Hostname: csx2.cs.ucalgary.ca
 
@@ -105,6 +105,7 @@ program
                     emptystmt
 
 
+
 STDERR:
 
 
@@ -164,6 +165,7 @@ program
                     emptystmt
 
 
+
 STDERR:
 
 
@@ -199,6 +201,7 @@ program
                     int [5] @ line 6
 
 
+
 STDERR:
 
 
@@ -223,16 +226,13 @@ program
         newid [bar] @ line 6
         sig
             formals
-thing is: 2 ''
-                foo
+                formal
                     newid [a1] @ line 6
                     typeid [int] @ line 6
-thing is: 2 ''
-                foo
+                formal
                     newid [a2] @ line 6
                     typeid [bool] @ line 6
-thing is: 2 ''
-                foo
+                formal
                     newid [a3] @ line 6
                     typeid [sometype] @ line 6
             typeid [returntype] @ line 6
@@ -245,22 +245,19 @@ thing is: 2 ''
             typeid [int] @ line 9
         block
             id [blarg] @ line 10
-thing is: 5 ''
-                foo
+                actuals
                     + @ line 11
                         int [123] @ line 11
                         int [456] @ line 11
                     id [garble] @ line 12
-thing is: 5 ''
-                        foo
+                        actuals
                             int [789] @ line 12
                     id [true] @ line 13
                     id [greep] @ line 14
-thing is: 5 ''
-                        foo
+                        actuals
                             id [false] @ line 14
-thing is: 38 'eek'
-                            foo
+                            string [eek] @ line 14
+
 
 
 STDERR:
@@ -333,6 +330,7 @@ thing is: 20 ''
 thing is: 20 ''
                                         foo
                                             id [x] @ line 8
+
 
 
 STDERR:
@@ -578,6 +576,7 @@ thing is: 22 '/'
                 id [e] @ line 11
 
 
+
 STDERR:
 
 
@@ -598,5 +597,5 @@ error: expected token of type ; at or near line 20
 
 RETURN CODE: 1
 
-Run ended on Fri Feb 24 02:52:40 2023
+Run ended on Fri Feb 24 03:06:50 2023
 
