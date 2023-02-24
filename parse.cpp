@@ -19,12 +19,16 @@ Tokinfo expect( TokenID type ) {
     return tok;
 }
 
-void check_for_bad_newline() {
+void check_for_bad_semicolon() {
     // check if we inserted semicolon for a newline for more specific error message
     auto tok = lex();
     unlex( tok );
-    if ( tok.token == TOKEN_SEMICOLON && tok.lexeme == "" )
+    if ( tok.token != TOKEN_SEMICOLON ) return;
+
+    if ( tok.lexeme == "" )
         error( tok.linenum, "unexpected newline"  );
+    else
+        error( tok.linenum, "syntax error on \";\"" );
 }
 
 ASTNode newidentifier() {
@@ -62,7 +66,7 @@ ASTNode IfStmt() {
 
     result.add_child( Expression() );
 
-    check_for_bad_newline();
+    check_for_bad_semicolon();
 
     result.add_child( Block() );
 
@@ -102,7 +106,7 @@ ASTNode ForStmt() {
     tok = lex();
     unlex( tok );
 
-    check_for_bad_newline();
+    check_for_bad_semicolon();
 
     result.add_child( Block() );
 
@@ -271,6 +275,7 @@ ASTNode FunctionDecl() {
         formals.add_child( ParameterDecl() );
         while ( ( tok = lex() ).token == TOKEN_COMMA )
             formals.add_child( ParameterDecl() );
+        check_for_bad_semicolon();
 
         // consume trailing comma in params list if there is one
         if ( ( tok = lex() ).token != TOKEN_COMMA ) unlex( tok );
@@ -293,7 +298,7 @@ ASTNode FunctionDecl() {
 
     result.add_child( sig );
 
-    check_for_bad_newline();
+    check_for_bad_semicolon();
 
     result.add_child( Block() ); // FunctionBody
 
@@ -366,6 +371,7 @@ ASTNode Arguments() {
         while ( ( tok = lex() ).token == TOKEN_COMMA )
             result.add_child( Expression() );
 
+        check_for_bad_semicolon();
         // consume trailing comma in params list if there is one
         if ( ( tok = lex() ).token != TOKEN_COMMA ) unlex( tok );
     }
