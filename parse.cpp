@@ -82,9 +82,11 @@ ASTNode IfStmt() {
     result.type = AST_IFELSE;
 
     if ( tok.token == TOKEN_LBRACE ) {
-        result.add_child( Block() );
+        auto blk = Block();
+        result.add_child( blk );
     } else if ( tok.token == TOKEN_IF ) {
-        result.add_child( IfStmt() );
+        auto ifstmt = IfStmt();
+        result.add_child( ifstmt );
     } else {
         // TODO: make decent error
         error( tok.linenum, "" );
@@ -111,7 +113,8 @@ ASTNode ForStmt() {
 
     check_for_bad_semicolon();
 
-    result.add_child( Block() );
+    auto blk = Block();
+    result.add_child( blk );
 
     return result;
 }
@@ -263,8 +266,12 @@ ASTNode Block() {
 // "formal" in the reference compiler I think
 ASTNode ParameterDecl() {
     ASTNode result ( AST_FORMAL );
-    result.add_child( newidentifier() );
-    result.add_child( typeidentifier() );
+
+    auto newid = newidentifier();
+    result.add_child( newid );
+
+    auto typeident = typeidentifier();
+    result.add_child( typeident );
 
     return result;
 }
@@ -274,8 +281,11 @@ ASTNode VarDecl() {
 
     ASTNode result ( AST_VAR, tok.linenum, tok.lexeme );
 
-    result.add_child( newidentifier() );
-    result.add_child( typeidentifier() );
+    auto newid = newidentifier();
+    result.add_child( newid );
+
+    auto typeident = typeidentifier();
+    result.add_child( typeident );
 
     return result;
 }
@@ -302,12 +312,13 @@ ASTNode FunctionDecl() {
     if ( tok.token == TOKEN_ID ) {
         // ParameterList
 
-        {
-            auto params = ParameterDecl();
+        auto params = ParameterDecl();
+        formals.add_child( params );
+
+        while ( ( tok = lex() ).token == TOKEN_COMMA ) {
+            params = ParameterDecl();
             formals.add_child( params );
         }
-        while ( ( tok = lex() ).token == TOKEN_COMMA )
-            formals.add_child( ParameterDecl() );
         unlex( tok );
 
         check_for_bad_semicolon();
@@ -323,9 +334,10 @@ ASTNode FunctionDecl() {
     tok = lex();
     unlex( tok );
 
-    if ( tok.token == TOKEN_ID )
-        sig.add_child( typeidentifier() );
-    else {
+    if ( tok.token == TOKEN_ID ) {
+        auto tident = typeidentifier();
+        sig.add_child( tident );
+    } else {
         ASTNode inserted_void( AST_TYPEID, -1, "$void" );
 
         sig.add_child( inserted_void );
@@ -335,7 +347,8 @@ ASTNode FunctionDecl() {
 
     check_for_bad_semicolon();
 
-    result.add_child( Block() ); // FunctionBody
+    auto blk = Block();
+    result.add_child( blk ); // FunctionBody
 
     return result;
 }
@@ -401,10 +414,14 @@ ASTNode Arguments() {
     ASTNode result = { AST_ACTUALS };
 
     if ( is_expression_next() ) {
-        result.add_child( Expression() );
+        auto expr = Expression();
+        result.add_child( expr );
+
         Tokinfo tok;
-        while ( ( tok = lex() ).token == TOKEN_COMMA )
-            result.add_child( Expression() );
+        while ( ( tok = lex() ).token == TOKEN_COMMA ){
+            expr = Expression();
+            result.add_child( expr );
+        }
         unlex( tok );
 
         check_for_bad_semicolon();
@@ -419,9 +436,15 @@ ASTNode Arguments() {
 
 ASTNode Assignment() {
     ASTNode result = { AST_ASSIGN };
-    result.add_child( Expression() );
+
+    auto expr = Expression();
+    result.add_child( expr );
+
     result.linenum = expect( TOKEN_ASSIGN ).linenum;
-    result.add_child( Expression() );
+
+    expr = Expression();
+    result.add_child( expr );
+
     return result;
 }
 
@@ -473,16 +496,24 @@ ASTNode UnaryExpr() {
     ASTNode result;
 
     switch ( tok.token ) {
-        case TOKEN_BANG:
+        case TOKEN_BANG: {
             result.type = AST_LOGIC_NOT;
             result.linenum = tok.linenum;
-            result.add_child( UnaryExpr() );
+
+            auto exp = UnaryExpr();
+            result.add_child( exp );
+
             break;
-        case TOKEN_MINUS:
-            result.type = AST_UMINUS;
-            result.linenum = tok.linenum;
-            result.add_child( UnaryExpr() );
+        }
+        case TOKEN_MINUS: {
+                result.type = AST_UMINUS;
+                result.linenum = tok.linenum;
+
+                auto exp = UnaryExpr();
+                result.add_child( exp );
+
             break;
+        }
         default:
             unlex( tok );
 
@@ -491,7 +522,9 @@ ASTNode UnaryExpr() {
             Tokinfo tok;
             while ( ( tok = lex() ).token == TOKEN_LPAREN ) {
                 unlex( tok );
-                result.add_child( Arguments() );
+
+                auto args = Arguments();
+                result.add_child( args );
             }
             unlex( tok );
     }
