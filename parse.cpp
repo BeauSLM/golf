@@ -448,12 +448,6 @@ ASTNode Assignment() {
     return result;
 }
 
-ASTNode ExpresstionStmt() {
-    auto result = Expression();
-    result.type = AST_EXPRSTMT;
-    return result;
-}
-
 ASTNode Statement() {
     auto tok = lex();
     unlex( tok );
@@ -473,7 +467,7 @@ ASTNode Statement() {
             return ForStmt();
         default:
             if ( !is_expression_next() ) return { AST_EMPTYSTMT };
-            auto result = ExpresstionStmt();
+            auto result = Expression();
             if ( ( tok = lex() ).token == TOKEN_ASSIGN ) {
                 auto right = Expression();
                 auto left = result;
@@ -519,7 +513,6 @@ ASTNode UnaryExpr() {
 
             result = Operand();
 
-            Tokinfo tok;
             while ( ( tok = lex() ).token == TOKEN_LPAREN ) {
                 unlex( tok );
 
@@ -527,6 +520,7 @@ ASTNode UnaryExpr() {
                 result.add_child( args );
             }
             unlex( tok );
+            break;
     }
 
     return result;
