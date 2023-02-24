@@ -497,7 +497,7 @@ ASTNode Statement() {
                 if ( ( tok = lex() ).token == TOKEN_ASSIGN ) error( tok.linenum, "syntax error on \"=\"" );
             } else {
                 auto tmp = result;
-                result   = ASTNode( AST_EXPRSTMT );
+                result   = ASTNode( AST_EXPRSTMT, tmp.linenum );
                 result.add_child( tmp );
             }
 
