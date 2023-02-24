@@ -1,4 +1,4 @@
-Run started on Fri Feb 24 12:06:20 2023
+Run started on Fri Feb 24 12:22:35 2023
 
 Hostname: csx2.cs.ucalgary.ca
 
@@ -420,13 +420,30 @@ Test: func line breaks using trailing commas |
 % ./golf /home/profs/aycock/411/TEST/ms2/parse.t15
 
 STDOUT:
+program
+    func @ line 3
+        newid [foo] @ line 3
+        sig
+            formals
+                formal
+                    newid [a] @ line 3
+                    typeid [int] @ line 3
+                formal
+                    newid [b] @ line 4
+                    typeid [int] @ line 4
+                formal
+                    newid [c] @ line 5
+                    typeid [int] @ line 5
+            typeid [$void]
+        block
+            emptystmt
+
 
 
 STDERR:
-error: expected token of type id at or near line 6
 
 
-RETURN CODE: 1
+RETURN CODE: 0
 
 -------------------------------------------------------------------------------
 Test: func line breaks sans trailing comma |
@@ -450,13 +467,27 @@ Test: func call line breaks with trailing commas |
 % ./golf /home/profs/aycock/411/TEST/ms2/parse.t17
 
 STDOUT:
+program
+    func @ line 3
+        newid [foo] @ line 3
+        sig
+            formals
+            typeid [$void]
+        block
+            exprstmt
+                funccall
+                    id [garbled] @ line 4
+                    actuals
+                        id [a] @ line 4
+                        id [b] @ line 5
+                        id [c] @ line 6
+
 
 
 STDERR:
-error: expected token of type ( at or near line 7
 
 
-RETURN CODE: 1
+RETURN CODE: 0
 
 -------------------------------------------------------------------------------
 Test: func call line breaks sans trailing comma |
@@ -575,5 +606,5 @@ error: expected token of type ; at or near line 20
 
 RETURN CODE: 1
 
-Run ended on Fri Feb 24 12:06:20 2023
+Run ended on Fri Feb 24 12:22:35 2023
 
