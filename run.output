@@ -1,4 +1,4 @@
-Run started on Fri Feb 24 15:53:53 2023
+Run started on Fri Feb 24 15:56:27 2023
 
 Hostname: csx2.cs.ucalgary.ca
 
@@ -535,10 +535,8 @@ program
                     id [bar] @ line 8
                     actuals
                         id [d] @ line 8
-thing is: 12 'return'
-            foo
-thing is: 12 'return'
-            foo
+            return @ line 9
+            return @ line 10
                 int [12345] @ line 10
 thing is: 7 'break'
             foo
@@ -550,12 +548,12 @@ thing is: 7 'break'
                 block
                     exprstmt
                         int [42] @ line 16
-            elseif @ line 20
+            ifelse @ line 20
                 id [false] @ line 18
                 block
                     exprstmt
                         int [111] @ line 19
-                elseif @ line 22
+                ifelse @ line 22
                     id [fallse] @ line 20
                     block
                         exprstmt
@@ -563,7 +561,7 @@ thing is: 7 'break'
                     block
                         exprstmt
                             int [333] @ line 23
-            elseif @ line 27
+            ifelse @ line 27
                 id [false] @ line 25
                 block
                     exprstmt
@@ -711,11 +709,9 @@ program
                     = @ line 19
                         id [_havechar] @ line 19
                         id [false] @ line 19
-thing is: 12 'return'
-                    foo
+                    return @ line 20
                         id [_char] @ line 20
-thing is: 12 'return'
-            foo
+            return @ line 22
                 funccall
                     id [getchar] @ line 22
                     actuals
@@ -764,8 +760,7 @@ thing is: 12 'return'
             if @ line 43
                 id [_havetoken] @ line 43
                 block
-thing is: 12 'return'
-                    foo
+                    return @ line 44
                         id [_token] @ line 44
             = @ line 46
                 id [_havetoken] @ line 46
@@ -775,8 +770,7 @@ thing is: 12 'return'
                 funccall
                     id [scanner] @ line 47
                     actuals
-thing is: 12 'return'
-            foo
+            return @ line 48
                 id [_token] @ line 48
     func @ line 51
         newid [match] @ line 51
@@ -849,64 +843,56 @@ thing is: 7 'break'
                     id [ch] @ line 71
                     id [EOF] @ line 71
                 block
-thing is: 12 'return'
-                    foo
+                    return @ line 71
                         id [TK_EOF] @ line 71
             if @ line 72
                 == @ line 72
                     id [ch] @ line 72
                     id [ASCII_NL] @ line 72
                 block
-thing is: 12 'return'
-                    foo
+                    return @ line 72
                         id [TK_EOLN] @ line 72
             if @ line 73
                 == @ line 73
                     id [ch] @ line 73
                     id [ASCII_PLUS] @ line 73
                 block
-thing is: 12 'return'
-                    foo
+                    return @ line 73
                         id [TK_ADD] @ line 73
             if @ line 74
                 == @ line 74
                     id [ch] @ line 74
                     id [ASCII_MINUS] @ line 74
                 block
-thing is: 12 'return'
-                    foo
+                    return @ line 74
                         id [TK_SUB] @ line 74
             if @ line 75
                 == @ line 75
                     id [ch] @ line 75
                     id [ASCII_STAR] @ line 75
                 block
-thing is: 12 'return'
-                    foo
+                    return @ line 75
                         id [TK_MUL] @ line 75
             if @ line 76
                 == @ line 76
                     id [ch] @ line 76
                     id [ASCII_SLASH] @ line 76
                 block
-thing is: 12 'return'
-                    foo
+                    return @ line 76
                         id [TK_DIV] @ line 76
             if @ line 77
                 == @ line 77
                     id [ch] @ line 77
                     id [ASCII_LPAREN] @ line 77
                 block
-thing is: 12 'return'
-                    foo
+                    return @ line 77
                         id [TK_LPAREN] @ line 77
             if @ line 78
                 == @ line 78
                     id [ch] @ line 78
                     id [ASCII_RPAREN] @ line 78
                 block
-thing is: 12 'return'
-                    foo
+                    return @ line 78
                         id [TK_RPAREN] @ line 78
             if @ line 80
                 funccall
@@ -942,8 +928,7 @@ thing is: 12 'return'
                             id [ungetc] @ line 86
                             actuals
                                 id [ch] @ line 86
-thing is: 12 'return'
-                    foo
+                    return @ line 87
                         id [TK_NUMBER] @ line 87
             exprstmt
                 funccall
@@ -963,8 +948,7 @@ thing is: 12 'return'
                     typeid [int] @ line 94
             typeid [bool] @ line 94
         block
-thing is: 12 'return'
-            foo
+            return @ line 95
 thing is: 24 '&&'
                 foo
 thing is: 33 '>='
@@ -984,8 +968,7 @@ thing is: 32 '<='
                     typeid [int] @ line 98
             typeid [bool] @ line 98
         block
-thing is: 12 'return'
-            foo
+            return @ line 99
 thing is: 25 '||'
                 foo
 thing is: 25 '||'
@@ -1090,7 +1073,7 @@ thing is: 25 '||'
                         funccall
                             id [T] @ line 130
                             actuals
-                    elseif @ line 134
+                    ifelse @ line 134
                         == @ line 132
                             id [token] @ line 132
                             id [TK_ADD] @ line 132
@@ -1106,8 +1089,7 @@ thing is: 25 '||'
                                 - @ line 135
                                     id [l] @ line 135
                                     id [r] @ line 135
-thing is: 12 'return'
-            foo
+            return @ line 138
                 id [l] @ line 138
     func @ line 141
         newid [T] @ line 141
@@ -1158,7 +1140,7 @@ thing is: 25 '||'
                         funccall
                             id [F] @ line 150
                             actuals
-                    elseif @ line 154
+                    ifelse @ line 154
                         == @ line 152
                             id [token] @ line 152
                             id [TK_MUL] @ line 152
@@ -1174,8 +1156,7 @@ thing is: 25 '||'
                                 / @ line 155
                                     id [l] @ line 155
                                     id [r] @ line 155
-thing is: 12 'return'
-            foo
+            return @ line 158
                 id [l] @ line 158
     func @ line 161
         newid [F] @ line 161
@@ -1194,7 +1175,7 @@ thing is: 12 'return'
                 funccall
                     id [peek] @ line 165
                     actuals
-            elseif @ line 172
+            ifelse @ line 172
                 == @ line 167
                     id [token] @ line 167
                     id [TK_LPAREN] @ line 167
@@ -1214,7 +1195,7 @@ thing is: 12 'return'
                             id [match] @ line 170
                             actuals
                                 id [TK_RPAREN] @ line 170
-                elseif @ line 176
+                ifelse @ line 176
                     == @ line 172
                         id [token] @ line 172
                         id [TK_SUB] @ line 172
@@ -1230,7 +1211,7 @@ thing is: 12 'return'
                                 funccall
                                     id [F] @ line 174
                                     actuals
-                    elseif @ line 180
+                    ifelse @ line 180
                         == @ line 176
                             id [token] @ line 176
                             id [TK_NUMBER] @ line 176
@@ -1253,8 +1234,7 @@ thing is: 12 'return'
                                 funccall
                                     id [halt] @ line 182
                                     actuals
-thing is: 12 'return'
-            foo
+            return @ line 184
                 id [result] @ line 184
     var @ line 191
         newid [EOF] @ line 191
@@ -1402,5 +1382,5 @@ STDERR:
 
 RETURN CODE: 0
 
-Run ended on Fri Feb 24 15:53:53 2023
+Run ended on Fri Feb 24 15:56:27 2023
 
