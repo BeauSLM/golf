@@ -60,6 +60,9 @@ ASTNode IfStmt() {
     result.type = AST_IF;
 
     result.add_child( Expression() );
+
+    check_for_bad_newline();
+
     result.add_child( Block() );
 
     tok = lex();
