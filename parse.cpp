@@ -391,6 +391,7 @@ ASTNode TopLevelDecl() {
             break;
         case TOKEN_VAR:
             result = VarDecl();
+            result.type = AST_GLOBVAR;
             break;
         default:
             printf("current token is: %s\n", tok.lexeme.data());
