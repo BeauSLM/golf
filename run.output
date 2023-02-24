@@ -1,4 +1,4 @@
-Run started on Fri Feb 24 11:22:26 2023
+Run started on Fri Feb 24 11:28:24 2023
 
 Hostname: csx2.cs.ucalgary.ca
 
@@ -9,7 +9,8 @@ Running make |
 % /usr/bin/make
 
 STDOUT:
-make: Nothing to be done for 'release'.
+clang++ -o parse.o -c parse.cpp -Wall -Wextra -std=c++17 -O3 -MMD -MF parse.d
+clang++ -Wall -Wextra -std=c++17 -O3 -o golf main.o error.o lex.o parse.o
 
 
 STDERR:
@@ -285,54 +286,38 @@ program
         block
             = @ line 4
                 id [x] @ line 4
-thing is: 20 '-'
-                foo
+                - @ line 4
                     id [a] @ line 4
-thing is: 21 ''
-                    foo
+                    u- @ line 4
                         int [123] @ line 4
             = @ line 5
                 id [x] @ line 5
-thing is: 20 '-'
-                foo
+                - @ line 5
                     id [a] @ line 5
-thing is: 21 ''
-                    foo
+                    u- @ line 5
                         int [123] @ line 5
             = @ line 6
                 id [x] @ line 6
-thing is: 20 '-'
-                foo
+                - @ line 6
                     id [a] @ line 6
-thing is: 21 ''
-                    foo
-thing is: 21 ''
-                        foo
+                    u- @ line 6
+                        u- @ line 6
                             int [123] @ line 6
             = @ line 7
                 id [x] @ line 7
-thing is: 20 '-'
-                foo
+                - @ line 7
                     id [a] @ line 7
-thing is: 21 ''
-                    foo
+                    u- @ line 7
                         id [b] @ line 7
             = @ line 8
                 id [x] @ line 8
-thing is: 21 ''
-                foo
-thing is: 21 ''
-                    foo
-thing is: 21 ''
-                        foo
-thing is: 21 ''
-                            foo
-thing is: 21 ''
-                                foo
-thing is: 21 ''
-                                    foo
-thing is: 21 ''
-                                        foo
+                u- @ line 8
+                    u- @ line 8
+                        u- @ line 8
+                            u- @ line 8
+                                u- @ line 8
+                                    u- @ line 8
+                                        u- @ line 8
                                             id [x] @ line 8
 
 
@@ -536,24 +521,19 @@ program
             formals
             typeid [$void] 
         block
-thing is: 14 'var'
-            foo
+            var @ line 4
                 newid [a] @ line 4
                 typeid [int] @ line 4
-thing is: 14 'var'
-            foo
+            var @ line 5
                 newid [b] @ line 5
                 typeid [int] @ line 5
-thing is: 14 'var'
-            foo
+            var @ line 6
                 newid [c] @ line 6
                 typeid [int] @ line 6
-thing is: 14 'var'
-            foo
+            var @ line 7
                 newid [d] @ line 7
                 typeid [int] @ line 7
-thing is: 14 'var'
-            foo
+            var @ line 8
                 newid [e] @ line 8
                 typeid [int] @ line 8
             exprstmt
@@ -567,14 +547,10 @@ thing is: 14 'var'
                         id [d] @ line 10
                     id [e] @ line 10
             exprstmt
-thing is: 23 '/'
-                foo
-thing is: 23 '/'
-                    foo
-thing is: 23 '/'
-                        foo
-thing is: 23 '/'
-                            foo
+                / @ line 11
+                    / @ line 11
+                        / @ line 11
+                            / @ line 11
                                 id [a] @ line 11
                                 id [b] @ line 11
                             id [d] @ line 11
@@ -603,5 +579,5 @@ error: expected token of type ; at or near line 20
 
 RETURN CODE: 1
 
-Run ended on Fri Feb 24 11:22:26 2023
+Run ended on Fri Feb 24 11:28:26 2023
 
