@@ -19,6 +19,19 @@ Tokinfo expect( TokenID type ) {
     return tok;
 }
 
+bool is_expression_next() {
+    auto tok = lex();
+    unlex( tok );
+
+    return tok.token == TOKEN_BANG
+        || tok.token == TOKEN_MINUS
+        || tok.token == TOKEN_INT
+        || tok.token == TOKEN_STRING
+        || tok.token == TOKEN_ID
+        || tok.token == TOKEN_LPAREN
+    ;
+}
+
 void check_for_bad_semicolon() {
     // check if we inserted semicolon for a newline for more specific error message
     auto tok = lex();
@@ -52,7 +65,15 @@ ASTNode BreakStmt() {
 ASTNode ReturnStmt() {
     auto tok = expect( TOKEN_RETURN );
 
-    return ASTNode ( AST_RETURN, tok.linenum, tok.lexeme );
+    ASTNode result( AST_RETURN, tok.linenum, tok.lexeme );
+
+    // optional expression to return
+    if ( is_expression_next() ) {
+        auto exp = Expression();
+        result.add_child( exp );
+    }
+
+    return result;
 }
 
 ASTNode IfStmt() {
@@ -398,19 +419,6 @@ ASTNode Operand() {
             return result;
         }
     }
-}
-
-bool is_expression_next() {
-    auto tok = lex();
-    unlex( tok );
-
-    return tok.token == TOKEN_BANG
-        || tok.token == TOKEN_MINUS
-        || tok.token == TOKEN_INT
-        || tok.token == TOKEN_STRING
-        || tok.token == TOKEN_ID
-        || tok.token == TOKEN_LPAREN
-    ;
 }
 
 ASTNode Arguments() {
