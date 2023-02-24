@@ -104,7 +104,7 @@ ASTNode ForStmt() {
     if ( tok.token != TOKEN_LBRACE ) {
         auto expr = Expression();
         result.add_child( expr );
-    }
+    } else result.add_child( { AST_ID, -1, "$true" } );
 
     tok = lex();
     unlex( tok );
