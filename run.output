@@ -1,4 +1,4 @@
-Run started on Fri Feb 24 01:25:26 2023
+Run started on Fri Feb 24 02:52:40 2023
 
 Hostname: csx2.cs.ucalgary.ca
 
@@ -97,10 +97,10 @@ program
         newid [main] @ line 4
         sig
             formals
-            typeid [$void]
+            typeid [$void] 
         block
             for @ line 5
-                id [$true]
+                id [$true] 
                 block
                     emptystmt
 
@@ -152,7 +152,7 @@ program
         newid [main] @ line 3
         sig
             formals
-            typeid [$void]
+            typeid [$void] 
         block
             if @ line 5
                 == @ line 6
@@ -176,13 +176,33 @@ Test: precedence check |
 % ./golf /home/profs/aycock/411/TEST/ms2/parse.t6
 
 STDOUT:
+program
+    func @ line 4
+        newid [foo] @ line 4
+        sig
+            formals
+            typeid [asdf] @ line 4
+        block
+            = @ line 5
+                id [x] @ line 5
+                + @ line 5
+                    int [2] @ line 5
+                    * @ line 5
+                        int [3] @ line 5
+                        int [5] @ line 5
+            = @ line 6
+                id [y] @ line 6
+                * @ line 6
+                    + @ line 6
+                        int [2] @ line 6
+                        int [3] @ line 6
+                    int [5] @ line 6
 
 
 STDERR:
-error: syntax error on "=" at or near line 5
 
 
-RETURN CODE: 1
+RETURN CODE: 0
 
 -------------------------------------------------------------------------------
 Test: formal and actual params |
@@ -196,7 +216,7 @@ program
         newid [foo] @ line 3
         sig
             formals
-            typeid [$void]
+            typeid [$void] 
         block
             emptystmt
     func @ line 6
@@ -206,40 +226,39 @@ program
 thing is: 2 ''
                 foo
                     newid [a1] @ line 6
-                    typeid [int]
+                    typeid [int] @ line 6
 thing is: 2 ''
                 foo
                     newid [a2] @ line 6
-                    typeid [bool]
+                    typeid [bool] @ line 6
 thing is: 2 ''
                 foo
                     newid [a3] @ line 6
-                    typeid [sometype]
-            typeid [returntype]
+                    typeid [sometype] @ line 6
+            typeid [returntype] @ line 6
         block
             emptystmt
     func @ line 9
         newid [baz] @ line 9
         sig
             formals
-            typeid [int]
+            typeid [int] @ line 9
         block
-thing is: 16 'blarg'
-            foo
+            id [blarg] @ line 10
 thing is: 5 ''
                 foo
                     + @ line 11
                         int [123] @ line 11
                         int [456] @ line 11
-                    id [garble]
+                    id [garble] @ line 12
 thing is: 5 ''
                         foo
                             int [789] @ line 12
-                    id [true]
-                    id [greep]
+                    id [true] @ line 13
+                    id [greep] @ line 14
 thing is: 5 ''
                         foo
-                            id [false]
+                            id [false] @ line 14
 thing is: 38 'eek'
                             foo
 
@@ -256,13 +275,70 @@ Test: unary and binary minus |
 % ./golf /home/profs/aycock/411/TEST/ms2/parse.t8
 
 STDOUT:
+program
+    func @ line 3
+        newid [main] @ line 3
+        sig
+            formals
+            typeid [$void] 
+        block
+            = @ line 4
+                id [x] @ line 4
+thing is: 19 '-'
+                foo
+                    id [a] @ line 4
+thing is: 20 ''
+                    foo
+                        int [123] @ line 4
+            = @ line 5
+                id [x] @ line 5
+thing is: 19 '-'
+                foo
+                    id [a] @ line 5
+thing is: 20 ''
+                    foo
+                        int [123] @ line 5
+            = @ line 6
+                id [x] @ line 6
+thing is: 19 '-'
+                foo
+                    id [a] @ line 6
+thing is: 20 ''
+                    foo
+thing is: 20 ''
+                        foo
+                            int [123] @ line 6
+            = @ line 7
+                id [x] @ line 7
+thing is: 19 '-'
+                foo
+                    id [a] @ line 7
+thing is: 20 ''
+                    foo
+                        id [b] @ line 7
+            = @ line 8
+                id [x] @ line 8
+thing is: 20 ''
+                foo
+thing is: 20 ''
+                    foo
+thing is: 20 ''
+                        foo
+thing is: 20 ''
+                            foo
+thing is: 20 ''
+                                foo
+thing is: 20 ''
+                                    foo
+thing is: 20 ''
+                                        foo
+                                            id [x] @ line 8
 
 
 STDERR:
-error: syntax error on "=" at or near line 4
 
 
-RETURN CODE: 1
+RETURN CODE: 0
 
 -------------------------------------------------------------------------------
 Test: func open brace in wrong place, with semicolon |
@@ -424,7 +500,7 @@ STDOUT:
 
 
 STDERR:
-error: syntax error on "=" at or near line 6
+error: expected token of type ; at or near line 10
 
 
 RETURN CODE: 1
@@ -456,39 +532,38 @@ program
         newid [a_sock] @ line 3
         sig
             formals
-            typeid [$void]
+            typeid [$void] 
         block
 thing is: 13 'var'
             foo
                 newid [a] @ line 4
-                typeid [int]
+                typeid [int] @ line 4
 thing is: 13 'var'
             foo
                 newid [b] @ line 5
-                typeid [int]
+                typeid [int] @ line 5
 thing is: 13 'var'
             foo
                 newid [c] @ line 6
-                typeid [int]
+                typeid [int] @ line 6
 thing is: 13 'var'
             foo
                 newid [d] @ line 7
-                typeid [int]
+                typeid [int] @ line 7
 thing is: 13 'var'
             foo
                 newid [e] @ line 8
-                typeid [int]
-thing is: 16 '+'
-            foo
+                typeid [int] @ line 8
+            + @ line 10
                 + @ line 10
                     + @ line 10
                         + @ line 10
-                            id [a]
-                            id [b]
-                        id [c]
-                    id [d]
-                id [e]
-thing is: 16 '/'
+                            id [a] @ line 10
+                            id [b] @ line 10
+                        id [c] @ line 10
+                    id [d] @ line 10
+                id [e] @ line 10
+thing is: 22 '/'
             foo
 thing is: 22 '/'
                 foo
@@ -496,11 +571,11 @@ thing is: 22 '/'
                     foo
 thing is: 22 '/'
                         foo
-                            id [a]
-                            id [b]
-                        id [d]
-                    id [d]
-                id [e]
+                            id [a] @ line 11
+                            id [b] @ line 11
+                        id [d] @ line 11
+                    id [d] @ line 11
+                id [e] @ line 11
 
 
 STDERR:
@@ -518,10 +593,10 @@ STDOUT:
 
 
 STDERR:
-error: syntax error on "=" at or near line 19
+error: expected token of type ; at or near line 20
 
 
 RETURN CODE: 1
 
-Run ended on Fri Feb 24 01:25:26 2023
+Run ended on Fri Feb 24 02:52:40 2023
 
