@@ -425,21 +425,12 @@ ASTNode Statement() {
     }
 }
 
-ASTNode PrimaryExpr() {
-    // TODO: figure out children situation ffs
-    ASTNode result ( AST_EXPR );
 
-    auto operand = Operand();
-    result.add_child( operand );
+            if ( tok.token == TOKEN_ASSIGN ) error(tok.linenum, "syntax error on \"=\"");
+            unlex( tok );
 
-    Tokinfo tok;
-    while ( ( tok = lex() ).token == TOKEN_LPAREN ) {
-        unlex( tok );
-        result.add_child( Arguments() );
+            return result;
     }
-    unlex( tok );
-
-    return result;
 }
 
 ASTNode UnaryExpr() {
@@ -460,7 +451,15 @@ ASTNode UnaryExpr() {
             break;
         default:
             unlex( tok );
-            return PrimaryExpr();
+
+            result = Operand();
+
+            Tokinfo tok;
+            while ( ( tok = lex() ).token == TOKEN_LPAREN ) {
+                unlex( tok );
+                result.add_child( Arguments() );
+            }
+            unlex( tok );
     }
 
     return result;
