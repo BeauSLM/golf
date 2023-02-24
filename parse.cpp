@@ -123,7 +123,10 @@ ASTNode PL5() {
     while ( ( tok = lex() ).token == TOKEN_STAR || tok.token == TOKEN_SLASH || tok.token == TOKEN_PERCENT ) {
         auto right = UnaryExpr();
         auto left = result;
-        result = ASTNode ( AST_LOGIC_OR, tok.linenum, tok.lexeme );
+        result = ASTNode ( AST_UNSET, tok.linenum, tok.lexeme );
+        if ( tok.token == TOKEN_STAR ) result.type = AST_STAR;
+        if ( tok.token == TOKEN_SLASH ) result.type = AST_SLASH;
+        if ( tok.token == TOKEN_PERCENT ) result.type = AST_PERCENT;
 
         result.add_child( left );
         result.add_child( right );
@@ -140,7 +143,9 @@ ASTNode PL4() {
     while ( ( tok = lex() ).token == TOKEN_PLUS || tok.token == TOKEN_MINUS ) {
         auto right = PL5();
         auto left = result;
-        result = ASTNode ( AST_LOGIC_OR, tok.linenum, tok.lexeme );
+        result = ASTNode ( AST_UNSET, tok.linenum, tok.lexeme );
+        if ( tok.token == TOKEN_PLUS ) result.type = AST_PLUS;
+        if ( tok.token == TOKEN_MINUS ) result.type = AST_MINUS;
 
         result.add_child( left );
         result.add_child( right );
@@ -163,7 +168,30 @@ ASTNode PL3() {
             || tok.token == TOKEN_GT) {
         auto right = PL4();
         auto left = result;
-        result = ASTNode ( AST_LOGIC_OR, tok.linenum, tok.lexeme );
+        result = ASTNode ( AST_UNSET, tok.linenum, tok.lexeme );
+        switch ( tok.token ) {
+            case TOKEN_EQ:
+                result.type = AST_EQ;
+                break;
+            case TOKEN_NEQ:
+                result.type = AST_NEQ;
+                break;
+            case TOKEN_GEQ:
+                result.type = AST_GEQ;
+                break;
+            case TOKEN_LEQ:
+                result.type = AST_LEQ;
+                break;
+            case TOKEN_LT:
+                result.type = AST_LT;
+                break;
+            case TOKEN_GT:
+                result.type = AST_NEQ;
+                break;
+            default:
+                // TODO: FIX THIS
+                error( tok.linenum, "unreachable" );
+        }
 
         result.add_child( left );
         result.add_child( right );
