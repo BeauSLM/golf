@@ -581,6 +581,8 @@ std::string ASTNode_to_string( ASTNode n ) {
         case AST_IF:        return "if " + numstring;
         case AST_EQ:        return "== "  + numstring;
         case AST_PLUS:      return "+ "   + numstring;
+        case AST_MINUS:     return "- "   + numstring;
+        case AST_SLASH:     return "/ "   + numstring;
         case AST_INT:       return "int " + lexstring + numstring;
         case AST_ASSIGN:    return "= " + numstring;
         case AST_STAR:      return "* " + numstring;
@@ -588,6 +590,8 @@ std::string ASTNode_to_string( ASTNode n ) {
         case AST_FORMALS:   return "formals";
         case AST_FUNCCALL:  return "funccall";
         case AST_ACTUALS:   return "actuals";
+        case AST_VAR:       return "var " + numstring;
+        case AST_UMINUS:    return "u- " + numstring;
         case AST_STRING:    return "string " + lexstring + numstring;
         default:
             printf( "thing is: %d '%s'\n", n.type, n.lexeme.data() );
