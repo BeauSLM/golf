@@ -599,7 +599,7 @@ std::string ASTNode_to_string( ASTNode n ) {
         case AST_EMPTYSTMT: return "emptystmt";
         case AST_EXPRSTMT:  return "exprstmt";
         case AST_IF:        return "if" + numstring;
-        case AST_IFELSE:    return "elseif" + numstring;
+        case AST_IFELSE:    return "ifelse" + numstring;
         case AST_EQ:        return "=="  + numstring;
         case AST_PLUS:      return "+"   + numstring;
         case AST_MINUS:     return "-"   + numstring;
@@ -614,6 +614,7 @@ std::string ASTNode_to_string( ASTNode n ) {
         case AST_VAR:       return "var" + numstring;
         case AST_UMINUS:    return "u-" + numstring;
         case AST_STRING:    return "string" + lexstring + numstring;
+        case AST_RETURN:    return "return" + numstring;
         default:
             printf( "thing is: %d '%s'\n", n.type, n.lexeme.data() );
             return "foo";
