@@ -42,6 +42,7 @@ int main( int argc, char *argv[] ) {
 
     auto root = parse();
     printast( root, 0 );
+    puts( "" );
 
     return EXIT_SUCCESS;
 }
