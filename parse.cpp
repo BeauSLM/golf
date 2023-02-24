@@ -238,7 +238,6 @@ ASTNode PL1() {
     return result;
 }
 
-
 ASTNode Expression() {
     return PL1();
 }
@@ -252,8 +251,10 @@ ASTNode Block() {
     Tokinfo tok;
     while ( ( tok = lex() ).token != TOKEN_RBRACE ) {
         unlex( tok );
+
         auto stmt = Statement();
         result.add_child( stmt );
+
         expect( TOKEN_SEMICOLON );
     }
     unlex( tok );
