@@ -1,4 +1,4 @@
-Run started on Fri Feb 24 15:56:27 2023
+Run started on Fri Feb 24 16:09:58 2023
 
 Hostname: csx2.cs.ucalgary.ca
 
@@ -538,46 +538,45 @@ program
             return @ line 9
             return @ line 10
                 int [12345] @ line 10
-thing is: 7 'break'
-            foo
+            break @ line 11
             block
-                exprstmt
+                exprstmt @ line 13
                     id [ego] @ line 13
             if @ line 15
                 id [true] @ line 15
                 block
-                    exprstmt
+                    exprstmt @ line 16
                         int [42] @ line 16
             ifelse @ line 20
                 id [false] @ line 18
                 block
-                    exprstmt
+                    exprstmt @ line 19
                         int [111] @ line 19
                 ifelse @ line 22
                     id [fallse] @ line 20
                     block
-                        exprstmt
+                        exprstmt @ line 21
                             int [222] @ line 21
                     block
-                        exprstmt
+                        exprstmt @ line 23
                             int [333] @ line 23
             ifelse @ line 27
                 id [false] @ line 25
                 block
-                    exprstmt
+                    exprstmt @ line 26
                         int [444] @ line 26
                 block
-                    exprstmt
+                    exprstmt @ line 28
                         int [555] @ line 28
             for @ line 30
                 id [$true]
                 block
-                    exprstmt
+                    exprstmt @ line 31
                         int [666] @ line 31
             for @ line 33
                 id [some_expr] @ line 33
                 block
-                    exprstmt
+                    exprstmt @ line 34
                         int [777] @ line 34
             = @ line 37
                 string [abc] @ line 37
@@ -641,7 +640,7 @@ program
             var @ line 8
                 newid [e] @ line 8
                 typeid [int] @ line 8
-            exprstmt
+            exprstmt @ line 10
                 + @ line 10
                     + @ line 10
                         + @ line 10
@@ -651,7 +650,7 @@ program
                             id [c] @ line 10
                         id [d] @ line 10
                     id [e] @ line 10
-            exprstmt
+            exprstmt @ line 11
                 / @ line 11
                     / @ line 11
                         / @ line 11
@@ -691,10 +690,10 @@ program
                 funccall
                     id [parser] @ line 7
                     actuals
-    var @ line 14
+    globvar @ line 14
         newid [_havechar] @ line 14
         typeid [bool] @ line 14
-    var @ line 15
+    globvar @ line 15
         newid [_char] @ line 15
         typeid [int] @ line 15
     func @ line 17
@@ -742,13 +741,13 @@ program
             = @ line 31
                 id [_char] @ line 31
                 id [ch] @ line 31
-    var @ line 38
+    globvar @ line 38
         newid [_havetoken] @ line 38
         typeid [bool] @ line 38
-    var @ line 39
+    globvar @ line 39
         newid [_token] @ line 39
         typeid [int] @ line 39
-    var @ line 40
+    globvar @ line 40
         newid [attr] @ line 40
         typeid [int] @ line 40
     func @ line 42
@@ -782,8 +781,7 @@ program
             typeid [$void]
         block
             if @ line 52
-thing is: 31 '!='
-                foo
+                != @ line 52
                     funccall
                         id [peek] @ line 52
                         actuals
@@ -829,15 +827,13 @@ thing is: 31 '!='
                             id [getc] @ line 65
                             actuals
                     if @ line 66
-thing is: 30 ''
-                        foo
+                        ! @ line 66
                             funccall
                                 id [isspace] @ line 66
                                 actuals
                                     id [ch] @ line 66
                         block
-thing is: 7 'break'
-                            foo
+                            break @ line 67
             if @ line 71
                 == @ line 71
                     id [ch] @ line 71
@@ -949,14 +945,11 @@ thing is: 7 'break'
             typeid [bool] @ line 94
         block
             return @ line 95
-thing is: 24 '&&'
-                foo
-thing is: 33 '>='
-                    foo
+                && @ line 95
+                    >= @ line 95
                         id [ch] @ line 95
                         id [ASCII_0] @ line 95
-thing is: 32 '<='
-                    foo
+                    <= @ line 95
                         id [ch] @ line 95
                         id [ASCII_9] @ line 95
     func @ line 98
@@ -969,10 +962,8 @@ thing is: 32 '<='
             typeid [bool] @ line 98
         block
             return @ line 99
-thing is: 25 '||'
-                foo
-thing is: 25 '||'
-                    foo
+                || @ line 100
+                    || @ line 99
                         == @ line 99
                             id [ch] @ line 99
                             id [ASCII_SPACE] @ line 99
@@ -992,8 +983,7 @@ thing is: 25 '||'
                 newid [result] @ line 109
                 typeid [int] @ line 109
             for @ line 111
-thing is: 31 '!='
-                foo
+                != @ line 111
                     funccall
                         id [peek] @ line 111
                         actuals
@@ -1045,8 +1035,7 @@ thing is: 31 '!='
                     id [T] @ line 126
                     actuals
             for @ line 127
-thing is: 25 '||'
-                foo
+                || @ line 127
                     == @ line 127
                         funccall
                             id [peek] @ line 127
@@ -1112,8 +1101,7 @@ thing is: 25 '||'
                     id [F] @ line 146
                     actuals
             for @ line 147
-thing is: 25 '||'
-                foo
+                || @ line 147
                     == @ line 147
                         funccall
                             id [peek] @ line 147
@@ -1236,70 +1224,70 @@ thing is: 25 '||'
                                     actuals
             return @ line 184
                 id [result] @ line 184
-    var @ line 191
+    globvar @ line 191
         newid [EOF] @ line 191
         typeid [int] @ line 191
-    var @ line 193
+    globvar @ line 193
         newid [TK_EOF] @ line 193
         typeid [int] @ line 193
-    var @ line 194
+    globvar @ line 194
         newid [TK_EOLN] @ line 194
         typeid [int] @ line 194
-    var @ line 195
+    globvar @ line 195
         newid [TK_NUMBER] @ line 195
         typeid [int] @ line 195
-    var @ line 196
+    globvar @ line 196
         newid [TK_ADD] @ line 196
         typeid [int] @ line 196
-    var @ line 197
+    globvar @ line 197
         newid [TK_SUB] @ line 197
         typeid [int] @ line 197
-    var @ line 198
+    globvar @ line 198
         newid [TK_MUL] @ line 198
         typeid [int] @ line 198
-    var @ line 199
+    globvar @ line 199
         newid [TK_DIV] @ line 199
         typeid [int] @ line 199
-    var @ line 200
+    globvar @ line 200
         newid [TK_LPAREN] @ line 200
         typeid [int] @ line 200
-    var @ line 201
+    globvar @ line 201
         newid [TK_RPAREN] @ line 201
         typeid [int] @ line 201
-    var @ line 203
+    globvar @ line 203
         newid [ASCII_0] @ line 203
         typeid [int] @ line 203
-    var @ line 204
+    globvar @ line 204
         newid [ASCII_9] @ line 204
         typeid [int] @ line 204
-    var @ line 205
+    globvar @ line 205
         newid [ASCII_PLUS] @ line 205
         typeid [int] @ line 205
-    var @ line 206
+    globvar @ line 206
         newid [ASCII_MINUS] @ line 206
         typeid [int] @ line 206
-    var @ line 207
+    globvar @ line 207
         newid [ASCII_STAR] @ line 207
         typeid [int] @ line 207
-    var @ line 208
+    globvar @ line 208
         newid [ASCII_SLASH] @ line 208
         typeid [int] @ line 208
-    var @ line 209
+    globvar @ line 209
         newid [ASCII_LPAREN] @ line 209
         typeid [int] @ line 209
-    var @ line 210
+    globvar @ line 210
         newid [ASCII_RPAREN] @ line 210
         typeid [int] @ line 210
-    var @ line 211
+    globvar @ line 211
         newid [ASCII_SPACE] @ line 211
         typeid [int] @ line 211
-    var @ line 212
+    globvar @ line 212
         newid [ASCII_TAB] @ line 212
         typeid [int] @ line 212
-    var @ line 213
+    globvar @ line 213
         newid [ASCII_CR] @ line 213
         typeid [int] @ line 213
-    var @ line 214
+    globvar @ line 214
         newid [ASCII_NL] @ line 214
         typeid [int] @ line 214
     func @ line 216
@@ -1382,5 +1370,5 @@ STDERR:
 
 RETURN CODE: 0
 
-Run ended on Fri Feb 24 15:56:27 2023
+Run ended on Fri Feb 24 16:09:58 2023
 
