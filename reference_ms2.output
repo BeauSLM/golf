@@ -1,0 +1,1386 @@
+Run started on Fri Feb 24 00:44:44 2023
+
+Hostname: csx2.cs.ucalgary.ca
+
+-------------------------------------------------------------------------------
+Running make |
+--------------
+
+% /usr/bin/make
+
+STDOUT:
+
+
+STDERR:
+make: *** No targets specified and no makefile found.  Stop.
+
+
+RETURN CODE: 2
+
+-------------------------------------------------------------------------------
+Locating GoLF compiler |
+------------------------
+
+Compiler will be run as ./golf
+
+-------------------------------------------------------------------------------
+Test: too few arguments |
+-------------------------
+
+% ./golf
+
+STDOUT:
+
+
+STDERR:
+Usage: ./golf [option] file.golf
+  -show string
+    	show output from a specific part of the compiler;
+    	string can be:
+    	    tokens	tokens from scanner
+    	    ast		AST constructed by parser (textual)
+    	    astview	AST constructed by parser (graphical)
+    	 (default "ast")
+
+
+RETURN CODE: 1
+
+-------------------------------------------------------------------------------
+Test: too many arguments |
+--------------------------
+
+% ./golf /dev/null /dev/zero
+
+STDOUT:
+
+
+STDERR:
+Usage: ./golf [option] file.golf
+  -show string
+    	show output from a specific part of the compiler;
+    	string can be:
+    	    tokens	tokens from scanner
+    	    ast		AST constructed by parser (textual)
+    	    astview	AST constructed by parser (graphical)
+    	 (default "ast")
+
+
+RETURN CODE: 1
+
+-------------------------------------------------------------------------------
+Test: nonexistent file |
+------------------------
+
+% ./golf /i/do/not/exist
+
+STDOUT:
+
+
+STDERR:
+open /i/do/not/exist: no such file or directory
+
+
+RETURN CODE: 1
+
+-------------------------------------------------------------------------------
+Test: func open brace in wrong place |
+--------------------------------------
+
+% ./golf /home/profs/aycock/411/TEST/ms2/parse.t1
+
+STDOUT:
+
+
+STDERR:
+error: unexpected newline at or near line 3
+
+
+RETURN CODE: 1
+
+-------------------------------------------------------------------------------
+Test: "for" open brace exception |
+----------------------------------
+
+% ./golf /home/profs/aycock/411/TEST/ms2/parse.t2
+
+STDOUT:
+program
+    func @ line 4
+        newid [main] @ line 4
+        sig
+            formals
+            typeid [$void]
+        block
+            for @ line 5
+                id [$true]
+                block
+                    emptystmt
+
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: "for" open brace in wrong place |
+---------------------------------------
+
+% ./golf /home/profs/aycock/411/TEST/ms2/parse.t3
+
+STDOUT:
+
+
+STDERR:
+error: unexpected newline at or near line 4
+
+
+RETURN CODE: 1
+
+-------------------------------------------------------------------------------
+Test: "if" open brace in wrong place |
+--------------------------------------
+
+% ./golf /home/profs/aycock/411/TEST/ms2/parse.t4
+
+STDOUT:
+
+
+STDERR:
+error: unexpected newline at or near line 4
+
+
+RETURN CODE: 1
+
+-------------------------------------------------------------------------------
+Test: weird but correct formatting |
+------------------------------------
+
+% ./golf /home/profs/aycock/411/TEST/ms2/parse.t5
+
+STDOUT:
+program
+    func @ line 3
+        newid [main] @ line 3
+        sig
+            formals
+            typeid [$void]
+        block
+            if @ line 5
+                == @ line 6
+                    + @ line 5
+                        int [2] @ line 5
+                        int [3] @ line 6
+                    int [5] @ line 7
+                block
+                    emptystmt
+
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: precedence check |
+------------------------
+
+% ./golf /home/profs/aycock/411/TEST/ms2/parse.t6
+
+STDOUT:
+program
+    func @ line 4
+        newid [foo] @ line 4
+        sig
+            formals
+            typeid [asdf] @ line 4
+        block
+            = @ line 5
+                id [x] @ line 5
+                + @ line 5
+                    int [2] @ line 5
+                    * @ line 5
+                        int [3] @ line 5
+                        int [5] @ line 5
+            = @ line 6
+                id [y] @ line 6
+                * @ line 6
+                    + @ line 6
+                        int [2] @ line 6
+                        int [3] @ line 6
+                    int [5] @ line 6
+
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: formal and actual params |
+--------------------------------
+
+% ./golf /home/profs/aycock/411/TEST/ms2/parse.t7
+
+STDOUT:
+program
+    func @ line 3
+        newid [foo] @ line 3
+        sig
+            formals
+            typeid [$void]
+        block
+            emptystmt
+    func @ line 6
+        newid [bar] @ line 6
+        sig
+            formals
+                formal
+                    newid [a1] @ line 6
+                    typeid [int] @ line 6
+                formal
+                    newid [a2] @ line 6
+                    typeid [bool] @ line 6
+                formal
+                    newid [a3] @ line 6
+                    typeid [sometype] @ line 6
+            typeid [returntype] @ line 6
+        block
+            emptystmt
+    func @ line 9
+        newid [baz] @ line 9
+        sig
+            formals
+            typeid [int] @ line 9
+        block
+            exprstmt
+                funccall
+                    id [blarg] @ line 10
+                    actuals
+                        + @ line 11
+                            int [123] @ line 11
+                            int [456] @ line 11
+                        funccall
+                            id [garble] @ line 12
+                            actuals
+                                int [789] @ line 12
+                        id [true] @ line 13
+                        funccall
+                            id [greep] @ line 14
+                            actuals
+                                id [false] @ line 14
+                                string [eek] @ line 14
+
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: unary and binary minus |
+------------------------------
+
+% ./golf /home/profs/aycock/411/TEST/ms2/parse.t8
+
+STDOUT:
+program
+    func @ line 3
+        newid [main] @ line 3
+        sig
+            formals
+            typeid [$void]
+        block
+            = @ line 4
+                id [x] @ line 4
+                - @ line 4
+                    id [a] @ line 4
+                    int [-123] @ line 4
+            = @ line 5
+                id [x] @ line 5
+                - @ line 5
+                    id [a] @ line 5
+                    int [-123] @ line 5
+            = @ line 6
+                id [x] @ line 6
+                - @ line 6
+                    id [a] @ line 6
+                    u- @ line 6
+                        int [-123] @ line 6
+            = @ line 7
+                id [x] @ line 7
+                - @ line 7
+                    id [a] @ line 7
+                    u- @ line 7
+                        id [b] @ line 7
+            = @ line 8
+                id [x] @ line 8
+                u- @ line 8
+                    u- @ line 8
+                        u- @ line 8
+                            u- @ line 8
+                                u- @ line 8
+                                    u- @ line 8
+                                        u- @ line 8
+                                            id [x] @ line 8
+
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: func open brace in wrong place, with semicolon |
+------------------------------------------------------
+
+% ./golf /home/profs/aycock/411/TEST/ms2/parse.t9
+
+STDOUT:
+
+
+STDERR:
+error: syntax error on ";" at or near line 4
+
+
+RETURN CODE: 1
+
+-------------------------------------------------------------------------------
+Test: func open brace with bonus semicolon |
+--------------------------------------------
+
+% ./golf /home/profs/aycock/411/TEST/ms2/parse.t10
+
+STDOUT:
+
+
+STDERR:
+error: syntax error on ";" at or near line 4
+
+
+RETURN CODE: 1
+
+-------------------------------------------------------------------------------
+Test: "for" open brace in wrong place, with semicolon |
+-------------------------------------------------------
+
+% ./golf /home/profs/aycock/411/TEST/ms2/parse.t11
+
+STDOUT:
+
+
+STDERR:
+error: syntax error on ";" at or near line 5
+
+
+RETURN CODE: 1
+
+-------------------------------------------------------------------------------
+Test: "for" with bonus semicolon |
+----------------------------------
+
+% ./golf /home/profs/aycock/411/TEST/ms2/parse.t12
+
+STDOUT:
+
+
+STDERR:
+error: syntax error on ";" at or near line 5
+
+
+RETURN CODE: 1
+
+-------------------------------------------------------------------------------
+Test: "if" open brace in wrong place, with semicolon |
+------------------------------------------------------
+
+% ./golf /home/profs/aycock/411/TEST/ms2/parse.t13
+
+STDOUT:
+
+
+STDERR:
+error: syntax error on ";" at or near line 5
+
+
+RETURN CODE: 1
+
+-------------------------------------------------------------------------------
+Test: "if" with bonus semicolon |
+---------------------------------
+
+% ./golf /home/profs/aycock/411/TEST/ms2/parse.t14
+
+STDOUT:
+
+
+STDERR:
+error: syntax error on ";" at or near line 5
+
+
+RETURN CODE: 1
+
+-------------------------------------------------------------------------------
+Test: func line breaks using trailing commas |
+----------------------------------------------
+
+% ./golf /home/profs/aycock/411/TEST/ms2/parse.t15
+
+STDOUT:
+program
+    func @ line 3
+        newid [foo] @ line 3
+        sig
+            formals
+                formal
+                    newid [a] @ line 3
+                    typeid [int] @ line 3
+                formal
+                    newid [b] @ line 4
+                    typeid [int] @ line 4
+                formal
+                    newid [c] @ line 5
+                    typeid [int] @ line 5
+            typeid [$void]
+        block
+            emptystmt
+
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: func line breaks sans trailing comma |
+--------------------------------------------
+
+% ./golf /home/profs/aycock/411/TEST/ms2/parse.t16
+
+STDOUT:
+
+
+STDERR:
+error: unexpected newline at or near line 6
+
+
+RETURN CODE: 1
+
+-------------------------------------------------------------------------------
+Test: func call line breaks with trailing commas |
+--------------------------------------------------
+
+% ./golf /home/profs/aycock/411/TEST/ms2/parse.t17
+
+STDOUT:
+program
+    func @ line 3
+        newid [foo] @ line 3
+        sig
+            formals
+            typeid [$void]
+        block
+            exprstmt
+                funccall
+                    id [garbled] @ line 4
+                    actuals
+                        id [a] @ line 4
+                        id [b] @ line 5
+                        id [c] @ line 6
+
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: func call line breaks sans trailing comma |
+-------------------------------------------------
+
+% ./golf /home/profs/aycock/411/TEST/ms2/parse.t18
+
+STDOUT:
+
+
+STDERR:
+error: unexpected newline at or near line 7
+
+
+RETURN CODE: 1
+
+-------------------------------------------------------------------------------
+Test: legit syntax salad |
+--------------------------
+
+% ./golf /home/profs/aycock/411/TEST/ms2/parse.t19
+
+STDOUT:
+program
+    func @ line 3
+        newid [asdf] @ line 3
+        sig
+            formals
+            typeid [$void]
+        block
+            var @ line 4
+                newid [i] @ line 4
+                typeid [int] @ line 4
+            emptystmt
+            = @ line 6
+                id [x] @ line 6
+                int [123] @ line 6
+            exprstmt
+                funccall
+                    id [foo] @ line 7
+                    actuals
+                        id [d] @ line 7
+            exprstmt
+                funccall
+                    id [bar] @ line 8
+                    actuals
+                        id [d] @ line 8
+            return @ line 9
+            return @ line 10
+                int [12345] @ line 10
+            break @ line 11
+            block
+                exprstmt @ line 13
+                    id [ego] @ line 13
+            if @ line 15
+                id [true] @ line 15
+                block
+                    exprstmt @ line 16
+                        int [42] @ line 16
+            ifelse @ line 18
+                id [false] @ line 18
+                block
+                    exprstmt @ line 19
+                        int [111] @ line 19
+                ifelse @ line 20
+                    id [fallse] @ line 20
+                    block
+                        exprstmt @ line 21
+                            int [222] @ line 21
+                    block
+                        exprstmt @ line 23
+                            int [333] @ line 23
+            ifelse @ line 25
+                id [false] @ line 25
+                block
+                    exprstmt @ line 26
+                        int [444] @ line 26
+                block
+                    exprstmt @ line 28
+                        int [555] @ line 28
+            for @ line 30
+                id [$true]
+                block
+                    exprstmt @ line 31
+                        int [666] @ line 31
+            for @ line 33
+                id [some_expr] @ line 33
+                block
+                    exprstmt @ line 34
+                        int [777] @ line 34
+            = @ line 37
+                string [abc] @ line 37
+                id [def] @ line 37
+            = @ line 38
+                == @ line 38
+                    + @ line 38
+                        id [asdf] @ line 38
+                        int [12] @ line 38
+                    int [4] @ line 38
+                id [bcd] @ line 38
+
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: assignment |
+------------------
+
+% ./golf /home/profs/aycock/411/TEST/ms2/parse.t20
+
+STDOUT:
+
+
+STDERR:
+error: syntax error on "=" at or near line 7
+
+
+RETURN CODE: 1
+
+-------------------------------------------------------------------------------
+Test: associativity test |
+--------------------------
+
+% ./golf /home/profs/aycock/411/TEST/ms2/parse.t21
+
+STDOUT:
+program
+    func @ line 3
+        newid [a_sock] @ line 3
+        sig
+            formals
+            typeid [$void]
+        block
+            var @ line 4
+                newid [a] @ line 4
+                typeid [int] @ line 4
+            var @ line 5
+                newid [b] @ line 5
+                typeid [int] @ line 5
+            var @ line 6
+                newid [c] @ line 6
+                typeid [int] @ line 6
+            var @ line 7
+                newid [d] @ line 7
+                typeid [int] @ line 7
+            var @ line 8
+                newid [e] @ line 8
+                typeid [int] @ line 8
+            exprstmt @ line 10
+                + @ line 10
+                    + @ line 10
+                        + @ line 10
+                            + @ line 10
+                                id [a] @ line 10
+                                id [b] @ line 10
+                            id [c] @ line 10
+                        id [d] @ line 10
+                    id [e] @ line 10
+            exprstmt @ line 11
+                / @ line 11
+                    / @ line 11
+                        / @ line 11
+                            / @ line 11
+                                id [a] @ line 11
+                                id [b] @ line 11
+                            id [d] @ line 11
+                        id [d] @ line 11
+                    id [e] @ line 11
+
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: a calculated move |
+-------------------------
+
+% ./golf /home/profs/aycock/411/TEST/ms2/gen.t18
+
+STDOUT:
+program
+    func @ line 5
+        newid [main] @ line 5
+        sig
+            formals
+            typeid [$void]
+        block
+            exprstmt
+                funccall
+                    id [init] @ line 6
+                    actuals
+            exprstmt
+                funccall
+                    id [parser] @ line 7
+                    actuals
+    globvar @ line 14
+        newid [_havechar] @ line 14
+        typeid [bool] @ line 14
+    globvar @ line 15
+        newid [_char] @ line 15
+        typeid [int] @ line 15
+    func @ line 17
+        newid [getc] @ line 17
+        sig
+            formals
+            typeid [int] @ line 17
+        block
+            if @ line 18
+                id [_havechar] @ line 18
+                block
+                    = @ line 19
+                        id [_havechar] @ line 19
+                        id [false] @ line 19
+                    return @ line 20
+                        id [_char] @ line 20
+            return @ line 22
+                funccall
+                    id [getchar] @ line 22
+                    actuals
+    func @ line 25
+        newid [ungetc] @ line 25
+        sig
+            formals
+                formal
+                    newid [ch] @ line 25
+                    typeid [int] @ line 25
+            typeid [$void]
+        block
+            if @ line 26
+                id [_havechar] @ line 26
+                block
+                    exprstmt
+                        funccall
+                            id [prints] @ line 27
+                            actuals
+                                string [Internal error: too many ungets!\n] @ line 27
+                    exprstmt
+                        funccall
+                            id [halt] @ line 28
+                            actuals
+            = @ line 30
+                id [_havechar] @ line 30
+                id [true] @ line 30
+            = @ line 31
+                id [_char] @ line 31
+                id [ch] @ line 31
+    globvar @ line 38
+        newid [_havetoken] @ line 38
+        typeid [bool] @ line 38
+    globvar @ line 39
+        newid [_token] @ line 39
+        typeid [int] @ line 39
+    globvar @ line 40
+        newid [attr] @ line 40
+        typeid [int] @ line 40
+    func @ line 42
+        newid [peek] @ line 42
+        sig
+            formals
+            typeid [int] @ line 42
+        block
+            if @ line 43
+                id [_havetoken] @ line 43
+                block
+                    return @ line 44
+                        id [_token] @ line 44
+            = @ line 46
+                id [_havetoken] @ line 46
+                id [true] @ line 46
+            = @ line 47
+                id [_token] @ line 47
+                funccall
+                    id [scanner] @ line 47
+                    actuals
+            return @ line 48
+                id [_token] @ line 48
+    func @ line 51
+        newid [match] @ line 51
+        sig
+            formals
+                formal
+                    newid [expect] @ line 51
+                    typeid [int] @ line 51
+            typeid [$void]
+        block
+            if @ line 52
+                != @ line 52
+                    funccall
+                        id [peek] @ line 52
+                        actuals
+                    id [expect] @ line 52
+                block
+                    exprstmt
+                        funccall
+                            id [prints] @ line 53
+                            actuals
+                                string [Error: expected ] @ line 53
+                    exprstmt
+                        funccall
+                            id [printc] @ line 54
+                            actuals
+                                id [expect] @ line 54
+                    exprstmt
+                        funccall
+                            id [prints] @ line 55
+                            actuals
+                                string [\n] @ line 55
+                    exprstmt
+                        funccall
+                            id [halt] @ line 56
+                            actuals
+            = @ line 58
+                id [_havetoken] @ line 58
+                id [false] @ line 58
+    func @ line 61
+        newid [scanner] @ line 61
+        sig
+            formals
+            typeid [int] @ line 61
+        block
+            var @ line 62
+                newid [ch] @ line 62
+                typeid [int] @ line 62
+            for @ line 64
+                id [$true]
+                block
+                    = @ line 65
+                        id [ch] @ line 65
+                        funccall
+                            id [getc] @ line 65
+                            actuals
+                    if @ line 66
+                        ! @ line 66
+                            funccall
+                                id [isspace] @ line 66
+                                actuals
+                                    id [ch] @ line 66
+                        block
+                            break @ line 67
+            if @ line 71
+                == @ line 71
+                    id [ch] @ line 71
+                    id [EOF] @ line 71
+                block
+                    return @ line 71
+                        id [TK_EOF] @ line 71
+            if @ line 72
+                == @ line 72
+                    id [ch] @ line 72
+                    id [ASCII_NL] @ line 72
+                block
+                    return @ line 72
+                        id [TK_EOLN] @ line 72
+            if @ line 73
+                == @ line 73
+                    id [ch] @ line 73
+                    id [ASCII_PLUS] @ line 73
+                block
+                    return @ line 73
+                        id [TK_ADD] @ line 73
+            if @ line 74
+                == @ line 74
+                    id [ch] @ line 74
+                    id [ASCII_MINUS] @ line 74
+                block
+                    return @ line 74
+                        id [TK_SUB] @ line 74
+            if @ line 75
+                == @ line 75
+                    id [ch] @ line 75
+                    id [ASCII_STAR] @ line 75
+                block
+                    return @ line 75
+                        id [TK_MUL] @ line 75
+            if @ line 76
+                == @ line 76
+                    id [ch] @ line 76
+                    id [ASCII_SLASH] @ line 76
+                block
+                    return @ line 76
+                        id [TK_DIV] @ line 76
+            if @ line 77
+                == @ line 77
+                    id [ch] @ line 77
+                    id [ASCII_LPAREN] @ line 77
+                block
+                    return @ line 77
+                        id [TK_LPAREN] @ line 77
+            if @ line 78
+                == @ line 78
+                    id [ch] @ line 78
+                    id [ASCII_RPAREN] @ line 78
+                block
+                    return @ line 78
+                        id [TK_RPAREN] @ line 78
+            if @ line 80
+                funccall
+                    id [isdigit] @ line 80
+                    actuals
+                        id [ch] @ line 80
+                block
+                    = @ line 81
+                        id [attr] @ line 81
+                        int [0] @ line 81
+                    for @ line 82
+                        funccall
+                            id [isdigit] @ line 82
+                            actuals
+                                id [ch] @ line 82
+                        block
+                            = @ line 83
+                                id [attr] @ line 83
+                                + @ line 83
+                                    * @ line 83
+                                        id [attr] @ line 83
+                                        int [10] @ line 83
+                                    - @ line 83
+                                        id [ch] @ line 83
+                                        id [ASCII_0] @ line 83
+                            = @ line 84
+                                id [ch] @ line 84
+                                funccall
+                                    id [getc] @ line 84
+                                    actuals
+                    exprstmt
+                        funccall
+                            id [ungetc] @ line 86
+                            actuals
+                                id [ch] @ line 86
+                    return @ line 87
+                        id [TK_NUMBER] @ line 87
+            exprstmt
+                funccall
+                    id [prints] @ line 90
+                    actuals
+                        string [Error: invalid character.\n] @ line 90
+            exprstmt
+                funccall
+                    id [halt] @ line 91
+                    actuals
+    func @ line 94
+        newid [isdigit] @ line 94
+        sig
+            formals
+                formal
+                    newid [ch] @ line 94
+                    typeid [int] @ line 94
+            typeid [bool] @ line 94
+        block
+            return @ line 95
+                && @ line 95
+                    >= @ line 95
+                        id [ch] @ line 95
+                        id [ASCII_0] @ line 95
+                    <= @ line 95
+                        id [ch] @ line 95
+                        id [ASCII_9] @ line 95
+    func @ line 98
+        newid [isspace] @ line 98
+        sig
+            formals
+                formal
+                    newid [ch] @ line 98
+                    typeid [int] @ line 98
+            typeid [bool] @ line 98
+        block
+            return @ line 99
+                || @ line 100
+                    || @ line 99
+                        == @ line 99
+                            id [ch] @ line 99
+                            id [ASCII_SPACE] @ line 99
+                        == @ line 100
+                            id [ch] @ line 100
+                            id [ASCII_TAB] @ line 100
+                    == @ line 101
+                        id [ch] @ line 101
+                        id [ASCII_CR] @ line 101
+    func @ line 108
+        newid [parser] @ line 108
+        sig
+            formals
+            typeid [$void]
+        block
+            var @ line 109
+                newid [result] @ line 109
+                typeid [int] @ line 109
+            for @ line 111
+                != @ line 111
+                    funccall
+                        id [peek] @ line 111
+                        actuals
+                    id [TK_EOF] @ line 111
+                block
+                    = @ line 112
+                        id [result] @ line 112
+                        funccall
+                            id [E] @ line 112
+                            actuals
+                    exprstmt
+                        funccall
+                            id [match] @ line 113
+                            actuals
+                                id [TK_EOLN] @ line 113
+                    exprstmt
+                        funccall
+                            id [prints] @ line 115
+                            actuals
+                                string [ = ] @ line 115
+                    exprstmt
+                        funccall
+                            id [printi] @ line 116
+                            actuals
+                                id [result] @ line 116
+                    exprstmt
+                        funccall
+                            id [prints] @ line 117
+                            actuals
+                                string [\n] @ line 117
+    func @ line 121
+        newid [E] @ line 121
+        sig
+            formals
+            typeid [int] @ line 121
+        block
+            var @ line 122
+                newid [l] @ line 122
+                typeid [int] @ line 122
+            var @ line 123
+                newid [r] @ line 123
+                typeid [int] @ line 123
+            var @ line 124
+                newid [token] @ line 124
+                typeid [int] @ line 124
+            = @ line 126
+                id [l] @ line 126
+                funccall
+                    id [T] @ line 126
+                    actuals
+            for @ line 127
+                || @ line 127
+                    == @ line 127
+                        funccall
+                            id [peek] @ line 127
+                            actuals
+                        id [TK_ADD] @ line 127
+                    == @ line 127
+                        funccall
+                            id [peek] @ line 127
+                            actuals
+                        id [TK_SUB] @ line 127
+                block
+                    = @ line 128
+                        id [token] @ line 128
+                        funccall
+                            id [peek] @ line 128
+                            actuals
+                    exprstmt
+                        funccall
+                            id [match] @ line 129
+                            actuals
+                                id [token] @ line 129
+                    = @ line 130
+                        id [r] @ line 130
+                        funccall
+                            id [T] @ line 130
+                            actuals
+                    ifelse @ line 132
+                        == @ line 132
+                            id [token] @ line 132
+                            id [TK_ADD] @ line 132
+                        block
+                            = @ line 133
+                                id [l] @ line 133
+                                + @ line 133
+                                    id [l] @ line 133
+                                    id [r] @ line 133
+                        block
+                            = @ line 135
+                                id [l] @ line 135
+                                - @ line 135
+                                    id [l] @ line 135
+                                    id [r] @ line 135
+            return @ line 138
+                id [l] @ line 138
+    func @ line 141
+        newid [T] @ line 141
+        sig
+            formals
+            typeid [int] @ line 141
+        block
+            var @ line 142
+                newid [l] @ line 142
+                typeid [int] @ line 142
+            var @ line 143
+                newid [r] @ line 143
+                typeid [int] @ line 143
+            var @ line 144
+                newid [token] @ line 144
+                typeid [int] @ line 144
+            = @ line 146
+                id [l] @ line 146
+                funccall
+                    id [F] @ line 146
+                    actuals
+            for @ line 147
+                || @ line 147
+                    == @ line 147
+                        funccall
+                            id [peek] @ line 147
+                            actuals
+                        id [TK_MUL] @ line 147
+                    == @ line 147
+                        funccall
+                            id [peek] @ line 147
+                            actuals
+                        id [TK_DIV] @ line 147
+                block
+                    = @ line 148
+                        id [token] @ line 148
+                        funccall
+                            id [peek] @ line 148
+                            actuals
+                    exprstmt
+                        funccall
+                            id [match] @ line 149
+                            actuals
+                                id [token] @ line 149
+                    = @ line 150
+                        id [r] @ line 150
+                        funccall
+                            id [F] @ line 150
+                            actuals
+                    ifelse @ line 152
+                        == @ line 152
+                            id [token] @ line 152
+                            id [TK_MUL] @ line 152
+                        block
+                            = @ line 153
+                                id [l] @ line 153
+                                * @ line 153
+                                    id [l] @ line 153
+                                    id [r] @ line 153
+                        block
+                            = @ line 155
+                                id [l] @ line 155
+                                / @ line 155
+                                    id [l] @ line 155
+                                    id [r] @ line 155
+            return @ line 158
+                id [l] @ line 158
+    func @ line 161
+        newid [F] @ line 161
+        sig
+            formals
+            typeid [int] @ line 161
+        block
+            var @ line 162
+                newid [result] @ line 162
+                typeid [int] @ line 162
+            var @ line 164
+                newid [token] @ line 164
+                typeid [int] @ line 164
+            = @ line 165
+                id [token] @ line 165
+                funccall
+                    id [peek] @ line 165
+                    actuals
+            ifelse @ line 167
+                == @ line 167
+                    id [token] @ line 167
+                    id [TK_LPAREN] @ line 167
+                block
+                    exprstmt
+                        funccall
+                            id [match] @ line 168
+                            actuals
+                                id [TK_LPAREN] @ line 168
+                    = @ line 169
+                        id [result] @ line 169
+                        funccall
+                            id [E] @ line 169
+                            actuals
+                    exprstmt
+                        funccall
+                            id [match] @ line 170
+                            actuals
+                                id [TK_RPAREN] @ line 170
+                ifelse @ line 172
+                    == @ line 172
+                        id [token] @ line 172
+                        id [TK_SUB] @ line 172
+                    block
+                        exprstmt
+                            funccall
+                                id [match] @ line 173
+                                actuals
+                                    id [TK_SUB] @ line 173
+                        = @ line 174
+                            id [result] @ line 174
+                            u- @ line 174
+                                funccall
+                                    id [F] @ line 174
+                                    actuals
+                    ifelse @ line 176
+                        == @ line 176
+                            id [token] @ line 176
+                            id [TK_NUMBER] @ line 176
+                        block
+                            exprstmt
+                                funccall
+                                    id [match] @ line 177
+                                    actuals
+                                        id [TK_NUMBER] @ line 177
+                            = @ line 178
+                                id [result] @ line 178
+                                id [attr] @ line 178
+                        block
+                            exprstmt
+                                funccall
+                                    id [prints] @ line 181
+                                    actuals
+                                        string [Error: expected factor.\n] @ line 181
+                            exprstmt
+                                funccall
+                                    id [halt] @ line 182
+                                    actuals
+            return @ line 184
+                id [result] @ line 184
+    globvar @ line 191
+        newid [EOF] @ line 191
+        typeid [int] @ line 191
+    globvar @ line 193
+        newid [TK_EOF] @ line 193
+        typeid [int] @ line 193
+    globvar @ line 194
+        newid [TK_EOLN] @ line 194
+        typeid [int] @ line 194
+    globvar @ line 195
+        newid [TK_NUMBER] @ line 195
+        typeid [int] @ line 195
+    globvar @ line 196
+        newid [TK_ADD] @ line 196
+        typeid [int] @ line 196
+    globvar @ line 197
+        newid [TK_SUB] @ line 197
+        typeid [int] @ line 197
+    globvar @ line 198
+        newid [TK_MUL] @ line 198
+        typeid [int] @ line 198
+    globvar @ line 199
+        newid [TK_DIV] @ line 199
+        typeid [int] @ line 199
+    globvar @ line 200
+        newid [TK_LPAREN] @ line 200
+        typeid [int] @ line 200
+    globvar @ line 201
+        newid [TK_RPAREN] @ line 201
+        typeid [int] @ line 201
+    globvar @ line 203
+        newid [ASCII_0] @ line 203
+        typeid [int] @ line 203
+    globvar @ line 204
+        newid [ASCII_9] @ line 204
+        typeid [int] @ line 204
+    globvar @ line 205
+        newid [ASCII_PLUS] @ line 205
+        typeid [int] @ line 205
+    globvar @ line 206
+        newid [ASCII_MINUS] @ line 206
+        typeid [int] @ line 206
+    globvar @ line 207
+        newid [ASCII_STAR] @ line 207
+        typeid [int] @ line 207
+    globvar @ line 208
+        newid [ASCII_SLASH] @ line 208
+        typeid [int] @ line 208
+    globvar @ line 209
+        newid [ASCII_LPAREN] @ line 209
+        typeid [int] @ line 209
+    globvar @ line 210
+        newid [ASCII_RPAREN] @ line 210
+        typeid [int] @ line 210
+    globvar @ line 211
+        newid [ASCII_SPACE] @ line 211
+        typeid [int] @ line 211
+    globvar @ line 212
+        newid [ASCII_TAB] @ line 212
+        typeid [int] @ line 212
+    globvar @ line 213
+        newid [ASCII_CR] @ line 213
+        typeid [int] @ line 213
+    globvar @ line 214
+        newid [ASCII_NL] @ line 214
+        typeid [int] @ line 214
+    func @ line 216
+        newid [init] @ line 216
+        sig
+            formals
+            typeid [$void]
+        block
+            = @ line 217
+                id [EOF] @ line 217
+                int [-1] @ line 217
+            = @ line 219
+                id [ASCII_0] @ line 219
+                int [48] @ line 219
+            = @ line 220
+                id [ASCII_9] @ line 220
+                int [57] @ line 220
+            = @ line 221
+                id [ASCII_PLUS] @ line 221
+                int [43] @ line 221
+            = @ line 222
+                id [ASCII_MINUS] @ line 222
+                int [45] @ line 222
+            = @ line 223
+                id [ASCII_STAR] @ line 223
+                int [42] @ line 223
+            = @ line 224
+                id [ASCII_SLASH] @ line 224
+                int [47] @ line 224
+            = @ line 225
+                id [ASCII_LPAREN] @ line 225
+                int [40] @ line 225
+            = @ line 226
+                id [ASCII_RPAREN] @ line 226
+                int [41] @ line 226
+            = @ line 227
+                id [ASCII_SPACE] @ line 227
+                int [32] @ line 227
+            = @ line 228
+                id [ASCII_TAB] @ line 228
+                int [9] @ line 228
+            = @ line 229
+                id [ASCII_CR] @ line 229
+                int [13] @ line 229
+            = @ line 230
+                id [ASCII_NL] @ line 230
+                int [10] @ line 230
+            = @ line 232
+                id [TK_EOF] @ line 232
+                int [256] @ line 232
+            = @ line 233
+                id [TK_NUMBER] @ line 233
+                int [257] @ line 233
+            = @ line 234
+                id [TK_ADD] @ line 234
+                id [ASCII_PLUS] @ line 234
+            = @ line 235
+                id [TK_SUB] @ line 235
+                id [ASCII_MINUS] @ line 235
+            = @ line 236
+                id [TK_MUL] @ line 236
+                id [ASCII_STAR] @ line 236
+            = @ line 237
+                id [TK_DIV] @ line 237
+                id [ASCII_SLASH] @ line 237
+            = @ line 238
+                id [TK_LPAREN] @ line 238
+                id [ASCII_LPAREN] @ line 238
+            = @ line 239
+                id [TK_RPAREN] @ line 239
+                id [ASCII_RPAREN] @ line 239
+            = @ line 240
+                id [TK_EOLN] @ line 240
+                id [ASCII_NL] @ line 240
+
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+Run ended on Fri Feb 24 00:44:44 2023
+
