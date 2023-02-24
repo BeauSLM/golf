@@ -569,37 +569,37 @@ ASTNode parse() {
 // it's 11 at night and i've been coding since 7 am. forgive me
 std::string ASTNode_to_string( ASTNode n ) {
     std::string numstring;
-    if ( n.linenum > 0 ) numstring = "@ line " + std::to_string( n.linenum );
+    if ( n.linenum > 0 ) numstring = " @ line " + std::to_string( n.linenum );
 
     std::string lexstring;
-    if ( n.lexeme.size() > 0) lexstring = "[" + n.lexeme + "] ";
+    if ( n.lexeme.size() > 0) lexstring = " [" + n.lexeme + "]";
 
     switch ( n.type ) {
         case AST_PROGRAM:   return "program";
-        case AST_FUNC:      return "func " + numstring;
-        case AST_NEWID:     return "newid " + lexstring + numstring;
+        case AST_FUNC:      return "func" + numstring;
+        case AST_NEWID:     return "newid" + lexstring + numstring;
         case AST_SIGNATURE: return "sig";
-        case AST_TYPEID:    return "typeid " + lexstring + numstring;
+        case AST_TYPEID:    return "typeid" + lexstring + numstring;
         case AST_BLOCK:     return "block";
-        case AST_FOR:       return "for " + numstring;
-        case AST_ID:        return "id " + lexstring + numstring;
+        case AST_FOR:       return "for" + numstring;
+        case AST_ID:        return "id" + lexstring + numstring;
         case AST_EMPTYSTMT: return "emptystmt";
         case AST_EXPRSTMT:  return "exprstmt";
-        case AST_IF:        return "if " + numstring;
-        case AST_EQ:        return "== "  + numstring;
-        case AST_PLUS:      return "+ "   + numstring;
-        case AST_MINUS:     return "- "   + numstring;
-        case AST_SLASH:     return "/ "   + numstring;
-        case AST_INT:       return "int " + lexstring + numstring;
-        case AST_ASSIGN:    return "= " + numstring;
-        case AST_STAR:      return "* " + numstring;
+        case AST_IF:        return "if" + numstring;
+        case AST_EQ:        return "=="  + numstring;
+        case AST_PLUS:      return "+"   + numstring;
+        case AST_MINUS:     return "-"   + numstring;
+        case AST_SLASH:     return "/"   + numstring;
+        case AST_INT:       return "int" + lexstring + numstring;
+        case AST_ASSIGN:    return "=" + numstring;
+        case AST_STAR:      return "*" + numstring;
         case AST_FORMAL:    return "formal";
         case AST_FORMALS:   return "formals";
         case AST_FUNCCALL:  return "funccall";
         case AST_ACTUALS:   return "actuals";
-        case AST_VAR:       return "var " + numstring;
-        case AST_UMINUS:    return "u- " + numstring;
-        case AST_STRING:    return "string " + lexstring + numstring;
+        case AST_VAR:       return "var" + numstring;
+        case AST_UMINUS:    return "u-" + numstring;
+        case AST_STRING:    return "string" + lexstring + numstring;
         default:
             printf( "thing is: %d '%s'\n", n.type, n.lexeme.data() );
             return "foo";
