@@ -1,4 +1,4 @@
-Run started on Fri Feb 24 16:09:58 2023
+Run started on Fri Feb 24 16:12:13 2023
 
 Hostname: csx2.cs.ucalgary.ca
 
@@ -547,12 +547,12 @@ program
                 block
                     exprstmt @ line 16
                         int [42] @ line 16
-            ifelse @ line 20
+            ifelse @ line 18
                 id [false] @ line 18
                 block
                     exprstmt @ line 19
                         int [111] @ line 19
-                ifelse @ line 22
+                ifelse @ line 20
                     id [fallse] @ line 20
                     block
                         exprstmt @ line 21
@@ -560,7 +560,7 @@ program
                     block
                         exprstmt @ line 23
                             int [333] @ line 23
-            ifelse @ line 27
+            ifelse @ line 25
                 id [false] @ line 25
                 block
                     exprstmt @ line 26
@@ -1062,7 +1062,7 @@ program
                         funccall
                             id [T] @ line 130
                             actuals
-                    ifelse @ line 134
+                    ifelse @ line 132
                         == @ line 132
                             id [token] @ line 132
                             id [TK_ADD] @ line 132
@@ -1128,7 +1128,7 @@ program
                         funccall
                             id [F] @ line 150
                             actuals
-                    ifelse @ line 154
+                    ifelse @ line 152
                         == @ line 152
                             id [token] @ line 152
                             id [TK_MUL] @ line 152
@@ -1163,7 +1163,7 @@ program
                 funccall
                     id [peek] @ line 165
                     actuals
-            ifelse @ line 172
+            ifelse @ line 167
                 == @ line 167
                     id [token] @ line 167
                     id [TK_LPAREN] @ line 167
@@ -1183,7 +1183,7 @@ program
                             id [match] @ line 170
                             actuals
                                 id [TK_RPAREN] @ line 170
-                ifelse @ line 176
+                ifelse @ line 172
                     == @ line 172
                         id [token] @ line 172
                         id [TK_SUB] @ line 172
@@ -1199,7 +1199,7 @@ program
                                 funccall
                                     id [F] @ line 174
                                     actuals
-                    ifelse @ line 180
+                    ifelse @ line 176
                         == @ line 176
                             id [token] @ line 176
                             id [TK_NUMBER] @ line 176
@@ -1370,5 +1370,5 @@ STDERR:
 
 RETURN CODE: 0
 
-Run ended on Fri Feb 24 16:09:58 2023
+Run ended on Fri Feb 24 16:12:13 2023
 
