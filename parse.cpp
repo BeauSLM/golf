@@ -99,7 +99,6 @@ ASTNode IfStmt() {
     }
 
     result.type    = AST_IFELSE;
-    result.linenum = tok.linenum;
     result.lexeme  = "";
 
     tok = lex();
