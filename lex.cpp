@@ -43,6 +43,8 @@ Tokinfo lex() {
     while ( ( ch = getc( fp ) ) != EOF && is_space( ch ) )
         if ( ch == '\n' ) result.linenum++;
 
+    // TODO: semicolon insertion is triggered on a newline or EOF, so just do it here
+
     result.lexeme = ch; // first (and possibly only) character of the lexeme
 
     // FSM based on our character that chooses what token to return
@@ -189,6 +191,21 @@ Tokinfo lex() {
             while ( ( ch = getc( fp ) ) != EOF && ch != '\n' )
                 ;
             ungetc( ch, fp );
+
+            // insert semicolon according to spec
+            if (   result.token == TOKEN_ID
+                || result.token == TOKEN_INT
+                || result.token == TOKEN_STRING
+                || result.token == TOKEN_BREAK
+                || result.token == TOKEN_RETURN
+                || result.token == TOKEN_RBRACE
+                || result.token == TOKEN_RPAREN
+            ) {
+                result.token  = TOKEN_SEMICOLON;
+                result.lexeme = "";
+                break;
+            }
+
             goto spin;
         case '"': // beginning of string literal
             result.lexeme.clear(); // don't include the quote in the lexeme
