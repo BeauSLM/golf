@@ -58,11 +58,7 @@ ASTNode ReturnStmt() {
 ASTNode IfStmt() {
     auto tok = expect( TOKEN_IF );
 
-    ASTNode result;
-
-    result.linenum = tok.linenum;
-    result.lexeme = tok.lexeme;
-    result.type = AST_IF;
+    ASTNode result( AST_IF, tok.linenum, tok.lexeme );
 
     result.add_child( Expression() );
 
@@ -93,7 +89,7 @@ ASTNode IfStmt() {
 ASTNode ForStmt() {
     auto tok = expect( TOKEN_FOR );
 
-    ASTNode result;
+    ASTNode result( AST_FOR, tok.linenum );
 
     // [ Condition ]
     tok = lex();
@@ -473,7 +469,7 @@ ASTNode UnaryExpr() {
 
 // SourceFile
 ASTNode parse() {
-    ASTNode root;
+    ASTNode root( AST_PROGRAM );
 
     Tokinfo tok;
 
