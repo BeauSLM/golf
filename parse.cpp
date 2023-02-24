@@ -93,14 +93,17 @@ ASTNode IfStmt() {
         result.add_child( blk );
     }
 
-    tok = lex();
-
-    if ( tok.token != TOKEN_ELSE ) {
+    if ( ( tok = lex() ).token != TOKEN_ELSE ) {
         unlex( tok );
         return result;
     }
 
-    result.type = AST_IFELSE;
+    result.type    = AST_IFELSE;
+    result.linenum = tok.linenum;
+    result.lexeme  = "";
+
+    tok = lex();
+    unlex( tok );
 
     if ( tok.token == TOKEN_LBRACE ) {
         auto blk = Block();
@@ -108,10 +111,8 @@ ASTNode IfStmt() {
     } else if ( tok.token == TOKEN_IF ) {
         auto ifstmt = IfStmt();
         result.add_child( ifstmt );
-    } else {
-        // TODO: make decent error
-        error( tok.linenum, "" );
-    }
+    } else
+        error( tok.linenum, "syntax error o\"%s\"", tok.lexeme.data() );
 
     return result;
 }
@@ -598,6 +599,7 @@ std::string ASTNode_to_string( ASTNode n ) {
         case AST_EMPTYSTMT: return "emptystmt";
         case AST_EXPRSTMT:  return "exprstmt";
         case AST_IF:        return "if" + numstring;
+        case AST_IFELSE:    return "elseif" + numstring;
         case AST_EQ:        return "=="  + numstring;
         case AST_PLUS:      return "+"   + numstring;
         case AST_MINUS:     return "-"   + numstring;

@@ -18,7 +18,6 @@ enum ASTNodeID {
 
     // keywords
     AST_BREAK,
-    AST_ELSE,
     AST_FOR,
     AST_FUNC,
     AST_IF,
