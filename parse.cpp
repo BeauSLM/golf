@@ -240,7 +240,9 @@ ASTNode FunctionDecl() {
     ASTNode formals ( AST_FORMALS );
 
     tok = lex();
+    // printf("token's lexeme: %s\n", tok.lexeme.data() );
     unlex( tok );
+    // printf("token's lexeme: %s, %d\n", (tok = lex()).lexeme.data(), tok.token );
 
     if ( tok.token == TOKEN_ID ) {
         // ParameterList
@@ -283,9 +285,11 @@ ASTNode TopLevelDecl() {
 
     switch ( tok.token ) {
         case TOKEN_FUNC:
-            result =  FunctionDecl();
+            result = FunctionDecl();
+            break;
         case TOKEN_VAR:
-            result =  VarDecl();
+            result = VarDecl();
+            break;
         default:
             printf("current token is: %s\n", tok.lexeme.data());
             error( tok.linenum, "top level declarations must begin with 'func' or 'var'" );

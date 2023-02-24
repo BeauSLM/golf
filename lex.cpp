@@ -10,6 +10,7 @@ bool is_space( int c ) { return c == '\n' || c == '\t' || c == ' ' || c == '\r';
 bool is_letter( int c ) { return isalpha( c ) || c == '_'; }
 
 std::queue<Tokinfo> tokens;
+std::queue<Tokinfo> semicolons; // HACK: unlex semicolons with lower priority???
 
 void unlex( Tokinfo t ) { tokens.push( t ); }
 
@@ -24,6 +25,12 @@ Tokinfo lex() {
     if ( !tokens.empty() ) {
         result = tokens.front();
         tokens.pop();
+        return result;
+    }
+
+    if ( !semicolons.empty() ) {
+        result = semicolons.front();
+        semicolons.pop();
         return result;
     }
 
@@ -84,7 +91,7 @@ Tokinfo lex() {
 
             // peek next char to see if its a newline. if so, insert a semicolon
             if ( ( ch = getc( fp ) ) == '\n' )
-                unlex( Tokinfo { TOKEN_SEMICOLON, result.linenum, "", } );
+                semicolons.push ( Tokinfo { TOKEN_SEMICOLON, result.linenum, "", } );
 
             // put back to mimick "peeking"
             ungetc( ch, fp );
@@ -105,7 +112,7 @@ Tokinfo lex() {
 
             // peek next char to see if its a newline. if so, insert a semicolon
             if ( ( ch = getc( fp ) ) == '\n' )
-                unlex( Tokinfo { TOKEN_SEMICOLON, result.linenum, "", } );
+                semicolons.push( Tokinfo { TOKEN_SEMICOLON, result.linenum, "", } );
 
             // put back to mimick "peeking"
             ungetc( ch, fp );
@@ -210,7 +217,7 @@ Tokinfo lex() {
 
             // add semicolon if this thing is the last thing on the line or in file
             if ( ( ch = getc( fp ) ) == '\n' )
-                unlex( Tokinfo{ TOKEN_SEMICOLON, result.linenum, "", } );
+                semicolons.push( Tokinfo{ TOKEN_SEMICOLON, result.linenum, "", } );
 
             result.token = TOKEN_STRING;
             ungetc( ch, fp );
@@ -226,7 +233,7 @@ Tokinfo lex() {
                     result.lexeme += ch;
 
                 // add semicolon if this thing is the last thing on the line or in file
-                if ( ch == '\n' ) unlex( Tokinfo { TOKEN_SEMICOLON, result.linenum, "", } );
+                if ( ch == '\n' ) semicolons.push( Tokinfo { TOKEN_SEMICOLON, result.linenum, "", } );
 
                 result.token = TOKEN_INT;
                 ungetc( ch, fp );
@@ -252,7 +259,7 @@ Tokinfo lex() {
 
                 // if end of line and token is break, return, or an identifier, insert a semicolon
                 if ( ( ch == '\n' ) && ( result.token == TOKEN_BREAK || result.token == TOKEN_RETURN || result.token == TOKEN_ID ) )
-                    unlex( Tokinfo { TOKEN_SEMICOLON, result.linenum, "", } );
+                    semicolons.push( Tokinfo { TOKEN_SEMICOLON, result.linenum, "", } );
 
                 ungetc( ch, fp );
                 break;
