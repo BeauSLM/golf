@@ -7,7 +7,7 @@
 #include "lex.hpp"
 
 enum ASTNodeID {
-    // TODO: populate
+    // TODO: sort and prune
     AST_PROGRAM,
     AST_SIGNATURE,
     AST_FORMAL,

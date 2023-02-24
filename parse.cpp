@@ -589,6 +589,7 @@ std::string ASTNode_to_string( ASTNode n ) {
     if ( n.lexeme.size() > 0) lexstring = " [" + n.lexeme + "]";
 
     switch ( n.type ) {
+        // TODO: sort and prune
         case AST_PROGRAM:   return "program";
         case AST_FUNC:      return "func" + numstring;
         case AST_NEWID:     return "newid" + lexstring + numstring;
@@ -598,10 +599,11 @@ std::string ASTNode_to_string( ASTNode n ) {
         case AST_FOR:       return "for" + numstring;
         case AST_ID:        return "id" + lexstring + numstring;
         case AST_EMPTYSTMT: return "emptystmt";
-        case AST_EXPRSTMT:  return "exprstmt";
+        case AST_EXPRSTMT:  return "exprstmt" + numstring;
         case AST_IF:        return "if" + numstring;
         case AST_IFELSE:    return "ifelse" + numstring;
         case AST_EQ:        return "=="  + numstring;
+        case AST_NEQ:       return "!="  + numstring;
         case AST_PLUS:      return "+"   + numstring;
         case AST_MINUS:     return "-"   + numstring;
         case AST_SLASH:     return "/"   + numstring;
@@ -616,6 +618,13 @@ std::string ASTNode_to_string( ASTNode n ) {
         case AST_UMINUS:    return "u-" + numstring;
         case AST_STRING:    return "string" + lexstring + numstring;
         case AST_RETURN:    return "return" + numstring;
+        case AST_BREAK:     return "break" + numstring;
+        case AST_LOGIC_NOT: return "!" + numstring;
+        case AST_LOGIC_AND: return "&&" + numstring;
+        case AST_LOGIC_OR:  return "||" + numstring;
+        case AST_LEQ:       return "<=" + numstring;
+        case AST_GEQ:       return ">=" + numstring;
+        case AST_GLOBVAR:   return "globvar" + numstring;
         default:
             printf( "thing is: %d '%s'\n", n.type, n.lexeme.data() );
             return "foo";
