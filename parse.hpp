@@ -35,7 +35,7 @@ enum ASTNodeID {
     AST_UMINUS,
     AST_STAR,
     AST_SLASH,
-    AST_PERCENT,
+    AST_MODULUS,
     AST_LOGIC_AND,
     AST_LOGIC_OR,
     AST_EQ,     // ==

@@ -144,13 +144,13 @@ ASTNode PL5() {
     ASTNode result = UnaryExpr();
 
     Tokinfo tok;
-    while ( ( tok = lex() ).token == TOKEN_STAR || tok.token == TOKEN_SLASH || tok.token == TOKEN_PERCENT ) {
+    while ( ( tok = lex() ).token == TOKEN_STAR || tok.token == TOKEN_SLASH || tok.token == TOKEN_MODULUS ) {
         auto right = UnaryExpr();
         auto left = result;
         result = ASTNode ( AST_UNSET, tok.linenum, tok.lexeme );
         if ( tok.token == TOKEN_STAR ) result.type = AST_STAR;
         if ( tok.token == TOKEN_SLASH ) result.type = AST_SLASH;
-        if ( tok.token == TOKEN_PERCENT ) result.type = AST_PERCENT;
+        if ( tok.token == TOKEN_MODULUS ) result.type = AST_MODULUS;
 
         result.add_child( left );
         result.add_child( right );

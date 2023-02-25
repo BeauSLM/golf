@@ -83,7 +83,7 @@ Tokinfo lex() {
             result.token = TOKEN_STAR;
             break;
         case '%':
-            result.token = TOKEN_PERCENT;
+            result.token = TOKEN_MODULUS;
             break;
         case '(':
             result.token = TOKEN_LPAREN;
@@ -310,7 +310,7 @@ const char *token_to_string( TokenID token ) {
         case TOKEN_MINUS:     return "-";
         case TOKEN_STAR:      return "*";
         case TOKEN_SLASH:     return "/";
-        case TOKEN_PERCENT:   return "%";
+        case TOKEN_MODULUS:   return "%";
         case TOKEN_LOGIC_AND: return "&&";
         case TOKEN_LOGIC_OR:  return "||";
         case TOKEN_EQ:        return "==";
