@@ -1,6 +1,3 @@
-// TODO: use newid and not new id in the right places
-// TODO: factor out switches in expressions
-
 #include "parse.hpp"
 #include "lex.hpp"
 #include "error.hpp"
@@ -213,7 +210,10 @@ ASTNode PL3() {
                 result.type = AST_NEQ;
                 break;
             default:
-                // TODO: FIX THIS
+                // NOTE: this is actually unreachable:
+                // the condition for the loop enforces that tok.token
+                // is one of the six cases I check here, which can be
+                // easily verified by inspection
                 error( tok.linenum, "unreachable" );
         }
 
@@ -527,9 +527,6 @@ ASTNode UnaryExpr() {
 
             auto exp = UnaryExpr();
 
-            // negative int literals
-            // HACK: if negative int comes back, its the child of a sub.
-            // REVIEW: I think its possible to do the negative int case better
             if ( exp.type == AST_INT && exp.lexeme[0] != '-' ) {
                 result = exp;
                 result.lexeme = "-" + result.lexeme;
@@ -542,7 +539,6 @@ ASTNode UnaryExpr() {
 
             result = Operand();
 
-            // REVIEW: why multiple sets of arguments???
             while ( ( tok = lex() ).token == TOKEN_LPAREN ) {
                 unlex( tok );
 
@@ -579,7 +575,6 @@ ASTNode parse() {
     return root;
 }
 
-// it's 11 at night and i've been coding since 7 am. forgive me
 std::string ASTNode_to_string( ASTNode n ) {
     std::string numstring;
     if ( n.linenum > 0 ) numstring = " @ line " + std::to_string( n.linenum );

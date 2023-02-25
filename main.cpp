@@ -7,7 +7,7 @@
 #include "parse.hpp"
 
 void printast( const ASTNode & root, int depth ) {
-    // HACK: this is cursed. like actually
+    // indent based on depth in tree
     std::string indent;
     for ( int i = 0; i < depth; i++ ) indent += "    ";
 
