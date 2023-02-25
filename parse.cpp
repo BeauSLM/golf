@@ -5,6 +5,8 @@
 ASTNode Expression();
 ASTNode Statement();
 
+// when we know what token should come next, use this
+// it throws an error if the expected token isn't next
 Tokinfo expect( TokenID type ) {
     auto tok = lex();
 
@@ -14,6 +16,7 @@ Tokinfo expect( TokenID type ) {
     return tok;
 }
 
+// check if the next token could start an expression
 bool is_expression_next() {
     auto tok = lex();
     unlex( tok );
@@ -23,18 +26,18 @@ bool is_expression_next() {
         || tok.token == TOKEN_INT
         || tok.token == TOKEN_STRING
         || tok.token == TOKEN_ID
-        || tok.token == TOKEN_LPAREN
-    ;
+        || tok.token == TOKEN_LPAREN;
 }
 
+// there are certain places where semicolon insertion makes putting a newline
+// there illegal cause a semicolon gets inserted. this function checks that
 void check_for_bad_semicolon() {
-    // check if we inserted semicolon for a newline for more specific error message
     auto tok = lex();
     unlex( tok );
     if ( tok.token != TOKEN_SEMICOLON ) return;
 
     if ( tok.lexeme == "" )
-        error( tok.linenum, "unexpected newline"  );
+        error( tok.linenum, "unexpected newline"    );
     else
         error( tok.linenum, "syntax error on \";\"" );
 }
@@ -56,16 +59,17 @@ ASTNode Operand() {
 
     switch ( tok.token ) {
         case TOKEN_INT:
-            return ASTNode ( AST_INT, tok.linenum, tok.lexeme );
+            return ASTNode ( AST_INT, tok.linenum, tok.lexeme    );
         case TOKEN_STRING:
             return ASTNode ( AST_STRING, tok.linenum, tok.lexeme );
         case TOKEN_ID:
-            return ASTNode ( AST_ID, tok.linenum, tok.lexeme );
+            return ASTNode ( AST_ID, tok.linenum, tok.lexeme     );
         default: {
-
             unlex( tok );
             expect( TOKEN_LPAREN );
+
             auto result = Expression();
+
             expect( TOKEN_RPAREN );
 
             return result;
@@ -75,6 +79,7 @@ ASTNode Operand() {
 
 ASTNode Arguments() {
     expect( TOKEN_LPAREN );
+
     ASTNode result = { AST_ACTUALS };
 
     if ( is_expression_next() ) {
@@ -106,8 +111,7 @@ ASTNode UnaryExpr() {
 
     switch ( tok.token ) {
         case TOKEN_BANG: {
-            result.type = AST_LOGIC_NOT;
-            result.linenum = tok.linenum;
+            result   = ASTNode ( AST_LOGIC_NOT, tok.linenum );
 
             auto exp = UnaryExpr();
             result.add_child( exp );
@@ -115,15 +119,15 @@ ASTNode UnaryExpr() {
             break;
         }
         case TOKEN_MINUS: {
-            result.type = AST_UMINUS;
-            result.linenum = tok.linenum;
+            result = ASTNode( AST_UMINUS, tok.linenum );
 
             auto exp = UnaryExpr();
 
             if ( exp.type == AST_INT && exp.lexeme[0] != '-' ) {
                 result = exp;
                 result.lexeme = "-" + result.lexeme;
-            } else result.add_child( exp );
+            } else
+                result.add_child( exp );
 
             break;
         }
@@ -142,6 +146,7 @@ ASTNode UnaryExpr() {
                 result.add_child( left );
                 result.add_child( right );
             }
+
             unlex( tok );
             break;
     }
@@ -153,7 +158,10 @@ ASTNode MulExpr() {
     ASTNode result = UnaryExpr();
 
     Tokinfo tok;
-    while ( ( tok = lex() ).token == TOKEN_STAR || tok.token == TOKEN_SLASH || tok.token == TOKEN_PERCENT ) {
+    while ( ( tok = lex() )
+                  .token == TOKEN_STAR
+            || tok.token == TOKEN_SLASH
+            || tok.token == TOKEN_PERCENT ) {
         auto right = UnaryExpr();
         auto left = result;
 
@@ -176,9 +184,10 @@ ASTNode AddExpr() {
     Tokinfo tok;
     while ( ( tok = lex() ).token == TOKEN_PLUS || tok.token == TOKEN_MINUS ) {
         auto right = MulExpr();
-        auto left = result;
+        auto left  = result;
+
         result = ASTNode ( AST_UNSET, tok.linenum, tok.lexeme );
-        if ( tok.token == TOKEN_PLUS ) result.type = AST_PLUS;
+        if ( tok.token == TOKEN_PLUS  ) result.type = AST_PLUS;
         if ( tok.token == TOKEN_MINUS ) result.type = AST_MINUS;
 
         result.add_child( left );
@@ -193,16 +202,17 @@ ASTNode RelExpr() {
     ASTNode result = AddExpr();
 
     Tokinfo tok;
-    // TODO: make not ugly
     while ( ( tok = lex() )
                   .token == TOKEN_EQ
             || tok.token == TOKEN_NEQ
             || tok.token == TOKEN_GEQ
             || tok.token == TOKEN_LEQ
             || tok.token == TOKEN_LT
-            || tok.token == TOKEN_GT) {
+            || tok.token == TOKEN_GT ) {
+
         auto right = AddExpr();
         auto left = result;
+
         result = ASTNode ( AST_UNSET, tok.linenum, tok.lexeme );
         switch ( tok.token ) {
             case TOKEN_EQ:
@@ -231,7 +241,7 @@ ASTNode RelExpr() {
                 error( tok.linenum, "unreachable" );
         }
 
-        result.add_child( left );
+        result.add_child( left  );
         result.add_child( right );
     }
     unlex( tok );
@@ -245,8 +255,8 @@ ASTNode AndExpr() {
     Tokinfo tok;
     while ( ( tok = lex() ).token == TOKEN_LOGIC_AND ) {
         auto right = RelExpr();
-        auto left = result;
-        result = ASTNode ( AST_LOGIC_AND, tok.linenum, tok.lexeme );
+        auto left  = result;
+        result     = ASTNode ( AST_LOGIC_AND, tok.linenum, tok.lexeme );
 
         result.add_child( left );
         result.add_child( right );
@@ -302,10 +312,10 @@ ASTNode VarDecl() {
 
     ASTNode result ( AST_VAR, tok.linenum, tok.lexeme );
 
-    auto newid = newidentifier();
-    result.add_child( newid );
-
+    auto newid     = newidentifier();
     auto typeident = typeidentifier();
+
+    result.add_child( newid );
     result.add_child( typeident );
 
     return result;
@@ -378,13 +388,15 @@ ASTNode ForStmt() {
 
     ASTNode result( AST_FOR, tok.linenum );
 
-    // [ Condition ]
     tok = lex();
     unlex( tok );
+
+    // [ Condition ]
     if ( tok.token != TOKEN_LBRACE ) {
         auto expr = Expression();
         result.add_child( expr );
-    } else result.add_child( { AST_ID, -1, "$true" } );
+    } else
+        result.add_child( { AST_ID, -1, "$true" } );
 
     tok = lex();
     unlex( tok );
@@ -434,7 +446,6 @@ ASTNode Statement() {
                 result   = ASTNode( AST_EXPRSTMT, tmp.linenum );
                 result.add_child( tmp );
             }
-
             unlex( tok );
 
             return result;
@@ -445,10 +456,10 @@ ASTNode Statement() {
 ASTNode ParameterDecl() {
     ASTNode result ( AST_FORMAL );
 
-    auto newid = newidentifier();
-    result.add_child( newid );
-
+    auto newid     = newidentifier();
     auto typeident = typeidentifier();
+
+    result.add_child( newid );
     result.add_child( typeident );
 
     return result;

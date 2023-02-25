@@ -12,7 +12,6 @@ int main( int argc, char *argv[] ) {
         return EXIT_FAILURE;
     }
 
-
     // open file argument and give the FILE * to the lexer
     {
         // NOTE: if I need to close this instead of letting OS take care of it, I'll have to move this declaration
