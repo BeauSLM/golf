@@ -34,9 +34,9 @@ enum ASTNodeID {
     AST_PLUS,
     AST_MINUS,
     AST_UMINUS,
-    AST_STAR,
-    AST_SLASH,
-    AST_MODULUS,
+    AST_MUL,
+    AST_DIV,
+    AST_MOD,
     AST_ASSIGN, // =
     AST_LOGIC_AND,
     AST_LOGIC_OR,

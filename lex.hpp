@@ -19,7 +19,7 @@ enum TokenID {
     TOKEN_MINUS,
     TOKEN_STAR,
     TOKEN_SLASH,
-    TOKEN_MODULUS,
+    TOKEN_PERCENT,
     TOKEN_LOGIC_AND,
     TOKEN_LOGIC_OR,
     TOKEN_EQ,     // ==
