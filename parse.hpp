@@ -7,7 +7,7 @@
 #include "lex.hpp"
 
 enum ASTNodeID {
-    // TODO: sort and prune
+    // "program structure" or someth idk
     AST_PROGRAM,
     AST_SIGNATURE,
     AST_FORMAL,
@@ -15,6 +15,10 @@ enum ASTNodeID {
     AST_BLOCK,
     AST_ACTUALS,
     AST_FUNCCALL,
+
+    // statements
+    AST_EXPRSTMT,
+    AST_EMPTYSTMT,
 
     // keywords
     AST_BREAK,
@@ -25,23 +29,20 @@ enum ASTNodeID {
     AST_RETURN,
     AST_VAR,
     AST_GLOBVAR,
-    AST_EXPR,
-    AST_EXPRSTMT,
-    AST_EMPTYSTMT,
 
-    // operators and punctuation
+    // operators
     AST_PLUS,
     AST_MINUS,
     AST_UMINUS,
     AST_STAR,
     AST_SLASH,
     AST_MODULUS,
+    AST_ASSIGN, // =
     AST_LOGIC_AND,
     AST_LOGIC_OR,
     AST_EQ,     // ==
     AST_LT,
     AST_GT,
-    AST_ASSIGN, // =
     AST_LOGIC_NOT,
     AST_NEQ,
     AST_LEQ,    // <=
@@ -52,6 +53,7 @@ enum ASTNodeID {
     AST_NEWID,
     AST_TYPEID,
 
+    // literals
     AST_INT,
     AST_STRING,
 
@@ -59,7 +61,6 @@ enum ASTNodeID {
 };
 
 struct ASTNode {
-    // REVIEW: has linenum and lexeme like Token, should I factor them out?
     ASTNodeID type = AST_UNSET;
     int linenum = -1;
     std::string lexeme;
