@@ -82,6 +82,7 @@ ASTNode Arguments() {
 
     ASTNode result = { AST_ACTUALS };
 
+    // ExpressionList - at least one expression, but possibly more, all delimited by commas
     if ( is_expression_next() ) {
         auto expr = Expression();
         result.add_child( expr );
@@ -110,6 +111,7 @@ ASTNode UnaryExpr() {
     ASTNode result;
 
     switch ( tok.token ) {
+        // logical not
         case TOKEN_BANG: {
             result   = ASTNode ( AST_LOGIC_NOT, tok.linenum );
 
@@ -118,6 +120,7 @@ ASTNode UnaryExpr() {
 
             break;
         }
+        // unary minus aka "take the negative"
         case TOKEN_MINUS: {
             result = ASTNode( AST_UMINUS, tok.linenum );
 
@@ -158,6 +161,7 @@ ASTNode MulExpr() {
     ASTNode result = UnaryExpr();
 
     Tokinfo tok;
+    // children are unary expressions, multiplied
     while ( ( tok = lex() )
                   .token == TOKEN_STAR
             || tok.token == TOKEN_SLASH
@@ -182,6 +186,7 @@ ASTNode AddExpr() {
     ASTNode result = MulExpr();
 
     Tokinfo tok;
+    // children are Mul expressions, added to each other
     while ( ( tok = lex() ).token == TOKEN_PLUS || tok.token == TOKEN_MINUS ) {
         auto right = MulExpr();
         auto left  = result;
@@ -202,6 +207,7 @@ ASTNode RelExpr() {
     ASTNode result = AddExpr();
 
     Tokinfo tok;
+    // children are Add expressions, compared to each other
     while ( ( tok = lex() )
                   .token == TOKEN_EQ
             || tok.token == TOKEN_NEQ
@@ -253,6 +259,7 @@ ASTNode AndExpr() {
     ASTNode result = RelExpr();
 
     Tokinfo tok;
+    // children are relation/comparison Expressions, OR-ed together
     while ( ( tok = lex() ).token == TOKEN_LOGIC_AND ) {
         auto right = RelExpr();
         auto left  = result;
@@ -270,6 +277,7 @@ ASTNode OrExpr() {
     ASTNode result = AndExpr();
 
     Tokinfo tok;
+    // children are And Expressions, OR-ed together
     while ( ( tok = lex() ).token == TOKEN_LOGIC_OR ) {
         auto right = AndExpr();
         auto left = result;
@@ -348,6 +356,7 @@ ASTNode IfStmt() {
 
     ASTNode result( AST_IF, tok.linenum, tok.lexeme );
 
+    // Condition
     {
         auto expr = Expression();
         result.add_child( expr );
@@ -355,11 +364,13 @@ ASTNode IfStmt() {
 
     check_for_bad_semicolon();
 
+    // block to execute if condition is true
     {
         auto blk = Block();
         result.add_child( blk );
     }
 
+    // if no else, we're done
     if ( ( tok = lex() ).token != TOKEN_ELSE ) {
         unlex( tok );
         return result;
@@ -371,6 +382,8 @@ ASTNode IfStmt() {
     tok = lex();
     unlex( tok );
 
+    // else -> lbrace = if/else
+    // else -> if     = if/elseif i.e. another if statement
     if ( tok.token == TOKEN_LBRACE ) {
         auto blk = Block();
         result.add_child( blk );
@@ -431,6 +444,7 @@ ASTNode Statement() {
 
             auto result = Expression();
 
+            // Assignment
             if ( ( tok = lex() ).token == TOKEN_ASSIGN ) {
                 auto right = Expression();
 
@@ -484,12 +498,13 @@ ASTNode FunctionDecl() {
     tok = lex();
     unlex( tok );
 
+    // ParameterList
     if ( tok.token == TOKEN_ID ) {
-        // ParameterList
 
         auto params = ParameterDecl();
         formals.add_child( params );
 
+        // parameters delimited by commas
         while ( ( tok = lex() ).token == TOKEN_COMMA
              && ( tok = lex() ).token == TOKEN_ID ) {
             unlex( tok );
@@ -512,6 +527,7 @@ ASTNode FunctionDecl() {
     tok = lex();
     unlex( tok );
 
+    // return type
     if ( tok.token == TOKEN_ID ) {
         auto tident = typeidentifier();
         sig.add_child( tident );
@@ -525,8 +541,9 @@ ASTNode FunctionDecl() {
 
     check_for_bad_semicolon();
 
+    // FunctionBody
     auto blk = Block();
-    result.add_child( blk ); // FunctionBody
+    result.add_child( blk );
 
     return result;
 }
