@@ -593,7 +593,7 @@ std::string ASTNode_to_string( ASTNode n ) {
     if ( n.linenum > 0 ) numstring = " @ line " + std::to_string( n.linenum );
 
     std::string lexstring;
-    if ( n.lexeme.size() > 0) lexstring = " [" + n.lexeme + "]";
+    if ( n.lexeme.size() > 0 ) lexstring = " [" + n.lexeme + "]";
 
     switch ( n.type ) {
         // "program structure" or someth idk
@@ -622,9 +622,9 @@ std::string ASTNode_to_string( ASTNode n ) {
         case AST_PLUS:      return "+"        + numstring;
         case AST_MINUS:     return "-"        + numstring;
         case AST_UMINUS:    return "u-"       + numstring;
-        case AST_MUL:      return "*"        + numstring;
-        case AST_DIV:     return "/"        + numstring;
-        case AST_MOD:   return "%"        + numstring;
+        case AST_MUL:       return "*"        + numstring;
+        case AST_DIV:       return "/"        + numstring;
+        case AST_MOD:       return "%"        + numstring;
         case AST_ASSIGN:    return "="        + numstring;
         case AST_LOGIC_AND: return "&&"       + numstring;
         case AST_LOGIC_OR:  return "||"       + numstring;
