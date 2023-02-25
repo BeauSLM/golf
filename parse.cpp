@@ -553,21 +553,6 @@ ASTNode TopLevelDecl() {
     return result;
 }
 
-ASTNode Assignment() {
-    ASTNode result = { AST_ASSIGN };
-
-    auto expr = Expression();
-    result.add_child( expr );
-
-    result.linenum = expect( TOKEN_ASSIGN ).linenum;
-
-    expr = Expression();
-    result.add_child( expr );
-
-    return result;
-}
-
-
 // SourceFile
 ASTNode parse() {
     ASTNode root( AST_PROGRAM );
