@@ -641,3 +641,14 @@ std::string ASTNode_to_string( ASTNode n ) {
     error( -1, "unreachable in node to_string" );
     return "";
 }
+
+void printast( const ASTNode & root, int depth ) {
+    // indent based on depth in tree
+    std::string indent;
+    for ( int i = 0; i < depth; i++ ) indent += "    ";
+
+    printf( "%s%s\n", indent.data(), ASTNode_to_string( root ).data() );
+
+    for ( const auto & kid : root.children )
+        printast( kid, depth + 1);
+}

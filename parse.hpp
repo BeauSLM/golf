@@ -74,4 +74,6 @@ struct ASTNode {
 
 ASTNode parse();
 
+// printing utilities
 std::string ASTNode_to_string( ASTNode n );
+void printast( const ASTNode & root, int depth );
