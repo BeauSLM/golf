@@ -137,13 +137,14 @@ ASTNode ForStmt() {
     return result;
 }
 
-ASTNode PL5() {
+ASTNode MulExpr() {
     ASTNode result = UnaryExpr();
 
     Tokinfo tok;
     while ( ( tok = lex() ).token == TOKEN_STAR || tok.token == TOKEN_SLASH || tok.token == TOKEN_PERCENT ) {
         auto right = UnaryExpr();
         auto left = result;
+
         result = ASTNode ( AST_UNSET, tok.linenum, tok.lexeme );
         if ( tok.token == TOKEN_STAR    ) result.type = AST_MUL;
         if ( tok.token == TOKEN_SLASH   ) result.type = AST_DIV;
@@ -157,12 +158,12 @@ ASTNode PL5() {
     return result;
 }
 
-ASTNode PL4() {
-    ASTNode result = PL5();
+ASTNode AddExpr() {
+    ASTNode result = MulExpr();
 
     Tokinfo tok;
     while ( ( tok = lex() ).token == TOKEN_PLUS || tok.token == TOKEN_MINUS ) {
-        auto right = PL5();
+        auto right = MulExpr();
         auto left = result;
         result = ASTNode ( AST_UNSET, tok.linenum, tok.lexeme );
         if ( tok.token == TOKEN_PLUS ) result.type = AST_PLUS;
@@ -176,10 +177,11 @@ ASTNode PL4() {
     return result;
 }
 
-ASTNode PL3() {
-    ASTNode result = PL4();
+ASTNode RelExpr() {
+    ASTNode result = AddExpr();
 
     Tokinfo tok;
+    // TODO: make not ugly
     while ( ( tok = lex() )
                   .token == TOKEN_EQ
             || tok.token == TOKEN_NEQ
@@ -187,7 +189,7 @@ ASTNode PL3() {
             || tok.token == TOKEN_LEQ
             || tok.token == TOKEN_LT
             || tok.token == TOKEN_GT) {
-        auto right = PL4();
+        auto right = AddExpr();
         auto left = result;
         result = ASTNode ( AST_UNSET, tok.linenum, tok.lexeme );
         switch ( tok.token ) {
@@ -225,12 +227,12 @@ ASTNode PL3() {
     return result;
 }
 
-ASTNode PL2() {
-    ASTNode result = PL3();
+ASTNode AndExpr() {
+    ASTNode result = RelExpr();
 
     Tokinfo tok;
     while ( ( tok = lex() ).token == TOKEN_LOGIC_AND ) {
-        auto right = PL3();
+        auto right = RelExpr();
         auto left = result;
         result = ASTNode ( AST_LOGIC_AND, tok.linenum, tok.lexeme );
 
@@ -242,12 +244,12 @@ ASTNode PL2() {
     return result;
 }
 
-ASTNode PL1() {
-    ASTNode result = PL2();
+ASTNode OrExpr() {
+    ASTNode result = AndExpr();
 
     Tokinfo tok;
     while ( ( tok = lex() ).token == TOKEN_LOGIC_OR ) {
-        auto right = PL2();
+        auto right = AndExpr();
         auto left = result;
         result = ASTNode ( AST_LOGIC_OR, tok.linenum, tok.lexeme );
 
@@ -260,7 +262,7 @@ ASTNode PL1() {
 }
 
 ASTNode Expression() {
-    return PL1();
+    return OrExpr();
 }
 
 ASTNode Block() {
@@ -609,9 +611,9 @@ std::string ASTNode_to_string( ASTNode n ) {
         case AST_PLUS:      return "+"        + numstring;
         case AST_MINUS:     return "-"        + numstring;
         case AST_UMINUS:    return "u-"       + numstring;
-        case AST_STAR:      return "*"        + numstring;
-        case AST_SLASH:     return "/"        + numstring;
-        case AST_MODULUS:   return "%"        + numstring;
+        case AST_MUL:      return "*"        + numstring;
+        case AST_DIV:     return "/"        + numstring;
+        case AST_MOD:   return "%"        + numstring;
         case AST_ASSIGN:    return "="        + numstring;
         case AST_LOGIC_AND: return "&&"       + numstring;
         case AST_LOGIC_OR:  return "||"       + numstring;
