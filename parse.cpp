@@ -3,8 +3,6 @@
 #include "error.hpp"
 
 ASTNode Expression();
-ASTNode Block();
-ASTNode UnaryExpr();
 ASTNode Statement();
 
 Tokinfo expect( TokenID type ) {
@@ -53,86 +51,100 @@ ASTNode typeidentifier() {
     return ASTNode ( AST_TYPEID, tok.linenum, tok.lexeme );
 }
 
-ASTNode BreakStmt() {
-    auto tok = expect( TOKEN_BREAK );
+ASTNode Operand() {
+    auto tok = lex();
 
-    return ASTNode ( AST_BREAK, tok.linenum, tok.lexeme );
+    switch ( tok.token ) {
+        case TOKEN_INT:
+            return ASTNode ( AST_INT, tok.linenum, tok.lexeme );
+        case TOKEN_STRING:
+            return ASTNode ( AST_STRING, tok.linenum, tok.lexeme );
+        case TOKEN_ID:
+            return ASTNode ( AST_ID, tok.linenum, tok.lexeme );
+        default: {
+
+            unlex( tok );
+            expect( TOKEN_LPAREN );
+            auto result = Expression();
+            expect( TOKEN_RPAREN );
+
+            return result;
+        }
+    }
 }
 
-ASTNode ReturnStmt() {
-    auto tok = expect( TOKEN_RETURN );
+ASTNode Arguments() {
+    expect( TOKEN_LPAREN );
+    ASTNode result = { AST_ACTUALS };
 
-    ASTNode result( AST_RETURN, tok.linenum, tok.lexeme );
-
-    // optional expression to return
     if ( is_expression_next() ) {
-        auto exp = Expression();
-        result.add_child( exp );
-    }
-
-    return result;
-}
-
-ASTNode IfStmt() {
-    auto tok = expect( TOKEN_IF );
-
-    ASTNode result( AST_IF, tok.linenum, tok.lexeme );
-
-    {
         auto expr = Expression();
         result.add_child( expr );
-    }
 
-    check_for_bad_semicolon();
-
-    {
-        auto blk = Block();
-        result.add_child( blk );
-    }
-
-    if ( ( tok = lex() ).token != TOKEN_ELSE ) {
+        Tokinfo tok;
+        while ( ( tok = lex() ).token == TOKEN_COMMA && is_expression_next() ) {
+            expr = Expression();
+            result.add_child( expr );
+        }
         unlex( tok );
-        return result;
+
+        check_for_bad_semicolon();
+
+        // consume trailing comma in params list if there is one
+        if ( ( tok = lex() ).token != TOKEN_COMMA ) unlex( tok );
     }
 
-    result.type    = AST_IFELSE;
-    result.lexeme  = "";
-
-    tok = lex();
-    unlex( tok );
-
-    if ( tok.token == TOKEN_LBRACE ) {
-        auto blk = Block();
-        result.add_child( blk );
-    } else if ( tok.token == TOKEN_IF ) {
-        auto ifstmt = IfStmt();
-        result.add_child( ifstmt );
-    } else
-        error( tok.linenum, "syntax error o\"%s\"", tok.lexeme.data() );
+    expect( TOKEN_RPAREN );
 
     return result;
 }
 
-ASTNode ForStmt() {
-    auto tok = expect( TOKEN_FOR );
+ASTNode UnaryExpr() {
+    auto tok = lex();
 
-    ASTNode result( AST_FOR, tok.linenum );
+    ASTNode result;
 
-    // [ Condition ]
-    tok = lex();
-    unlex( tok );
-    if ( tok.token != TOKEN_LBRACE ) {
-        auto expr = Expression();
-        result.add_child( expr );
-    } else result.add_child( { AST_ID, -1, "$true" } );
+    switch ( tok.token ) {
+        case TOKEN_BANG: {
+            result.type = AST_LOGIC_NOT;
+            result.linenum = tok.linenum;
 
-    tok = lex();
-    unlex( tok );
+            auto exp = UnaryExpr();
+            result.add_child( exp );
 
-    check_for_bad_semicolon();
+            break;
+        }
+        case TOKEN_MINUS: {
+            result.type = AST_UMINUS;
+            result.linenum = tok.linenum;
 
-    auto blk = Block();
-    result.add_child( blk );
+            auto exp = UnaryExpr();
+
+            if ( exp.type == AST_INT && exp.lexeme[0] != '-' ) {
+                result = exp;
+                result.lexeme = "-" + result.lexeme;
+            } else result.add_child( exp );
+
+            break;
+        }
+        default:
+            unlex( tok );
+
+            result = Operand();
+
+            while ( ( tok = lex() ).token == TOKEN_LPAREN ) {
+                unlex( tok );
+
+                auto left  = result;
+                result     = ASTNode( AST_FUNCCALL );
+                auto right = Arguments();
+
+                result.add_child( left );
+                result.add_child( right );
+            }
+            unlex( tok );
+            break;
+    }
 
     return result;
 }
@@ -265,6 +277,40 @@ ASTNode Expression() {
     return OrExpr();
 }
 
+ASTNode BreakStmt() {
+    auto tok = expect( TOKEN_BREAK );
+
+    return ASTNode ( AST_BREAK, tok.linenum, tok.lexeme );
+}
+
+ASTNode ReturnStmt() {
+    auto tok = expect( TOKEN_RETURN );
+
+    ASTNode result( AST_RETURN, tok.linenum, tok.lexeme );
+
+    // optional expression to return
+    if ( is_expression_next() ) {
+        auto exp = Expression();
+        result.add_child( exp );
+    }
+
+    return result;
+}
+
+ASTNode VarDecl() {
+    auto tok = expect( TOKEN_VAR );
+
+    ASTNode result ( AST_VAR, tok.linenum, tok.lexeme );
+
+    auto newid = newidentifier();
+    result.add_child( newid );
+
+    auto typeident = typeidentifier();
+    result.add_child( typeident );
+
+    return result;
+}
+
 ASTNode Block() {
     expect( TOKEN_LBRACE );
 
@@ -287,23 +333,117 @@ ASTNode Block() {
     return result;
 }
 
-// "formal" in the reference compiler I think
-ASTNode ParameterDecl() {
-    ASTNode result ( AST_FORMAL );
+ASTNode IfStmt() {
+    auto tok = expect( TOKEN_IF );
 
-    auto newid = newidentifier();
-    result.add_child( newid );
+    ASTNode result( AST_IF, tok.linenum, tok.lexeme );
 
-    auto typeident = typeidentifier();
-    result.add_child( typeident );
+    {
+        auto expr = Expression();
+        result.add_child( expr );
+    }
+
+    check_for_bad_semicolon();
+
+    {
+        auto blk = Block();
+        result.add_child( blk );
+    }
+
+    if ( ( tok = lex() ).token != TOKEN_ELSE ) {
+        unlex( tok );
+        return result;
+    }
+
+    result.type    = AST_IFELSE;
+    result.lexeme  = "";
+
+    tok = lex();
+    unlex( tok );
+
+    if ( tok.token == TOKEN_LBRACE ) {
+        auto blk = Block();
+        result.add_child( blk );
+    } else if ( tok.token == TOKEN_IF ) {
+        auto ifstmt = IfStmt();
+        result.add_child( ifstmt );
+    } else
+        error( tok.linenum, "syntax error o\"%s\"", tok.lexeme.data() );
 
     return result;
 }
 
-ASTNode VarDecl() {
-    auto tok = expect( TOKEN_VAR );
+ASTNode ForStmt() {
+    auto tok = expect( TOKEN_FOR );
 
-    ASTNode result ( AST_VAR, tok.linenum, tok.lexeme );
+    ASTNode result( AST_FOR, tok.linenum );
+
+    // [ Condition ]
+    tok = lex();
+    unlex( tok );
+    if ( tok.token != TOKEN_LBRACE ) {
+        auto expr = Expression();
+        result.add_child( expr );
+    } else result.add_child( { AST_ID, -1, "$true" } );
+
+    tok = lex();
+    unlex( tok );
+
+    check_for_bad_semicolon();
+
+    auto blk = Block();
+    result.add_child( blk );
+
+    return result;
+}
+
+ASTNode Statement() {
+    auto tok = lex();
+    unlex( tok );
+
+    switch ( tok.token ) {
+        case TOKEN_VAR:
+            return VarDecl();
+        case TOKEN_RETURN:
+            return ReturnStmt();
+        case TOKEN_BREAK:
+            return BreakStmt();
+        case TOKEN_LBRACE:
+            return Block();
+        case TOKEN_IF:
+            return IfStmt();
+        case TOKEN_FOR:
+            return ForStmt();
+        default:
+            if ( !is_expression_next() ) return { AST_EMPTYSTMT };
+
+            auto result = Expression();
+
+            if ( ( tok = lex() ).token == TOKEN_ASSIGN ) {
+                auto right = Expression();
+
+                auto left = result;
+
+                result = ASTNode ( AST_ASSIGN, tok.linenum, tok.lexeme );
+                result.add_child( left );
+                result.add_child( right );
+
+                if ( ( tok = lex() ).token == TOKEN_ASSIGN ) error( tok.linenum, "syntax error on \"=\"" );
+            } else {
+                auto tmp = result;
+                result   = ASTNode( AST_EXPRSTMT, tmp.linenum );
+                result.add_child( tmp );
+            }
+
+            unlex( tok );
+
+            return result;
+    }
+}
+
+// "formal" in the reference compiler I think
+ASTNode ParameterDecl() {
+    ASTNode result ( AST_FORMAL );
 
     auto newid = newidentifier();
     result.add_child( newid );
@@ -402,54 +542,6 @@ ASTNode TopLevelDecl() {
     return result;
 }
 
-ASTNode Operand() {
-    auto tok = lex();
-
-    switch ( tok.token ) {
-        case TOKEN_INT:
-            return ASTNode ( AST_INT, tok.linenum, tok.lexeme );
-        case TOKEN_STRING:
-            return ASTNode ( AST_STRING, tok.linenum, tok.lexeme );
-        case TOKEN_ID:
-            return ASTNode ( AST_ID, tok.linenum, tok.lexeme );
-        default: {
-
-            unlex( tok );
-            expect( TOKEN_LPAREN );
-            auto result = Expression();
-            expect( TOKEN_RPAREN );
-
-            return result;
-        }
-    }
-}
-
-ASTNode Arguments() {
-    expect( TOKEN_LPAREN );
-    ASTNode result = { AST_ACTUALS };
-
-    if ( is_expression_next() ) {
-        auto expr = Expression();
-        result.add_child( expr );
-
-        Tokinfo tok;
-        while ( ( tok = lex() ).token == TOKEN_COMMA && is_expression_next() ) {
-            expr = Expression();
-            result.add_child( expr );
-        }
-        unlex( tok );
-
-        check_for_bad_semicolon();
-
-        // consume trailing comma in params list if there is one
-        if ( ( tok = lex() ).token != TOKEN_COMMA ) unlex( tok );
-    }
-
-    expect( TOKEN_RPAREN );
-
-    return result;
-}
-
 ASTNode Assignment() {
     ASTNode result = { AST_ASSIGN };
 
@@ -460,100 +552,6 @@ ASTNode Assignment() {
 
     expr = Expression();
     result.add_child( expr );
-
-    return result;
-}
-
-ASTNode Statement() {
-    auto tok = lex();
-    unlex( tok );
-
-    switch ( tok.token ) {
-        case TOKEN_VAR:
-            return VarDecl();
-        case TOKEN_RETURN:
-            return ReturnStmt();
-        case TOKEN_BREAK:
-            return BreakStmt();
-        case TOKEN_LBRACE:
-            return Block();
-        case TOKEN_IF:
-            return IfStmt();
-        case TOKEN_FOR:
-            return ForStmt();
-        default:
-            if ( !is_expression_next() ) return { AST_EMPTYSTMT };
-
-            auto result = Expression();
-
-            if ( ( tok = lex() ).token == TOKEN_ASSIGN ) {
-                auto right = Expression();
-
-                auto left = result;
-
-                result = ASTNode ( AST_ASSIGN, tok.linenum, tok.lexeme );
-                result.add_child( left );
-                result.add_child( right );
-
-                if ( ( tok = lex() ).token == TOKEN_ASSIGN ) error( tok.linenum, "syntax error on \"=\"" );
-            } else {
-                auto tmp = result;
-                result   = ASTNode( AST_EXPRSTMT, tmp.linenum );
-                result.add_child( tmp );
-            }
-
-            unlex( tok );
-
-            return result;
-    }
-}
-
-ASTNode UnaryExpr() {
-    auto tok = lex();
-
-    ASTNode result;
-
-    switch ( tok.token ) {
-        case TOKEN_BANG: {
-            result.type = AST_LOGIC_NOT;
-            result.linenum = tok.linenum;
-
-            auto exp = UnaryExpr();
-            result.add_child( exp );
-
-            break;
-        }
-        case TOKEN_MINUS: {
-            result.type = AST_UMINUS;
-            result.linenum = tok.linenum;
-
-            auto exp = UnaryExpr();
-
-            if ( exp.type == AST_INT && exp.lexeme[0] != '-' ) {
-                result = exp;
-                result.lexeme = "-" + result.lexeme;
-            } else result.add_child( exp );
-
-            break;
-        }
-        default:
-            unlex( tok );
-
-            result = Operand();
-
-            while ( ( tok = lex() ).token == TOKEN_LPAREN ) {
-                unlex( tok );
-
-                auto left  = result;
-                result     = ASTNode( AST_FUNCCALL );
-                auto right = Arguments();
-
-                result.add_child( left );
-                result.add_child( right );
-            }
-            unlex( tok );
-            break;
-    }
 
     return result;
 }
