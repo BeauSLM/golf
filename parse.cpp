@@ -58,14 +58,12 @@ ASTNode Operand() {
     auto tok = lex();
 
     switch ( tok.token ) {
-        case TOKEN_INT:
-            return ASTNode ( AST_INT, tok.linenum, tok.lexeme    );
-        case TOKEN_STRING:
-            return ASTNode ( AST_STRING, tok.linenum, tok.lexeme );
-        case TOKEN_ID:
-            return ASTNode ( AST_ID, tok.linenum, tok.lexeme     );
+        case TOKEN_INT:    return ASTNode ( AST_INT,    tok.linenum, tok.lexeme );
+        case TOKEN_STRING: return ASTNode ( AST_STRING, tok.linenum, tok.lexeme );
+        case TOKEN_ID:     return ASTNode ( AST_ID,     tok.linenum, tok.lexeme );
+
         default: {
-            unlex( tok );
+            unlex ( tok          );
             expect( TOKEN_LPAREN );
 
             auto result = Expression();
@@ -167,14 +165,14 @@ ASTNode MulExpr() {
             || tok.token == TOKEN_SLASH
             || tok.token == TOKEN_PERCENT ) {
         auto right = UnaryExpr();
-        auto left = result;
+        auto left  = result;
 
         result = ASTNode ( AST_UNSET, tok.linenum, tok.lexeme );
         if ( tok.token == TOKEN_STAR    ) result.type = AST_MUL;
         if ( tok.token == TOKEN_SLASH   ) result.type = AST_DIV;
         if ( tok.token == TOKEN_PERCENT ) result.type = AST_MOD;
 
-        result.add_child( left );
+        result.add_child( left  );
         result.add_child( right );
     }
     unlex( tok );
@@ -195,7 +193,7 @@ ASTNode AddExpr() {
         if ( tok.token == TOKEN_PLUS  ) result.type = AST_PLUS;
         if ( tok.token == TOKEN_MINUS ) result.type = AST_MINUS;
 
-        result.add_child( left );
+        result.add_child( left  );
         result.add_child( right );
     }
     unlex( tok );
@@ -217,7 +215,7 @@ ASTNode RelExpr() {
             || tok.token == TOKEN_GT ) {
 
         auto right = AddExpr();
-        auto left = result;
+        auto left  = result;
 
         result = ASTNode ( AST_UNSET, tok.linenum, tok.lexeme );
         switch ( tok.token ) {
@@ -265,7 +263,7 @@ ASTNode AndExpr() {
         auto left  = result;
         result     = ASTNode ( AST_LOGIC_AND, tok.linenum, tok.lexeme );
 
-        result.add_child( left );
+        result.add_child( left  );
         result.add_child( right );
     }
     unlex( tok );
@@ -283,7 +281,7 @@ ASTNode OrExpr() {
         auto left = result;
         result = ASTNode ( AST_LOGIC_OR, tok.linenum, tok.lexeme );
 
-        result.add_child( left );
+        result.add_child( left  );
         result.add_child( right );
     }
     unlex( tok );
@@ -320,10 +318,10 @@ ASTNode VarDecl() {
 
     ASTNode result ( AST_VAR, tok.linenum, tok.lexeme );
 
-    auto newid     = newidentifier();
+    auto newid     = newidentifier ();
     auto typeident = typeidentifier();
 
-    result.add_child( newid );
+    result.add_child( newid     );
     result.add_child( typeident );
 
     return result;
@@ -473,7 +471,7 @@ ASTNode ParameterDecl() {
     auto newid     = newidentifier();
     auto typeident = typeidentifier();
 
-    result.add_child( newid );
+    result.add_child( newid     );
     result.add_child( typeident );
 
     return result;
@@ -492,8 +490,8 @@ ASTNode FunctionDecl() {
     expect( TOKEN_LPAREN );
 
     // add signature
-    ASTNode sig ( AST_SIGNATURE );
-    ASTNode formals ( AST_FORMALS );
+    ASTNode sig     ( AST_SIGNATURE );
+    ASTNode formals ( AST_FORMALS   );
 
     tok = lex();
     unlex( tok );

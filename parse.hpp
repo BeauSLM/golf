@@ -66,7 +66,9 @@ struct ASTNode {
     std::string lexeme;
     std::vector<ASTNode> children;
 
-    ASTNode( ASTNodeID type = AST_UNSET, int linenum = -1, std::string lexeme = "" ): type(type), linenum(linenum), lexeme(lexeme) {}
+    ASTNode( ASTNodeID type = AST_UNSET, int linenum = -1, std::string lexeme = "" )
+        : type( type ), linenum( linenum ), lexeme( lexeme )
+        {}
 
     inline void add_child( ASTNode kid )                  { children.push_back(kid); }
     inline void set_children( std::vector<ASTNode> kids ) { children = kids; }
