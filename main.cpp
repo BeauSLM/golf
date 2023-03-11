@@ -24,13 +24,32 @@ int main( int argc, char *argv[] ) {
         }
     }
 
+
+#if MILESTONE == 1
+
     // print each token except EOF
-    // for ( Tokinfo t = lex(); t.token != TOKEN_EOF; t = lex() )
-    //     printf( "%s\t[%s] @ line %d\n", token_to_string( t.token ), t.lexeme.data(), t.linenum );
+    for ( Tokinfo t = lex(); t.token != TOKEN_EOF; t = lex() )
+        printf( "%s\t[%s] @ line %d\n", token_to_string( t.token ), t.lexeme.data(), t.linenum );
+
+#elif MILESTONE == 2
 
     auto root = parse();
+
     printast( root, 0 );
     puts( "" );
+
+#elif MILESTONE == 3
+
+    auto root = parse();
+
+    puts( "milestone 3" );
+
+#else
+
+    fprintf( stderr, "Invalid milestone number" );
+    return EXIT_FAILURE;
+
+#endif
 
     return EXIT_SUCCESS;
 }

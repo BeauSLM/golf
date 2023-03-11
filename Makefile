@@ -1,12 +1,19 @@
+# TODO: don't include debug info on release build
 CXX      := clang++
-CXXFLAGS := -Wall -Wextra -std=c++17
+CXXFLAGS := -Wall -Wextra -std=c++17 -g
 OBJS     := main.o error.o lex.o parse.o
 
 release: CXXFLAGS += -O3
-release: golf
+release: ms3
 
-debug: CXXFLAGS += -g
-debug: golf
+ms3: CXXFLAGS += -DMILESTONE=3
+ms3: golf
+
+ms2: CXXFLAGS += -DMILESTONE=2
+ms2: golf
+
+ms1: CXXFLAGS += -DMILESTONE=1
+ms1: golf
 
 golf: $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $@ $^
