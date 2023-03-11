@@ -9,5 +9,5 @@ my_stdout.txt
 golf_reference
 
 # symlink to provided test script
-run
+/run
 /.vscode/
