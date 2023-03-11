@@ -25,8 +25,10 @@ import signal
 import socket
 import subprocess
 
-TESTPATH = os.getenv( 'GOLF_TEST_PREFIX' ) + 'ms3'
-LOGFILE = 'ms3' + os.getenv( 'GOLF_LOG_SUFFIX' )
+MILESTONE = 'ms3'
+
+TESTPATH = os.getenv( 'GOLF_TEST_PREFIX' ) + MILESTONE
+LOGFILE = MILESTONE + os.getenv( 'GOLF_LOG_SUFFIX' )
 JARCLASS = 'golf'
 JAR = 'golf.jar'
 EXE = './golf'
@@ -183,7 +185,7 @@ def main():
 
 	# build it; this'll also permit variants on "Makefile" like "makefile"
 	banner('Running make')
-	run([ MAKE ])
+	run([ MAKE, MILESTONE ])
 
 	# figure out how to run the compiler
 	banner('Locating GoLF compiler')
