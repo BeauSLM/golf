@@ -32,6 +32,8 @@ void define
 STabRecord lookup
 ( const std::string &name, const int linenum )
 {
+    // REVIEW: is this correct?
+    // TODO: rename "it" - something that's more informative
     for ( auto it = scopestack.rbegin(); it != scopestack.rend(); it++ )
         if ( it->find(name) != it->end() )
             return ( *it )[ name ];

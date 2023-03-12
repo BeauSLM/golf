@@ -15,6 +15,7 @@ void postorder
     callback( root );
 }
 
+// TODO: prune the traversal if we need to
 void prepost
 ( ASTNode & root, void ( *precallback )( ASTNode & ), void ( *postcallback )( ASTNode & ) )
 {
