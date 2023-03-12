@@ -657,6 +657,32 @@ void printast( const ASTNode & root, int depth ) {
     // indent based on depth in tree
     std::string indent;
     for ( int i = 0; i < depth; i++ ) indent += "    ";
+void preorder
+( ASTNode & root, void ( *callback )( ASTNode & ) )
+{
+    prepost( root, callback, +[]( ASTNode & ) {} );
+}
+
+void postorder
+( ASTNode & root, void ( *callback )( ASTNode & ) )
+{
+    for ( auto & child : root.children ) postorder( child, callback );
+
+    callback( root );
+}
+
+void prepost
+( ASTNode & root, void ( *precallback )( ASTNode & ), void ( *postcallback )( ASTNode & ) )
+{
+    precallback( root );
+
+    // TODO: if we need to prune, bail here
+
+    for ( auto & child : root.children ) prepost( child, precallback, postcallback );
+
+    postcallback( root );
+}
+
 
     printf( "%s%s\n", indent.data(), ASTNode_to_string( root ).data() );
 

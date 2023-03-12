@@ -76,6 +76,16 @@ struct ASTNode {
 
 ASTNode parse();
 
+// traversal routines
+void preorder
+( ASTNode & root, void ( *callback    )( ASTNode & ) );
+
+void postorder
+( ASTNode & root, void ( *callback    )( ASTNode & ) );
+
+void prepost
+( ASTNode & root, void ( *precallback )( ASTNode & ), void ( *postcallback )( ASTNode & ) );
+
 // printing utilities
 std::string ASTNode_to_string( ASTNode n );
 void printast( const ASTNode & root, int depth );
