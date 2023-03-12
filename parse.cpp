@@ -586,7 +586,7 @@ ASTNode parse() {
     return root;
 }
 
-std::string ASTNode_to_string( ASTNode n ) {
+std::string ASTNode_to_string( ASTNode &n ) {
     std::string numstring;
     if ( n.linenum > 0 ) numstring = " @ line " + std::to_string( n.linenum );
 
@@ -653,10 +653,6 @@ std::string ASTNode_to_string( ASTNode n ) {
     return "";
 }
 
-void printast( const ASTNode & root, int depth ) {
-    // indent based on depth in tree
-    std::string indent;
-    for ( int i = 0; i < depth; i++ ) indent += "    ";
 void preorder
 ( ASTNode & root, void ( *callback )( ASTNode & ) )
 {
@@ -683,9 +679,24 @@ void prepost
     postcallback( root );
 }
 
+void printast( ASTNode & root ) {
+    // track how far in the AST we are
+    static int depth = -1;
 
-    printf( "%s%s\n", indent.data(), ASTNode_to_string( root ).data() );
+    auto pre = +[]( ASTNode & rpre) {
+        depth++;
 
-    for ( const auto & kid : root.children )
-        printast( kid, depth + 1);
+        std::string indent;
+        for ( int i = 0; i < depth; i++ ) indent += "    ";
+
+        printf( "%s%s\n", indent.data(), ASTNode_to_string( rpre ).data() );
+    };
+
+    auto post = +[]( ASTNode & rpost ) {
+        rpost.linenum += 0; // XXX: NO-OP to silence unused warning
+
+        depth--;
+    };
+
+    prepost( root, pre, post );
 }

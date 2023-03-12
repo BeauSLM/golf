@@ -87,5 +87,5 @@ void prepost
 ( ASTNode & root, void ( *precallback )( ASTNode & ), void ( *postcallback )( ASTNode & ) );
 
 // printing utilities
-std::string ASTNode_to_string( ASTNode n );
-void printast( const ASTNode & root, int depth );
+std::string ASTNode_to_string( ASTNode &n );
+void printast( ASTNode & root );

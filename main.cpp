@@ -35,7 +35,7 @@ int main( int argc, char *argv[] ) {
 
     auto root = parse();
 
-    printast( root, 0 );
+    printast( root );
     puts( "" );
 
 #elif MILESTONE == 3
