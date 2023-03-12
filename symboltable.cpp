@@ -26,10 +26,10 @@ void define
     if ( scopestack.back().find( name ) != scopestack.back().end() )
         error( linenum, "redefinition of %s", name.data() );
 
-    scope[name] = STabRecord();
+    scope[name] = new STabRecord();
 }
 
-STabRecord lookup
+STabRecord * lookup
 ( const std::string &name, const int linenum )
 {
     // REVIEW: is this correct?

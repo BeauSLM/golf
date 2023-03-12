@@ -39,7 +39,8 @@ void checksemantics
 
         for ( auto &symbol : universe )
         {
-            STabRecord record = {
+            auto record = new STabRecord
+            {
                 symbol.signature,
                 symbol.returnsignature,
                 symbol.isconst,
@@ -47,7 +48,7 @@ void checksemantics
             };
 
             // NOTE: not using define() because I know the information of the predefined symbols
-            scopestack.back()[symbol.name] = record;
+            scopestack.back()[ symbol.name ] = record;
         }
     }
 

@@ -15,7 +15,7 @@ struct STabRecord
 };
 
 // for my sanity
-typedef std::unordered_map<std::string, STabRecord> STab;
+typedef std::unordered_map<std::string, STabRecord*> STab;
 
 void
 openscope();
@@ -26,5 +26,5 @@ closescope();
 void define
 ( const std::string &name, const int linenum );
 
-STabRecord lookup
+STabRecord * lookup
 ( const std::string &name, const int linenum );
