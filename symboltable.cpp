@@ -8,7 +8,7 @@ std::vector<STab> scopestack;
 void
 openscope()
 {
-    scopestack.push_back( STab() );
+    scopestack.emplace_back();
 }
 
 void

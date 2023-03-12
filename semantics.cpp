@@ -4,7 +4,7 @@
 
 #include <assert.h>
 
-const struct {
+static const struct {
     std::string name,
                 signature,
                 returnsignature;
