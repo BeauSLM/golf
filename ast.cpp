@@ -31,7 +31,7 @@ void printast( ASTNode & root ) {
     // track how far in the AST we are
     static int depth = -1;
 
-    auto pre = +[]( ASTNode & rpre) {
+    auto pre = +[]( ASTNode & rpre ) {
         depth++;
 
         std::string indent;

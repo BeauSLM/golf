@@ -33,7 +33,8 @@ STabRecord lookup
 ( const std::string &name, const int linenum )
 {
     for ( auto it = scopestack.rbegin(); it != scopestack.rend(); it++ )
-        if ( it->find(name) != it->end() ) return (*it)[name];
+        if ( it->find(name) != it->end() )
+            return ( *it )[ name ];
 
     error( linenum, "undefined reference to %s", name.data() );
 }
