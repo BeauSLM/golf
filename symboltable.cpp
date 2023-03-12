@@ -1,3 +1,5 @@
+// REVIEW: this all can probably go in the semantic checker file but I need
+// a cpp file for every header atm cause of my makefile - I should fix that
 #include "symboltable.hpp"
 #include "error.hpp"
 
