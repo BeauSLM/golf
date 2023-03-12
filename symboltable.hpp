@@ -23,7 +23,7 @@ openscope();
 void
 closescope();
 
-void define
+STabRecord * define
 ( const std::string &name, const int linenum );
 
 STabRecord * lookup

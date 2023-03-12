@@ -17,7 +17,7 @@ closescope()
     scopestack.pop_back();
 }
 
-void define
+STabRecord * define
 ( const std::string &name, const int linenum )
 {
     STab &scope = scopestack.back();
@@ -26,7 +26,7 @@ void define
     if ( scopestack.back().find( name ) != scopestack.back().end() )
         error( linenum, "redefinition of %s", name.data() );
 
-    scope[name] = new STabRecord();
+    return ( scope[ name ] = new STabRecord() );
 }
 
 STabRecord * lookup
