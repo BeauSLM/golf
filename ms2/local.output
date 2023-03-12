@@ -1,4 +1,4 @@
-Run started on Sat Mar 11 15:58:00 2023
+Run started on Sat Mar 11 20:10:27 2023
 
 Hostname: beau-Desktop
 
@@ -13,7 +13,8 @@ clang++ -o main.o -c main.cpp -Wall -Wextra -std=c++17 -g -DMILESTONE=2 -MMD -MF
 clang++ -o error.o -c error.cpp -Wall -Wextra -std=c++17 -g -DMILESTONE=2 -MMD -MF error.d
 clang++ -o lex.o -c lex.cpp -Wall -Wextra -std=c++17 -g -DMILESTONE=2 -MMD -MF lex.d
 clang++ -o parse.o -c parse.cpp -Wall -Wextra -std=c++17 -g -DMILESTONE=2 -MMD -MF parse.d
-clang++ -Wall -Wextra -std=c++17 -g -DMILESTONE=2 -o golf main.o error.o lex.o parse.o
+clang++ -o ast.o -c ast.cpp -Wall -Wextra -std=c++17 -g -DMILESTONE=2 -MMD -MF ast.d
+clang++ -Wall -Wextra -std=c++17 -g -DMILESTONE=2 -o golf main.o error.o lex.o parse.o ast.o
 
 
 STDERR:
@@ -1374,5 +1375,5 @@ STDERR:
 
 RETURN CODE: 0
 
-Run ended on Sat Mar 11 15:58:01 2023
+Run ended on Sat Mar 11 20:10:28 2023
 
