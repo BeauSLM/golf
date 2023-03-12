@@ -27,6 +27,15 @@ static const struct {
     { "len",     "f(str)",  "int",  false, false, },
 };
 
+STabRecord * assert_node_is_type( ASTNode & node )
+{
+    auto record = lookup( node.lexeme, node.linenum );
+
+    if ( !record->istype ) error( node.linenum, "expected type, got '%s'", node.lexeme.data() );
+
+    return record;
+}
+
 // NOTE: only called once
 void checksemantics
 ( ASTNode & root )
