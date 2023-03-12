@@ -71,7 +71,11 @@ void checksemantics
 
                 // REVIEW: which linenum???
                 define( ident.lexeme, ident.linenum );
-            }
+
+                // functions and variables are not constants or types
+                auto record = lookup( ident.lexeme, ident.linenum );
+                record->isconst = record->istype = false;
+           }
         };
 
         preorder( root, define_globals );
