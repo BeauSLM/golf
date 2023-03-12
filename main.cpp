@@ -5,6 +5,7 @@
 #include "error.hpp"
 #include "lex.hpp"
 #include "parse.hpp"
+#include "semantics.hpp"
 
 int main( int argc, char *argv[] ) {
     if ( argc != 2 ) {
@@ -42,6 +43,7 @@ int main( int argc, char *argv[] ) {
 
     auto root = parse();
 
+    checksemantics( root );
     puts( "milestone 3" );
 
 #else

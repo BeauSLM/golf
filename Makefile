@@ -1,7 +1,7 @@
 # TODO: don't include debug info on release build
 CXX      := clang++
 CXXFLAGS := -Wall -Wextra -std=c++17
-OBJS     := main.o error.o lex.o parse.o ast.o symboltable.o
+OBJS     := main.o error.o lex.o parse.o ast.o symboltable.o semantics.o
 
 # TODO: RELEASE BUILD FOR SUBMISSION
 # XXX: I'M NOT KIDDING DO NOT FORGET THIS
