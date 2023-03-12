@@ -5,7 +5,7 @@
 // error and warning routines
 
 // fail routine for fatal errors
-void error( int linenum, const char *msg, ... );
+[[noreturn]] void error( int linenum, const char *msg, ... );
 
 // warning message for recoverable errors
 void warning( int linenum, const char *msg, ... );

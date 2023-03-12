@@ -34,8 +34,5 @@ STabRecord lookup
         if ( it->find(name) != it->end() ) return (*it)[name];
 
     error( linenum, "undefined reference to %s", name.data() );
-
-    // NOTE: unreachable!!!
-    return STabRecord();
 }
 

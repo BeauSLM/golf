@@ -33,7 +33,7 @@ void printf_wrapper( int linenum, const char *prefix, const char *msg, va_list a
     fprintf( stderr, "%s: %s at or near line %d\n", prefix, formatted, linenum );
 }
 
-void error( int linenum, const char *msg, ... ) {
+[[noreturn]] void error( int linenum, const char *msg, ... ) {
     va_list args;
     va_start(args, msg);
     printf_wrapper( linenum, "error", msg, args );
