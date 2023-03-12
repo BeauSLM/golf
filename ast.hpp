@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "lex.hpp"
+#include "symboltable.hpp"
 
 enum ASTNodeID {
     // "program structure" or someth idk
@@ -61,9 +62,12 @@ enum ASTNodeID {
 
 struct ASTNode {
     ASTNodeID type = AST_UNSET;
-    int linenum = -1;
+    int linenum    = -1;
+
     std::string lexeme;
     std::vector<ASTNode> children;
+
+    STabRecord * symbolinfo = nullptr;
 
     ASTNode( ASTNodeID type = AST_UNSET, int linenum = -1, std::string lexeme = "" )
         : type( type ), linenum( linenum ), lexeme( lexeme )
