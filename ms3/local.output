@@ -1,0 +1,749 @@
+Run started on Mon Mar 13 14:07:48 2023
+
+Hostname: beau-Desktop
+
+-------------------------------------------------------------------------------
+Running make |
+--------------
+
+% /usr/bin/make ms3
+
+STDOUT:
+make: Nothing to be done for 'ms3'.
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Locating GoLF compiler |
+------------------------
+
+Compiler will be run as ./golf
+
+-------------------------------------------------------------------------------
+Test: too few arguments |
+-------------------------
+
+% ./golf
+
+STDOUT:
+
+
+STDERR:
+Usage: ./golf <filename>
+
+
+
+RETURN CODE: 1
+
+-------------------------------------------------------------------------------
+Test: too many arguments |
+--------------------------
+
+% ./golf /dev/null /dev/zero
+
+STDOUT:
+
+
+STDERR:
+Usage: ./golf <filename>
+
+
+
+RETURN CODE: 1
+
+-------------------------------------------------------------------------------
+Test: nonexistent file |
+------------------------
+
+% ./golf /i/do/not/exist
+
+STDOUT:
+
+
+STDERR:
+Could not open file '/i/do/not/exist': No such file or directory
+
+
+RETURN CODE: 1
+
+-------------------------------------------------------------------------------
+Test: later global "int" redeclaration |
+----------------------------------------
+
+% ./golf ./ms3/check.t1
+
+STDOUT:
+
+
+STDERR:
+error: expected type, got 'int' at or near line 4
+
+
+RETURN CODE: 1
+
+-------------------------------------------------------------------------------
+Test: global var declaration loop |
+-----------------------------------
+
+% ./golf ./ms3/check.t2
+
+STDOUT:
+
+
+STDERR:
+error: expected type, got 'int' at or near line 4
+
+
+RETURN CODE: 1
+
+-------------------------------------------------------------------------------
+Test: local var version of check.t2 |
+-------------------------------------
+
+% ./golf ./ms3/check.t3
+
+STDOUT:
+milestone 3
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: global name test |
+------------------------
+
+% ./golf ./ms3/check.t4
+
+STDOUT:
+milestone 3
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: block scope check |
+-------------------------
+
+% ./golf ./ms3/check.t5
+
+STDOUT:
+milestone 3
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: global var declaration, complex loop |
+--------------------------------------------
+
+% ./golf ./ms3/check.t6
+
+STDOUT:
+
+
+STDERR:
+error: expected type, got 'bool' at or near line 3
+
+
+RETURN CODE: 1
+
+-------------------------------------------------------------------------------
+Test: parameter scope test |
+----------------------------
+
+% ./golf ./ms3/check.t7
+
+STDOUT:
+milestone 3
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: constants can't be changed |
+----------------------------------
+
+% ./golf ./ms3/check.t8
+
+STDOUT:
+milestone 3
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: nonexistent type name |
+-----------------------------
+
+% ./golf ./ms3/check.t9
+
+STDOUT:
+
+
+STDERR:
+error: unknown name 'notthere' at or near line 3
+
+
+RETURN CODE: 1
+
+-------------------------------------------------------------------------------
+Test: type name not a type |
+----------------------------
+
+% ./golf ./ms3/check.t10
+
+STDOUT:
+
+
+STDERR:
+error: expected type, got 't' at or near line 4
+
+
+RETURN CODE: 1
+
+-------------------------------------------------------------------------------
+Test: formal parameters need types |
+------------------------------------
+
+% ./golf ./ms3/check.t11
+
+STDOUT:
+
+
+STDERR:
+error: expected type, got 'main' at or near line 6
+
+
+RETURN CODE: 1
+
+-------------------------------------------------------------------------------
+Test: multiple (main) functions, same name |
+--------------------------------------------
+
+% ./golf ./ms3/check.t12
+
+STDOUT:
+
+
+STDERR:
+error: 'main' redefined at or near line 7
+
+
+RETURN CODE: 1
+
+-------------------------------------------------------------------------------
+Test: no main function |
+------------------------
+
+% ./golf ./ms3/check.t13
+
+STDOUT:
+
+
+STDERR:
+error: missing main() function
+
+
+RETURN CODE: 1
+
+-------------------------------------------------------------------------------
+Test: main can't have arguments |
+---------------------------------
+
+% ./golf ./ms3/check.t14
+
+STDOUT:
+milestone 3
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: main can't have a return value |
+--------------------------------------
+
+% ./golf ./ms3/check.t15
+
+STDOUT:
+milestone 3
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: dup check for formal parameters |
+---------------------------------------
+
+% ./golf ./ms3/check.t16
+
+STDOUT:
+milestone 3
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: function call as lvalue |
+-------------------------------
+
+% ./golf ./ms3/check.t17
+
+STDOUT:
+milestone 3
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: function name as lvalue |
+-------------------------------
+
+% ./golf ./ms3/check.t18
+
+STDOUT:
+milestone 3
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: humongous integer literal |
+---------------------------------
+
+% ./golf ./ms3/check.t19
+
+STDOUT:
+milestone 3
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: positive integer literal out of range |
+---------------------------------------------
+
+% ./golf ./ms3/check.t20
+
+STDOUT:
+milestone 3
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: negative integer literal out of range |
+---------------------------------------------
+
+% ./golf ./ms3/check.t21
+
+STDOUT:
+milestone 3
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: "break" not inside "for" loop |
+-------------------------------------
+
+% ./golf ./ms3/check.t22
+
+STDOUT:
+milestone 3
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: "break" in block, but not in "for" |
+------------------------------------------
+
+% ./golf ./ms3/check.t23
+
+STDOUT:
+milestone 3
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: "break" in "if" block |
+-----------------------------
+
+% ./golf ./ms3/check.t24
+
+STDOUT:
+milestone 3
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: missing return statement |
+--------------------------------
+
+% ./golf ./ms3/check.t25
+
+STDOUT:
+milestone 3
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: returning value from void function |
+------------------------------------------
+
+% ./golf ./ms3/check.t26
+
+STDOUT:
+milestone 3
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: return type mismatch |
+----------------------------
+
+% ./golf ./ms3/check.t27
+
+STDOUT:
+milestone 3
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: missing return type |
+---------------------------
+
+% ./golf ./ms3/check.t28
+
+STDOUT:
+milestone 3
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: "if" expr not a boolean type |
+------------------------------------
+
+% ./golf ./ms3/check.t29
+
+STDOUT:
+milestone 3
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: "if"-"else" not a boolean type |
+--------------------------------------
+
+% ./golf ./ms3/check.t30
+
+STDOUT:
+milestone 3
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: "for" expr not a boolean type |
+-------------------------------------
+
+% ./golf ./ms3/check.t31
+
+STDOUT:
+milestone 3
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: legit expression statements |
+-----------------------------------
+
+% ./golf ./ms3/check.t32
+
+STDOUT:
+milestone 3
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: built-in routine check |
+------------------------------
+
+% ./golf ./ms3/check.t33
+
+STDOUT:
+milestone 3
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: actual parameter type check |
+-----------------------------------
+
+% ./golf ./ms3/check.t34
+
+STDOUT:
+milestone 3
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: operand type mismatch |
+-----------------------------
+
+% ./golf ./ms3/check.t35
+
+STDOUT:
+milestone 3
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: another actual parameter type check |
+-------------------------------------------
+
+% ./golf ./ms3/check.t36
+
+STDOUT:
+milestone 3
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: return+argument checks |
+------------------------------
+
+% ./golf ./ms3/check.t37
+
+STDOUT:
+milestone 3
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: scope check and undefined variable |
+------------------------------------------
+
+% ./golf ./ms3/check.t38
+
+STDOUT:
+milestone 3
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: redefined variable |
+--------------------------
+
+% ./golf ./ms3/check.t39
+
+STDOUT:
+milestone 3
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: comparable and ordered comparisons |
+------------------------------------------
+
+% ./golf ./ms3/check.t40
+
+STDOUT:
+milestone 3
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: int/bool distinction |
+----------------------------
+
+% ./golf ./ms3/check.t41
+
+STDOUT:
+milestone 3
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: deep type propagation |
+-----------------------------
+
+% ./golf ./ms3/check.t42
+
+STDOUT:
+milestone 3
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: redefining "true" and "false" |
+-------------------------------------
+
+% ./golf ./ms3/check.t43
+
+STDOUT:
+milestone 3
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: call of non-function |
+----------------------------
+
+% ./golf ./ms3/check.t44
+
+STDOUT:
+milestone 3
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: type id used in wrong context |
+-------------------------------------
+
+% ./golf ./ms3/check.t45
+
+STDOUT:
+milestone 3
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+Run ended on Mon Mar 13 14:07:48 2023
+
