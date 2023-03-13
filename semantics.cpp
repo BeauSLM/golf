@@ -94,24 +94,39 @@ void checksemantics
     // notes with their corresponding symbol table records
     {
         // TODO:
-        auto foo = +[]( ASTNode &node )
+        auto pass_2_pre = +[]( ASTNode &node )
         {
             // TODO:
             switch ( node.type ) {
-                case AST_FUNC:
+                case AST_GLOBVAR:
+                {
+                    // verify that the type is valid
+                    auto type = node.children[ 1 ];
+                    assert_node_is_type( type );
 
+                    // get the name's symbol record and give it it's type
+                    // NOTE: we defined all global symbols in pass 1
+                    auto varname      = node.children[ 0 ];
+                    auto record       = lookup( varname.lexeme, varname.linenum );
+                    record->signature = type.lexeme;
+
+                    node.symbolinfo   = record;
+
+                    break;
+                }
                 default:
-                    error( node.linenum, "TODO" );
+                    break;
+                    // error( node.linenum, "TODO" );
             }
         };
 
-        auto bar = +[]( ASTNode &node )
+        auto pass_2_post = +[]( ASTNode &node )
         {
             // TODO:
-            if ( node.type == AST_BLOCK ) closescope();
+            // if ( node.type == AST_BLOCK ) closescope();
         };
 
-        prepost( root, foo, bar );
+        prepost( root, pass_2_pre, pass_2_post );
     }
 
 #if 0
