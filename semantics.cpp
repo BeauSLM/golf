@@ -44,7 +44,6 @@ void checksemantics
     openscope(); // universe block
     {
         extern std::vector<STab> scopestack;
-        scopestack.clear();
 
         for ( auto &symbol : universe )
         {
