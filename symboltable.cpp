@@ -23,7 +23,7 @@ STabRecord * define
     STab &scope = scopestack.back();
 
     // check for redefinition
-    if ( scopestack.back().find( name ) != scopestack.back().end() )
+    if ( scope.find( name ) != scope.end() )
         error( linenum, "redefinition of %s", name.data() );
 
     return ( scope[ name ] = new STabRecord() );

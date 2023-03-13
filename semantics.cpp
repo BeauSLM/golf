@@ -27,11 +27,12 @@ static const struct {
     { "len",     "f(str)",  "int",  false, false, },
 };
 
-STabRecord * assert_node_is_type( ASTNode & node )
+// verifies that a given identifier refers to a type, and returns the corresponding stab record
+STabRecord * assert_node_is_type( ASTNode & ident )
 {
-    auto record = lookup( node.lexeme, node.linenum );
+    auto record = lookup( ident.lexeme, ident.linenum );
 
-    if ( !record->istype ) error( node.linenum, "expected type, got '%s'", node.lexeme.data() );
+    if ( !record->istype ) error( ident.linenum, "expected type, got '%s'", ident.lexeme.data() );
 
     return record;
 }
@@ -45,7 +46,7 @@ void checksemantics
     {
         extern std::vector<STab> scopestack;
 
-        for ( auto &symbol : universe )
+        for ( const auto &symbol : universe )
         {
             auto record = new STabRecord
             {
