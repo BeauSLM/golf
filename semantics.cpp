@@ -111,6 +111,35 @@ void checksemantics
 
                     break;
                 }
+                case AST_FUNC:
+                {
+                    std::vector<ASTNode> & children = node.children;
+
+                    ASTNode &funcname = children[ 0 ];
+                    auto record       = lookup ( funcname.lexeme, funcname.linenum );
+
+                    ASTNode &returntype = children[ 1 ].children[ 1 ];
+
+                    record->returnsignature = returntype.lexeme;
+
+                    record->signature = "f(";
+
+                    std::vector<ASTNode> & params = children[ 1 ].children[ 0 ].children;
+                    for ( auto & param : params )
+                    {
+                        auto & typestring = param.children[ 1 ].lexeme;
+
+                        record->signature += typestring;
+                        record->signature += ",";
+                    }
+
+                    // remove trailing "," that I added
+                    if ( record->signature.size() > 2 ) record->signature.pop_back();
+
+                    record->signature += ")";
+
+                    break;
+                }
                 default:
                     break;
                     // error( node.linenum, "TODO" );
