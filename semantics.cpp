@@ -72,11 +72,9 @@ void checksemantics
             // identifier (name) of the symbol
             ASTNode &ident = node.children[ 0 ];
 
-            // REVIEW: which linenum???
-            define( ident.lexeme, ident.linenum );
-
             // functions and variables are not constants or types
-            STabRecord *record = lookup( ident.lexeme, ident.linenum );
+            // REVIEW: which linenum should the record get???
+            STabRecord *record = define( ident.lexeme, ident.linenum );
             record->isconst    = record->istype = false;
 
             if ( node.type == AST_FUNC && node.children[ 0 ].lexeme == "main" )
