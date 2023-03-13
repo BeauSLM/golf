@@ -64,30 +64,32 @@ void checksemantics
     // pass 1: populate file block
     openscope(); // file block
     {
+        static bool main_is_defined = false;
         auto define_globals = +[]( ASTNode & node )
         {
-            if ( node.type == AST_GLOBVAR || node.type == AST_FUNC )
-            {
-                // identifier (name) of the symbol
-                auto ident = node.children[ 0 ];
+            if ( node.type != AST_GLOBVAR && node.type != AST_FUNC ) return;
 
-                // make sure the node actually has the children it should
-                // TODO: remove
-                {
-                    assert( node.children.size() > 0 );
-                    assert( ident.type = AST_NEWID );
-                }
+            // identifier (name) of the symbol
+            ASTNode &ident = node.children[ 0 ];
 
-                // REVIEW: which linenum???
-                define( ident.lexeme, ident.linenum );
+            // REVIEW: which linenum???
+            define( ident.lexeme, ident.linenum );
 
-                // functions and variables are not constants or types
-                auto record = lookup( ident.lexeme, ident.linenum );
-                record->isconst = record->istype = false;
-           }
+            // functions and variables are not constants or types
+            STabRecord *record = lookup( ident.lexeme, ident.linenum );
+            record->isconst    = record->istype = false;
+
+            if ( node.type == AST_FUNC && node.children[ 0 ].lexeme == "main" )
+                main_is_defined = true;
+
+            // OPTIMIZE: global declarations can't have children that are global declarations (I think)
+            // this means I can simply prune the traversal of the children of this node
         };
 
         preorder( root, define_globals );
+
+        if ( !main_is_defined )
+            error( -1, "missing main() function" );
     }
 
     // pass 2: fully populate global symbol table records and annotate all identifier
