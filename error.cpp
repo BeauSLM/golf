@@ -30,7 +30,11 @@ void printf_wrapper( int linenum, const char *prefix, const char *msg, va_list a
     char formatted[ERROR_LEN];
     bzero( formatted, ERROR_LEN );
     vsnprintf(formatted, ERROR_LEN, msg, args);
-    fprintf( stderr, "%s: %s at or near line %d\n", prefix, formatted, linenum );
+
+    if ( linenum > 0 )
+        fprintf( stderr, "%s: %s at or near line %d\n", prefix, formatted, linenum );
+    else
+        fprintf( stderr, "%s: %s\n", prefix, formatted );
 }
 
 [[noreturn]] void error( int linenum, const char *msg, ... ) {
