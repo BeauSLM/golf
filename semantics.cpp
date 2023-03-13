@@ -103,12 +103,12 @@ void checksemantics
                 case AST_GLOBVAR:
                 {
                     // verify that the type is valid
-                    auto type = node.children[ 1 ];
+                    ASTNode &type = node.children[ 1 ];
                     assert_node_is_type( type );
 
                     // get the name's symbol record and give it it's type
                     // NOTE: we defined all global symbols in pass 1
-                    auto varname      = node.children[ 0 ];
+                    ASTNode &varname  = node.children[ 0 ];
                     auto record       = lookup( varname.lexeme, varname.linenum );
                     record->signature = type.lexeme;
 
