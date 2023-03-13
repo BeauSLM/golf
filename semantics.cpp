@@ -2,8 +2,6 @@
 #include "symboltable.hpp"
 #include "error.hpp"
 
-#include <assert.h>
-
 static const struct {
     std::string name,
                 signature,
@@ -26,16 +24,6 @@ static const struct {
     { "halt",    "f()",     "void", false, false, },
     { "len",     "f(str)",  "int",  false, false, },
 };
-
-// verifies that a given identifier refers to a type, and returns the corresponding stab record
-STabRecord * assert_node_is_type( ASTNode & ident )
-{
-    auto record = lookup( ident.lexeme, ident.linenum );
-
-    if ( !record->istype ) error( ident.linenum, "expected type, got '%s'", ident.lexeme.data() );
-
-    return record;
-}
 
 // NOTE: only called once
 void checksemantics
@@ -98,11 +86,20 @@ void checksemantics
         {
             // TODO:
             switch ( node.type ) {
+            switch ( node.type )
+            {
+                case AST_TYPEID:
+                {
+                    node.symbolinfo = lookup( node.lexeme, node.linenum );
+
+                    if ( !node.symbolinfo->istype ) error( node.linenum, "expected type, got '%s'", node.lexeme.data() );
+
+                    break;
+                }
                 case AST_GLOBVAR:
                 {
                     // verify that the type is valid
                     ASTNode &type = node.children[ 1 ];
-                    assert_node_is_type( type );
 
                     // get the name's symbol record and give it it's type
                     // NOTE: we defined all global symbols in pass 1
