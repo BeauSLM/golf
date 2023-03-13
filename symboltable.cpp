@@ -24,7 +24,7 @@ STabRecord * define
 
     // check for redefinition
     if ( scope.find( name ) != scope.end() )
-        error( linenum, "redefinition of %s", name.data() );
+        error( linenum, "'%s' redefined", name.data() );
 
     return ( scope[ name ] = new STabRecord() );
 }
@@ -38,6 +38,6 @@ STabRecord * lookup
         if ( it->find(name) != it->end() )
             return ( *it )[ name ];
 
-    error( linenum, "undefined reference to %s", name.data() );
+    error( linenum, "unknown name '%s'", name.data() );
 }
 
