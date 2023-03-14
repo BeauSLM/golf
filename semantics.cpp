@@ -124,6 +124,13 @@ void checksemantics
 
                     break;
                 }
+                case AST_VAR:
+                {
+                    ASTNode &varname = node.children[ 0 ];
+                    ASTNode &type    = node.children[ 1 ];
+
+                    node.symbolinfo = define( varname.lexeme, varname.linenum );
+                    node.symbolinfo->signature = type.lexeme;
 
                     break;
                 }
