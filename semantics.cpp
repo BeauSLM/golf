@@ -178,6 +178,11 @@ void checksemantics
                     closescope();
                     break;
                 }
+                case AST_ID:
+                {
+                    lookup( node.lexeme, node.linenum  );
+                    break;
+                }
                 default:
                     break;
             }
