@@ -65,8 +65,21 @@ void checksemantics
             STabRecord *record = define( ident.lexeme, ident.linenum );
             record->isconst    = record->istype = false;
 
+            // defining main:
+            // error if it has arguments
+            // error if it has a return type
             if ( node.type == AST_FUNC && node.children[ 0 ].lexeme == "main" )
+            {
+                auto &arguments = node.children[ 1 ].children[ 0 ].children;
+                if ( arguments.size() > 0 )
+                    error( node.linenum, "main() can't have arguments");
+
+                auto &returntype = node.children[ 1 ].children[ 1 ].lexeme;
+                if ( returntype != "$void" )
+                    error( node.linenum, "main() can't have a return value" );
+
                 main_is_defined = true;
+            }
 
             // OPTIMIZE: global declarations can't have children that are global declarations (I think)
             // this means I can simply prune the traversal of the children of this node
