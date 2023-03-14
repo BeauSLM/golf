@@ -116,16 +116,14 @@ void checksemantics
                 }
                 case AST_GLOBVAR:
                 {
-                    // verify that the type is valid
-                    ASTNode &type = node.children[ 1 ];
+                    ASTNode &type    = node.children[ 1 ];
+                    ASTNode &varname = node.children[ 0 ];
 
-                    // get the name's symbol record and give it it's type
-                    // NOTE: we defined all global symbols in pass 1
-                    ASTNode &varname  = node.children[ 0 ];
-                    auto record       = lookup( varname.lexeme, varname.linenum );
-                    record->signature = type.lexeme;
+                    node.symbolinfo            = lookup( varname.lexeme, varname.linenum );
+                    node.symbolinfo->signature = type.lexeme;
 
-                    node.symbolinfo   = record;
+                    break;
+                }
 
                     break;
                 }
