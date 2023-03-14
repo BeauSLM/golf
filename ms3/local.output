@@ -1,4 +1,4 @@
-Run started on Mon Mar 13 14:07:48 2023
+Run started on Mon Mar 13 21:30:27 2023
 
 Hostname: beau-Desktop
 
@@ -107,13 +107,13 @@ Test: local var version of check.t2 |
 % ./golf ./ms3/check.t3
 
 STDOUT:
-milestone 3
 
 
 STDERR:
+error: expected type, got 'int' at or near line 5
 
 
-RETURN CODE: 0
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: global name test |
@@ -272,13 +272,13 @@ Test: main can't have arguments |
 % ./golf ./ms3/check.t14
 
 STDOUT:
-milestone 3
 
 
 STDERR:
+error: main() can't have arguments at or near line 3
 
 
-RETURN CODE: 0
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: main can't have a return value |
@@ -287,13 +287,13 @@ Test: main can't have a return value |
 % ./golf ./ms3/check.t15
 
 STDOUT:
-milestone 3
 
 
 STDERR:
+error: main() can't have a return value at or near line 3
 
 
-RETURN CODE: 0
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: dup check for formal parameters |
@@ -617,13 +617,13 @@ Test: return+argument checks |
 % ./golf ./ms3/check.t37
 
 STDOUT:
-milestone 3
 
 
 STDERR:
+error: unknown name 'i' at or near line 4
 
 
-RETURN CODE: 0
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: scope check and undefined variable |
@@ -632,13 +632,13 @@ Test: scope check and undefined variable |
 % ./golf ./ms3/check.t38
 
 STDOUT:
-milestone 3
 
 
 STDERR:
+error: unknown name 'c' at or near line 10
 
 
-RETURN CODE: 0
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: redefined variable |
@@ -647,13 +647,13 @@ Test: redefined variable |
 % ./golf ./ms3/check.t39
 
 STDOUT:
-milestone 3
 
 
 STDERR:
+error: 'b' redefined at or near line 13
 
 
-RETURN CODE: 0
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: comparable and ordered comparisons |
@@ -745,5 +745,5 @@ STDERR:
 
 RETURN CODE: 0
 
-Run ended on Mon Mar 13 14:07:48 2023
+Run ended on Mon Mar 13 21:30:27 2023
 
