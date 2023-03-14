@@ -97,10 +97,15 @@ void checksemantics
         // TODO:
         auto pass_2_pre = +[]( ASTNode &node )
         {
-            // TODO:
-            switch ( node.type ) {
             switch ( node.type )
             {
+                case AST_BLOCK:
+                {
+                    openscope();
+                    break;
+                }
+                // REVIEW: this can be done pre or post because we can't define
+                // custom types in this language
                 case AST_TYPEID:
                 {
                     node.symbolinfo = lookup( node.lexeme, node.linenum );
@@ -161,8 +166,16 @@ void checksemantics
 
         auto pass_2_post = +[]( ASTNode &node )
         {
-            // TODO:
-            // if ( node.type == AST_BLOCK ) closescope();
+            switch ( node.type )
+            {
+                case AST_BLOCK:
+                {
+                    closescope();
+                    break;
+                }
+                default:
+                    break;
+            }
         };
 
         prepost( root, pass_2_pre, pass_2_post );
