@@ -94,7 +94,8 @@ void checksemantics
     // pass 2: fully populate global symbol table records and annotate all identifier
     // notes with their corresponding symbol table records
     {
-        // TODO:
+        // function parameters that we defer defining until we have opened the function's scope
+        static std::vector<ASTNode *> funcparams;
         auto pass_2_pre = +[]( ASTNode &node )
         {
             switch ( node.type )
@@ -102,6 +103,19 @@ void checksemantics
                 case AST_BLOCK:
                 {
                     openscope();
+
+                    for ( auto param : funcparams )
+                    {
+                        ASTNode & name = param->children[ 0 ];
+                        ASTNode & type = param->children[ 1 ];
+
+                        name.symbolinfo = define( name.lexeme, name.linenum );
+                        type.symbolinfo = lookup( type.lexeme, type.linenum );
+
+                        name.symbolinfo->signature = type.lexeme;
+                    }
+
+                    funcparams.clear();
                     break;
                 }
                 // REVIEW: this can be done pre or post because we can't define
@@ -146,6 +160,8 @@ void checksemantics
 
                         record->signature += typestring;
                         record->signature += ",";
+
+                        funcparams.push_back( &param );
                     }
 
                     // remove trailing "," that I added
