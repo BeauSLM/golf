@@ -107,13 +107,13 @@ Test: local var version of check.t2 |
 % ./golf ./ms3/check.t3
 
 STDOUT:
+milestone 3
 
 
 STDERR:
-error: expected type, got 'int' at or near line 5
 
 
-RETURN CODE: 1
+RETURN CODE: 0
 
 -------------------------------------------------------------------------------
 Test: global name test |
@@ -745,5 +745,5 @@ STDERR:
 
 RETURN CODE: 0
 
-Run ended on Mon Mar 13 21:30:27 2023
+Run ended on Mon Mar 13 21:45:26 2023
 

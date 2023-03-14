@@ -124,16 +124,6 @@ void checksemantics
 
                     break;
                 }
-                case AST_VAR:
-                {
-                    ASTNode &varname = node.children[ 0 ];
-                    ASTNode &type    = node.children[ 1 ];
-
-                    node.symbolinfo = define( varname.lexeme, varname.linenum );
-                    node.symbolinfo->signature = type.lexeme;
-
-                    break;
-                }
                 case AST_FUNC:
                 {
                     std::vector<ASTNode> & children = node.children;
@@ -146,6 +136,8 @@ void checksemantics
                     record->returnsignature = returntype.lexeme;
 
                     record->signature = "f(";
+
+                    // TODO: put all parameters in the symbol table
 
                     std::vector<ASTNode> & params = children[ 1 ].children[ 0 ].children;
                     for ( auto & param : params )
@@ -183,6 +175,16 @@ void checksemantics
                     lookup( node.lexeme, node.linenum  );
                     break;
                 }
+                case AST_VAR:
+                {
+                    ASTNode &varname = node.children[ 0 ];
+                    ASTNode &type    = node.children[ 1 ];
+
+                    node.symbolinfo = define( varname.lexeme, varname.linenum );
+                    node.symbolinfo->signature = type.lexeme;
+
+                    break;
+                }
                 default:
                     break;
             }
@@ -194,12 +196,12 @@ void checksemantics
 #if 0
     // pass 3: propagate type information up the AST, starting at the leaves
     {
-        auto foo = +[]( ASTNode &node )
+        auto pass_3 = +[]( ASTNode &node )
         {
             // TODO:
             if ( node.type == AST_BLOCK ) openscope();
         };
-        postorder( root, foo );
+        postorder( root, pass_3 );
     }
 #endif
 }
