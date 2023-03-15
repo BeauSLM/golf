@@ -27,6 +27,17 @@ static const struct {
     { "len",     "f(str)",  "int",  false, false, },
 };
 
+bool check_child_type( int child_ix, std::string type, ASTNode & node )
+{
+    return node.children[ child_ix ].expressiontype == type;
+}
+
+void check_operand_types( std::string type, ASTNode & node )
+{
+    if ( !check_child_type( 0, type, node ) || !check_child_type( 1, type, node ) )
+        error( node.linenum, "operand type mismatch for '%s'", ASTNode_to_string( node.type ).data() );
+}
+
 // NOTE: only called once
 void checksemantics
 ( ASTNode & root )
