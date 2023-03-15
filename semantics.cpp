@@ -209,7 +209,6 @@ void checksemantics
         prepost( root, pass_2_pre, pass_2_post );
     }
 
-#if 0
     // pass 3: propagate type information up the AST, starting at the leaves
     {
         auto pass_3 = +[]( ASTNode &node )
@@ -219,6 +218,5 @@ void checksemantics
         };
         postorder( root, pass_3 );
     }
-#endif
 }
 
