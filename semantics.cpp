@@ -201,7 +201,7 @@ void checksemantics
                 }
                 case AST_ID:
                 {
-                    lookup( node.lexeme, node.linenum  );
+                    node.symbolinfo = lookup( node.lexeme, node.linenum  );
                     break;
                 }
                 case AST_VAR:
