@@ -2,6 +2,8 @@
 #include "symboltable.hpp"
 #include "error.hpp"
 
+#include <limits.h>
+
 static const struct {
     std::string name,
                 signature,
@@ -215,6 +217,71 @@ void checksemantics
         {
             // TODO:
             if ( node.type == AST_BLOCK ) openscope();
+                case AST_STRING:
+                    node.expressiontype = "string";
+                    break;
+                case AST_PLUS:
+                case AST_MINUS:
+                case AST_MUL:
+                case AST_DIV:
+                case AST_MOD:
+                    if ( node.children[ 0 ].expressiontype != "int" || node.children[ 1 ].expressiontype != "int" )
+                        error( node.linenum, "type mismatch for '%s'", ASTNode_to_string( node.type ).data() );
+                    node.expressiontype = "int";
+                    break;
+                case AST_UMINUS:
+                    if ( node.children[ 0 ].expressiontype != "int" )
+                        error( node.linenum, "type mismatch for '%s'", ASTNode_to_string( node.type ).data() );
+                    node.expressiontype = "int";
+                    break;
+                case AST_ASSIGN:
+                    node.expressiontype = "void";
+                    break;
+                case AST_LOGIC_AND:
+                    node.expressiontype = "bool";
+                    break;
+                case AST_LOGIC_OR:
+                    node.expressiontype = "bool";
+                    break;
+                case AST_EQ:
+                    node.expressiontype = "bool";
+                    break;
+                case AST_LT:
+                    node.expressiontype = "bool";
+                    break;
+                case AST_GT:
+                    node.expressiontype = "bool";
+                    break;
+                case AST_LOGIC_NOT:
+                    node.expressiontype = "bool";
+                    break;
+                case AST_NEQ:
+                    node.expressiontype = "bool";
+                    break;
+                case AST_LEQ:
+                    node.expressiontype = "bool";
+                    break;
+                case AST_GEQ:
+                    node.expressiontype = "bool";
+                    break;
+                case AST_FUNCCALL:
+                    node.expressiontype = node.symbolinfo->returnsignature;
+                    node.children[ 0 ].expressiontype = node.symbolinfo->signature;
+                    // number and type of args matches signature
+                    break;
+                case AST_ID:
+                    node.expressiontype = node.symbolinfo->signature;
+                    break;
+                // TODO: for if, ifelse, and for, make sure the expression is a boolean
+                case AST_IF:
+                    break;
+                case AST_IFELSE:
+                    break;
+                case AST_FOR:
+                    break;
+                default:
+                    break;
+            }
         };
         postorder( root, pass_3 );
     }
