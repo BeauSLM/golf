@@ -38,7 +38,7 @@ void printast( ASTNode & root ) {
         std::string indent;
         for ( int i = 0; i < depth; i++ ) indent += "    ";
 
-        printf( "%s%s\n", indent.data(), ASTNode_to_string( rpre ).data() );
+        printf( "%s%s\n", indent.data(), ASTNode_printstring( rpre ).data() );
     };
 
     auto post = +[]( ASTNode & rpost ) {
@@ -50,14 +50,10 @@ void printast( ASTNode & root ) {
     prepost( root, pre, post );
 }
 
-std::string ASTNode_to_string( ASTNode &n ) {
-    std::string numstring;
-    if ( n.linenum > 0 ) numstring = " @ line " + std::to_string( n.linenum );
+std::string ASTNode_to_string( ASTNodeID n ) {
+    std::string result;
 
-    std::string lexstring;
-    if ( n.lexeme.size() > 0 ) lexstring = " [" + n.lexeme + "]";
-
-    switch ( n.type ) {
+    switch ( n ) {
         // "program structure" or someth idk
         case AST_PROGRAM:   return "program";
         case AST_SIGNATURE: return "sig";
@@ -68,52 +64,121 @@ std::string ASTNode_to_string( ASTNode &n ) {
         case AST_FUNCCALL:  return "funccall";
 
         // statements
-        case AST_EXPRSTMT:  return "exprstmt" + numstring;
         case AST_EMPTYSTMT: return "emptystmt";
+        case AST_EXPRSTMT:  return "exprstmt";
 
         // keywords
-        case AST_BREAK:     return "break"    + numstring;
-        case AST_FOR:       return "for"      + numstring;
-        case AST_FUNC:      return "func"     + numstring;
-        case AST_IF:        return "if"       + numstring;
-        case AST_IFELSE:    return "ifelse"   + numstring;
-        case AST_RETURN:    return "return"   + numstring;
-        case AST_VAR:       return "var"      + numstring;
-        case AST_GLOBVAR:   return "globvar"  + numstring;
+        case AST_BREAK:     return "break";
+        case AST_FOR:       return "for";
+        case AST_FUNC:      return "func";
+        case AST_IF:        return "if";
+        case AST_IFELSE:    return "ifelse";
+        case AST_RETURN:    return "return";
+        case AST_VAR:       return "var";
+        case AST_GLOBVAR:   return "globvar";
 
-        case AST_PLUS:      return "+"        + numstring;
-        case AST_MINUS:     return "-"        + numstring;
-        case AST_UMINUS:    return "u-"       + numstring;
-        case AST_MUL:       return "*"        + numstring;
-        case AST_DIV:       return "/"        + numstring;
-        case AST_MOD:       return "%"        + numstring;
-        case AST_ASSIGN:    return "="        + numstring;
-        case AST_LOGIC_AND: return "&&"       + numstring;
-        case AST_LOGIC_OR:  return "||"       + numstring;
-        case AST_LOGIC_NOT: return "!"        + numstring;
-        case AST_EQ:        return "=="       + numstring;
-        case AST_LT:        return "<"        + numstring;
-        case AST_GT:        return ">"        + numstring;
-        case AST_NEQ:       return "!="       + numstring;
-        case AST_LEQ:       return "<="       + numstring;
-        case AST_GEQ:       return ">="       + numstring;
+        case AST_PLUS:      return "+";
+        case AST_MINUS:     return "-";
+        case AST_UMINUS:    return "u-";
+        case AST_MUL:       return "*";
+        case AST_DIV:       return "/";
+        case AST_MOD:       return "%";
+        case AST_ASSIGN:    return "=";
+        case AST_LOGIC_AND: return "&&";
+        case AST_LOGIC_OR:  return "||";
+        case AST_LOGIC_NOT: return "!";
+        case AST_EQ:        return "==";
+        case AST_LT:        return "<";
+        case AST_GT:        return ">";
+        case AST_NEQ:       return "!=";
+        case AST_LEQ:       return "<=";
+        case AST_GEQ:       return ">=";
 
         // identifiers
-        case AST_ID:        return "id"       + lexstring + numstring;
-        case AST_NEWID:     return "newid"    + lexstring + numstring;
-        case AST_TYPEID:    return "typeid"   + lexstring + numstring;
+        case AST_ID:        return "id";
+        case AST_NEWID:     return "newid";
+        case AST_TYPEID:    return "typeid";
 
 
         // literals
-        case AST_INT:       return "int"      + lexstring + numstring;
-        case AST_STRING:    return "string"   + lexstring + numstring;
+        case AST_INT:       return "int";
+        case AST_STRING:    return "string";
+
+        // sadness :(
+        case AST_UNSET: error( -1, "internal error" );
+    }
+
+    // this is unrachable, each case of the switch above returns or errors
+    error( -1, "unreachable in node to_string" );
+    return "";
+}
+
+std::string ASTNode_printstring( ASTNode &n ) {
+    std::string nodestring = ASTNode_to_string( n.type );
+
+    std::string numstring;
+    if ( n.linenum > 0 ) numstring = " @ line " + std::to_string( n.linenum );
+
+    std::string lexstring;
+    if ( n.lexeme.size() > 0 ) lexstring = " [" + n.lexeme + "]";
+
+    switch ( n.type ) {
+        // "program structure" or someth idk
+        case AST_PROGRAM:   return nodestring;
+        case AST_SIGNATURE: return nodestring;
+        case AST_FORMAL:    return nodestring;
+        case AST_FORMALS:   return nodestring;
+        case AST_BLOCK:     return nodestring;
+        case AST_ACTUALS:   return nodestring;
+        case AST_FUNCCALL:  return nodestring;
+
+        // statements
+        case AST_EMPTYSTMT: return nodestring;
+        case AST_EXPRSTMT:  return nodestring + numstring;
+
+        // keywords
+        case AST_BREAK:     return nodestring + numstring;
+        case AST_FOR:       return nodestring + numstring;
+        case AST_FUNC:      return nodestring + numstring;
+        case AST_IF:        return nodestring + numstring;
+        case AST_IFELSE:    return nodestring + numstring;
+        case AST_RETURN:    return nodestring + numstring;
+        case AST_VAR:       return nodestring + numstring;
+        case AST_GLOBVAR:   return nodestring + numstring;
+
+        case AST_PLUS:      return nodestring + numstring;
+        case AST_MINUS:     return nodestring + numstring;
+        case AST_UMINUS:    return nodestring + numstring;
+        case AST_MUL:       return nodestring + numstring;
+        case AST_DIV:       return nodestring + numstring;
+        case AST_MOD:       return nodestring + numstring;
+        case AST_ASSIGN:    return nodestring + numstring;
+        case AST_LOGIC_AND: return nodestring + numstring;
+        case AST_LOGIC_OR:  return nodestring + numstring;
+        case AST_LOGIC_NOT: return nodestring + numstring;
+        case AST_EQ:        return nodestring + numstring;
+        case AST_LT:        return nodestring + numstring;
+        case AST_GT:        return nodestring + numstring;
+        case AST_NEQ:       return nodestring + numstring;
+        case AST_LEQ:       return nodestring + numstring;
+        case AST_GEQ:       return nodestring + numstring;
+
+        // identifiers
+        case AST_ID:        return nodestring + lexstring + numstring;
+        case AST_NEWID:     return nodestring + lexstring + numstring;
+        case AST_TYPEID:    return nodestring + lexstring + numstring;
+
+
+        // literals
+        case AST_INT:       return nodestring + lexstring + numstring;
+        case AST_STRING:    return nodestring + lexstring + numstring;
 
         // sadness :(
         case AST_UNSET: error( n.linenum, "internal error" );
     }
 
     // this is unrachable, each case of the switch above returns or errors
-    error( -1, "unreachable in node to_string" );
+    error( -1, "unreachable in node printstring" );
     return "";
 }
 
