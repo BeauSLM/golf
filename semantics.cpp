@@ -215,8 +215,22 @@ void checksemantics
     {
         auto pass_3 = +[]( ASTNode &node )
         {
-            // TODO:
-            if ( node.type == AST_BLOCK ) openscope();
+            switch ( node.type )
+            {
+                case AST_INT:
+                {
+                    int64_t value;
+                    if ( node.lexeme.size() > 15 || ( value = std::stoll( node.lexeme ) ) < INT_MIN || value > INT_MAX )
+                    {
+                        if ( node.lexeme[ 0 ] == '-' )
+                            error( node.linenum, "integer literal too small", node.lexeme.data() );
+                        else
+                            error( node.linenum, "integer literal too large", node.lexeme.data() );
+                    }
+
+                    node.expressiontype = "int";
+                }
+                break;
                 case AST_STRING:
                     node.expressiontype = "string";
                     break;
