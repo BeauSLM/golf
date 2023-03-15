@@ -230,14 +230,14 @@ void checksemantics
             {
                 case AST_INT:
                 {
-                    int64_t value;
-                    if ( node.lexeme.size() > 15 || ( value = std::stoll( node.lexeme ) ) < INT_MIN || value > INT_MAX )
-                    {
-                        if ( node.lexeme[ 0 ] == '-' )
-                            error( node.linenum, "integer literal too small", node.lexeme.data() );
-                        else
-                            error( node.linenum, "integer literal too large", node.lexeme.data() );
-                    }
+                    if ( node.lexeme.size() > 12 )
+                        error( node.linenum, "integer literal out of range", node.lexeme.data() );
+                    int64_t value = std::stoll( node.lexeme );
+                    if ( value < INT_MIN )
+                        error( node.linenum, "integer literal too small", node.lexeme.data() );
+
+                    if ( value > INT_MAX )
+                        error( node.linenum, "integer literal too large", node.lexeme.data() );
 
                     node.expressiontype = "int";
                 }
