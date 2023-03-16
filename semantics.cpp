@@ -274,6 +274,16 @@ void checksemantics
 
                     node.expressiontype = "int";
                     break;
+                }
+                case AST_ID:
+                {
+                    if ( !strncmp( node.symbolinfo->signature.data(), "f(", 2 ) )
+                        node.expressiontype = node.symbolinfo->returnsignature;
+                    else
+                        node.expressiontype = node.symbolinfo->signature;
+
+                    break;
+                }
                 case AST_ASSIGN:
                     // REVIEW: does every identifier have a valid type at this point?
                     std::string type = node.children[ 0 ].expressiontype;
