@@ -309,8 +309,10 @@ void checksemantics
                     // REVIEW: does every identifier have a valid type at this point?
                     std::string type = node.children[ 0 ].expressiontype;
                     check_operand_types( type, node );
+
                     node.expressiontype = "void";
                     break;
+                }
                 case AST_LOGIC_AND:
                 case AST_LOGIC_OR:
                 case AST_LOGIC_NOT:
@@ -343,6 +345,7 @@ void checksemantics
 
                     node.expressiontype = "bool";
                     break;
+                }
                 case AST_FUNCCALL:
                 {
                     auto linenum = node.children[ 0 ].linenum;
@@ -374,11 +377,60 @@ void checksemantics
                     if ( !check_child_type( 0, "bool", node ) )
                         error( node.linenum, "%s expression must be boolean type", ASTNode_to_string( node.type ).data() );
                     break;
+                }
                 default:
                     break;
             }
         };
         postorder( root, pass_3 );
+    }
+
+    // pass 4: finish up
+    {
+        static int for_level = 0;
+        static std::string returntype;
+        // TODO: typecheck assignments in pass 3 but check that the operands are legal in here
+        auto pass_4_pre = +[]( ASTNode &node ) {
+            switch ( node.type )
+            {
+                case AST_FOR:
+                {
+                    for_level++;
+                    break;
+                }
+                case AST_FUNC:
+                {
+                    returntype = node.symbolinfo->returnsignature;
+                    break;
+                }
+                default:
+                    break;
+            }
+        };
+
+        auto pass_4_post = +[]( ASTNode &node ) {
+            switch ( node.type )
+            {
+                case AST_BREAK:
+                {
+                    if ( for_level == 0 ) error( node.linenum, "break must be inside 'for'" );
+
+                    break;
+                }
+                case AST_FOR:
+                {
+                    for_level--;
+                    break;
+                }
+                case AST_BLOCK:
+                {
+                }
+                default:
+                    break;
+            }
+        };
+
+        prepost( root, pass_4_pre, pass_4_post );
     }
 }
 
