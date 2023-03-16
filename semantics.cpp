@@ -1,8 +1,10 @@
+// TODO: think long and hard abt where my symbol table pointers are gonna go
 #include "semantics.hpp"
 #include "symboltable.hpp"
 #include "error.hpp"
 
 #include <limits.h>
+#include <string.h>
 
 static const struct {
     std::string name,
