@@ -160,13 +160,13 @@ void checksemantics
                     std::vector<ASTNode> & children = node.children;
 
                     ASTNode &funcname = children[ 0 ];
-                    auto record       = lookup ( funcname.lexeme, funcname.linenum );
+                    node.symbolinfo   = lookup ( funcname.lexeme, funcname.linenum );
 
                     ASTNode &returntype = children[ 1 ].children[ 1 ];
 
-                    record->returnsignature = returntype.lexeme;
+                    node.symbolinfo->returnsignature = returntype.lexeme;
 
-                    record->signature = "f(";
+                    node.symbolinfo->signature = "f(";
 
                     // TODO: put all parameters in the symbol table
 
@@ -175,16 +175,16 @@ void checksemantics
                     {
                         auto & typestring = param.children[ 1 ].lexeme;
 
-                        record->signature += typestring;
-                        record->signature += ",";
+                        node.symbolinfo->signature += typestring;
+                        node.symbolinfo->signature += ",";
 
                         funcparams.push_back( &param );
                     }
 
                     // remove trailing "," that I added
-                    if ( record->signature.size() > 2 ) record->signature.pop_back();
+                    if ( node.symbolinfo->signature.size() > 2 ) node.symbolinfo->signature.pop_back();
 
-                    record->signature += ")";
+                    node.symbolinfo->signature += ")";
 
                     break;
                 }
