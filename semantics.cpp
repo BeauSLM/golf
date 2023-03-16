@@ -368,10 +368,11 @@ void checksemantics
                     break;
                 }
                 case AST_IF:
-                    break;
                 case AST_IFELSE:
-                    break;
                 case AST_FOR:
+                {
+                    if ( !check_child_type( 0, "bool", node ) )
+                        error( node.linenum, "%s expression must be boolean type", ASTNode_to_string( node.type ).data() );
                     break;
                 default:
                     break;
