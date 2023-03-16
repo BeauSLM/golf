@@ -1,4 +1,4 @@
-Run started on Mon Mar 13 21:30:27 2023
+Run started on Wed Mar 15 21:12:06 2023
 
 Hostname: beau-Desktop
 
@@ -9,7 +9,8 @@ Running make |
 % /usr/bin/make ms3
 
 STDOUT:
-make: Nothing to be done for 'ms3'.
+clang++ -o semantics.o -c semantics.cpp -Wall -Wextra -std=c++17 -DMILESTONE=3 -g -MMD -MF semantics.d
+clang++ -Wall -Wextra -std=c++17 -DMILESTONE=3 -g -o golf main.o error.o lex.o parse.o ast.o symboltable.o semantics.o
 
 
 STDERR:
@@ -182,13 +183,13 @@ Test: constants can't be changed |
 % ./golf ./ms3/check.t8
 
 STDOUT:
-milestone 3
 
 
 STDERR:
+error: can't assign to a constant at or near line 4
 
 
-RETURN CODE: 0
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: nonexistent type name |
@@ -302,13 +303,13 @@ Test: dup check for formal parameters |
 % ./golf ./ms3/check.t16
 
 STDOUT:
-milestone 3
 
 
 STDERR:
+error: 'i' redefined at or near line 7
 
 
-RETURN CODE: 0
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: function call as lvalue |
@@ -317,13 +318,13 @@ Test: function call as lvalue |
 % ./golf ./ms3/check.t17
 
 STDOUT:
-milestone 3
 
 
 STDERR:
+error: can only assign to a variable at or near line 6
 
 
-RETURN CODE: 0
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: function name as lvalue |
@@ -332,13 +333,13 @@ Test: function name as lvalue |
 % ./golf ./ms3/check.t18
 
 STDOUT:
-milestone 3
 
 
 STDERR:
+error: cannot assign to a function at or near line 6
 
 
-RETURN CODE: 0
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: humongous integer literal |
@@ -347,13 +348,13 @@ Test: humongous integer literal |
 % ./golf ./ms3/check.t19
 
 STDOUT:
-milestone 3
 
 
 STDERR:
+error: integer literal out of range at or near line 5
 
 
-RETURN CODE: 0
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: positive integer literal out of range |
@@ -362,13 +363,13 @@ Test: positive integer literal out of range |
 % ./golf ./ms3/check.t20
 
 STDOUT:
-milestone 3
 
 
 STDERR:
+error: integer literal too large at or near line 6
 
 
-RETURN CODE: 0
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: negative integer literal out of range |
@@ -377,13 +378,13 @@ Test: negative integer literal out of range |
 % ./golf ./ms3/check.t21
 
 STDOUT:
-milestone 3
 
 
 STDERR:
+error: integer literal too small at or near line 6
 
 
-RETURN CODE: 0
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: "break" not inside "for" loop |
@@ -392,13 +393,13 @@ Test: "break" not inside "for" loop |
 % ./golf ./ms3/check.t22
 
 STDOUT:
-milestone 3
 
 
 STDERR:
+error: break must be inside 'for' at or near line 7
 
 
-RETURN CODE: 0
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: "break" in block, but not in "for" |
@@ -407,13 +408,13 @@ Test: "break" in block, but not in "for" |
 % ./golf ./ms3/check.t23
 
 STDOUT:
-milestone 3
 
 
 STDERR:
+error: break must be inside 'for' at or near line 5
 
 
-RETURN CODE: 0
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: "break" in "if" block |
@@ -422,13 +423,13 @@ Test: "break" in "if" block |
 % ./golf ./ms3/check.t24
 
 STDOUT:
-milestone 3
 
 
 STDERR:
+error: break must be inside 'for' at or near line 5
 
 
-RETURN CODE: 0
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: missing return statement |
@@ -497,13 +498,13 @@ Test: "if" expr not a boolean type |
 % ./golf ./ms3/check.t29
 
 STDOUT:
-milestone 3
 
 
 STDERR:
+error: if expression must be boolean type at or near line 4
 
 
-RETURN CODE: 0
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: "if"-"else" not a boolean type |
@@ -512,13 +513,13 @@ Test: "if"-"else" not a boolean type |
 % ./golf ./ms3/check.t30
 
 STDOUT:
-milestone 3
 
 
 STDERR:
+error: ifelse expression must be boolean type at or near line 4
 
 
-RETURN CODE: 0
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: "for" expr not a boolean type |
@@ -527,13 +528,13 @@ Test: "for" expr not a boolean type |
 % ./golf ./ms3/check.t31
 
 STDOUT:
-milestone 3
 
 
 STDERR:
+error: for expression must be boolean type at or near line 10
 
 
-RETURN CODE: 0
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: legit expression statements |
@@ -572,13 +573,13 @@ Test: actual parameter type check |
 % ./golf ./ms3/check.t34
 
 STDOUT:
-milestone 3
 
 
 STDERR:
+error: number/type of arguments doesn't match function declaration at or near line 4
 
 
-RETURN CODE: 0
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: operand type mismatch |
@@ -587,13 +588,13 @@ Test: operand type mismatch |
 % ./golf ./ms3/check.t35
 
 STDOUT:
-milestone 3
 
 
 STDERR:
+error: operand type mismatch for '+' at or near line 10
 
 
-RETURN CODE: 0
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: another actual parameter type check |
@@ -602,13 +603,13 @@ Test: another actual parameter type check |
 % ./golf ./ms3/check.t36
 
 STDOUT:
-milestone 3
 
 
 STDERR:
+error: number/type of arguments doesn't match function declaration at or near line 7
 
 
-RETURN CODE: 0
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: return+argument checks |
@@ -620,7 +621,7 @@ STDOUT:
 
 
 STDERR:
-error: unknown name 'i' at or near line 4
+error: number/type of arguments doesn't match function declaration at or near line 8
 
 
 RETURN CODE: 1
@@ -662,13 +663,13 @@ Test: comparable and ordered comparisons |
 % ./golf ./ms3/check.t40
 
 STDOUT:
-milestone 3
 
 
 STDERR:
+error: operand type mismatch for '>' at or near line 8
 
 
-RETURN CODE: 0
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: int/bool distinction |
@@ -677,13 +678,13 @@ Test: int/bool distinction |
 % ./golf ./ms3/check.t41
 
 STDOUT:
-milestone 3
 
 
 STDERR:
+error: operand type mismatch for '=' at or near line 5
 
 
-RETURN CODE: 0
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: deep type propagation |
@@ -722,13 +723,13 @@ Test: call of non-function |
 % ./golf ./ms3/check.t44
 
 STDOUT:
-milestone 3
 
 
 STDERR:
+error: can't call something that isn't a function at or near line 4
 
 
-RETURN CODE: 0
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: type id used in wrong context |
@@ -737,13 +738,13 @@ Test: type id used in wrong context |
 % ./golf ./ms3/check.t45
 
 STDOUT:
-milestone 3
 
 
 STDERR:
+error: can't use type 'int' here at or near line 5
 
 
-RETURN CODE: 0
+RETURN CODE: 1
 
-Run ended on Mon Mar 13 21:45:26 2023
+Run ended on Wed Mar 15 21:12:07 2023
 
