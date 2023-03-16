@@ -235,7 +235,7 @@ ASTNode RelExpr() {
                 result.type = AST_LT;
                 break;
             case TOKEN_GT:
-                result.type = AST_NEQ;
+                result.type = AST_GT;
                 break;
             default:
                 // NOTE: this is actually unreachable:
