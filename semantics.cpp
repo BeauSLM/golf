@@ -268,43 +268,48 @@ void checksemantics
                 case AST_MUL:
                 case AST_DIV:
                 case AST_MOD:
-                    if ( node.children[ 0 ].expressiontype != "int" || node.children[ 1 ].expressiontype != "int" )
-                        error( node.linenum, "type mismatch for '%s'", ASTNode_to_string( node.type ).data() );
-                    node.expressiontype = "int";
-                    break;
                 case AST_UMINUS:
-                    if ( node.children[ 0 ].expressiontype != "int" )
-                        error( node.linenum, "type mismatch for '%s'", ASTNode_to_string( node.type ).data() );
+                {
+                    check_operand_types( "int", node );
+
                     node.expressiontype = "int";
                     break;
                 case AST_ASSIGN:
+                    // REVIEW: does every identifier have a valid type at this point?
+                    std::string type = node.children[ 0 ].expressiontype;
+                    check_operand_types( type, node );
                     node.expressiontype = "void";
                     break;
                 case AST_LOGIC_AND:
-                    node.expressiontype = "bool";
-                    break;
                 case AST_LOGIC_OR:
-                    node.expressiontype = "bool";
-                    break;
-                case AST_EQ:
-                    node.expressiontype = "bool";
-                    break;
-                case AST_LT:
-                    node.expressiontype = "bool";
-                    break;
-                case AST_GT:
-                    node.expressiontype = "bool";
-                    break;
                 case AST_LOGIC_NOT:
+                {
+                    check_operand_types( "bool", node );
+
                     node.expressiontype = "bool";
                     break;
+                }
+                case AST_EQ:
                 case AST_NEQ:
+                {
+                    std::string type = node.children[ 0 ].expressiontype;
+                    check_operand_types( type, node );
+
                     node.expressiontype = "bool";
                     break;
+                }
+                case AST_LT:
+                case AST_GT:
                 case AST_LEQ:
-                    node.expressiontype = "bool";
-                    break;
                 case AST_GEQ:
+                {
+                    std::string type = node.children[ 0 ].expressiontype;
+                    // XXX: bleh
+                    if ( type == "int" )
+                        check_operand_types( type, node );
+                    else
+                        check_operand_types( "string", node );
+
                     node.expressiontype = "bool";
                     break;
                 case AST_FUNCCALL:
