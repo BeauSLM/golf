@@ -219,6 +219,17 @@ void checksemantics
 
                     break;
                 }
+                case AST_FUNCCALL:
+                {
+                    auto linenum = node.children[ 0 ].linenum;
+                    auto stabrecord = node.children[ 0 ].symbolinfo;
+
+                    // REVIEW: don't i need look at the normal signature??
+                    if ( !stabrecord || !strncmp( stabrecord->returnsignature.data(), "f(", 2 ) )
+                        error( linenum, "can't call something that isn't a function" );
+
+                    node.expressiontype = node.children[ 0 ].symbolinfo->returnsignature;
+                }
                 default:
                     break;
             }
