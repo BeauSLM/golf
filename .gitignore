@@ -10,4 +10,9 @@ golf_reference
 
 # symlink to provided test script
 /run
+
+# this ffs god I hate vscode
 /.vscode/
+
+# a file for me to try stuff in
+/t
