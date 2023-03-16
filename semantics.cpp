@@ -130,6 +130,7 @@ void checksemantics
                         type.symbolinfo = lookup( type.lexeme, type.linenum );
 
                         name.symbolinfo->signature = type.lexeme;
+                        name.expressiontype = type.lexeme;
                     }
 
                     funcparams.clear();
