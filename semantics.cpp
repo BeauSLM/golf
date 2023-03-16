@@ -285,6 +285,25 @@ void checksemantics
                     break;
                 }
                 case AST_ASSIGN:
+                {
+                    auto lhs = node.children[ 0 ].symbolinfo;
+                    auto rhs = node.children[ 1 ].symbolinfo;
+
+                    if ( !lhs || lhs->signature.size() == 0 )
+                        error( node.linenum, "can only assign to a variable" );
+
+                    if ( lhs->isconst )
+                        error( node.linenum, "can't assign to a constant" );
+
+                    if ( lhs->istype )
+                        error( node.linenum, "can't use type '%s' here", node.children[ 0 ].lexeme.data() );
+                    if ( rhs && rhs->istype )
+                        error( node.linenum, "can't use type '%s' here", node.children[ 1 ].lexeme.data() );
+
+                    if ( lhs->returnsignature.size() > 0 || !strncmp( lhs->signature.data(), "f(", 2 ) )
+                        error( node.linenum, "cannot assign to a function" );
+
+
                     // REVIEW: does every identifier have a valid type at this point?
                     std::string type = node.children[ 0 ].expressiontype;
                     check_operand_types( type, node );
