@@ -342,14 +342,29 @@ void checksemantics
                     node.expressiontype = "bool";
                     break;
                 case AST_FUNCCALL:
-                    node.expressiontype = node.symbolinfo->returnsignature;
-                    node.children[ 0 ].expressiontype = node.symbolinfo->signature;
-                    // number and type of args matches signature
+                {
+                    auto linenum = node.children[ 0 ].linenum;
+
+                    // TODO: stick in function with other signature builder
+                    std::string callsig = "f(";
+                    std::vector<ASTNode> & arguments = node.children[ 1 ].children;
+                    for ( auto & param : arguments )
+                    {
+                        auto & typestring = param.expressiontype;
+
+                        callsig += typestring;
+                        callsig += ",";
+                    }
+                    // remove trailing "," that I added
+                    if ( callsig.size() > 2 ) callsig.pop_back();
+
+                    callsig += ")";
+
+                    if ( callsig != node.children[ 0 ].symbolinfo->signature )
+                        error( linenum, "number/type of arguments doesn't match function declaration" );
+
                     break;
-                case AST_ID:
-                    node.expressiontype = node.symbolinfo->signature;
-                    break;
-                // TODO: for if, ifelse, and for, make sure the expression is a boolean
+                }
                 case AST_IF:
                     break;
                 case AST_IFELSE:
