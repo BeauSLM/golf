@@ -259,8 +259,10 @@ void checksemantics
                 }
                 break;
                 case AST_STRING:
+                {
                     node.expressiontype = "string";
                     break;
+                }
                 case AST_PLUS:
                 case AST_MINUS:
                 case AST_MUL:
