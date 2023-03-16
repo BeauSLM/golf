@@ -129,6 +129,9 @@ void checksemantics
 
                         name.symbolinfo->signature = type.lexeme;
                         name.expressiontype = type.lexeme;
+
+                        // store the symbol record in the formal node for convenience
+                        param->symbolinfo = name.symbolinfo;
                     }
 
                     funcparams.clear();
