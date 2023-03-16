@@ -113,6 +113,10 @@ void checksemantics
         {
             switch ( node.type )
             {
+                case AST_PROGRAM:
+                {
+                    node.symbolinfo = lookup( "main", -1 );
+                }
                 case AST_BLOCK:
                 {
                     openscope();
