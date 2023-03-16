@@ -34,7 +34,7 @@ bool check_child_type( int child_ix, std::string type, ASTNode & node )
 
 void check_operand_types( std::string type, ASTNode & node )
 {
-    if ( !check_child_type( 0, type, node ) || !check_child_type( 1, type, node ) )
+    if ( !check_child_type( 0, type, node ) || ( node.children.size() > 1 && !check_child_type( 1, type, node ) ) )
         error( node.linenum, "operand type mismatch for '%s'", ASTNode_to_string( node.type ).data() );
 }
 
