@@ -1,4 +1,4 @@
-Run started on Wed Mar 15 21:12:06 2023
+Run started on Thu Mar 16 16:56:45 2023
 
 Hostname: beau-Desktop
 
@@ -9,8 +9,7 @@ Running make |
 % /usr/bin/make ms3
 
 STDOUT:
-clang++ -o semantics.o -c semantics.cpp -Wall -Wextra -std=c++17 -DMILESTONE=3 -g -MMD -MF semantics.d
-clang++ -Wall -Wextra -std=c++17 -DMILESTONE=3 -g -o golf main.o error.o lex.o parse.o ast.o symboltable.o semantics.o
+make: Nothing to be done for 'ms3'.
 
 
 STDERR:
@@ -746,5 +745,5 @@ error: can't use type 'int' here at or near line 5
 
 RETURN CODE: 1
 
-Run ended on Wed Mar 15 21:12:07 2023
+Run ended on Thu Mar 16 16:56:45 2023
 
