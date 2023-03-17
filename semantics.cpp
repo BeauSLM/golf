@@ -121,6 +121,11 @@ void pass_2_pre
 {
     switch ( node.type )
     {
+        case AST_PROGRAM:
+        {
+            node.symbolinfo = lookup( "main", -1 );
+            break;
+        }
         case AST_BLOCK:
         {
             openscope();
