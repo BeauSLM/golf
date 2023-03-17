@@ -144,9 +144,9 @@ void pass_2_pre
         // custom types in this language
         case AST_TYPEID:
         {
-            node.symbolinfo = lookup( node.lexeme, node.linenum );
+            auto sym = lookup( node.lexeme, node.linenum );
 
-            if ( !node.symbolinfo->istype ) error( node.linenum, "expected type, got '%s'", node.lexeme.data() );
+            if ( !sym->istype ) error( node.linenum, "expected type, got '%s'", node.lexeme.data() );
 
             break;
         }
