@@ -114,7 +114,7 @@ std::string ASTNode_to_string( ASTNodeID n ) {
 }
 
 std::string ASTNode_printstring( ASTNode &n ) {
-    std::string nodestring = ASTNode_to_string( n.type );
+    std::string result = ASTNode_to_string( n.type );
 
     std::string numstring;
     if ( n.linenum > 0 ) numstring = " @ line " + std::to_string( n.linenum );
@@ -122,63 +122,65 @@ std::string ASTNode_printstring( ASTNode &n ) {
     std::string lexstring;
     if ( n.lexeme.size() > 0 ) lexstring = " [" + n.lexeme + "]";
 
+
     switch ( n.type ) {
         // "program structure" or someth idk
-        case AST_PROGRAM:   return nodestring;
-        case AST_SIGNATURE: return nodestring;
-        case AST_FORMAL:    return nodestring;
-        case AST_FORMALS:   return nodestring;
-        case AST_BLOCK:     return nodestring;
-        case AST_ACTUALS:   return nodestring;
-        case AST_FUNCCALL:  return nodestring;
+        case AST_PROGRAM:
+        case AST_SIGNATURE:
+        case AST_FORMAL:
+        case AST_FORMALS:
+        case AST_BLOCK:
+        case AST_ACTUALS:
+        case AST_FUNCCALL:
 
         // statements
-        case AST_EMPTYSTMT: return nodestring;
-        case AST_EXPRSTMT:  return nodestring + numstring;
+        case AST_EMPTYSTMT:    break;
+        case AST_EXPRSTMT:
 
         // keywords
-        case AST_BREAK:     return nodestring + numstring;
-        case AST_FOR:       return nodestring + numstring;
-        case AST_FUNC:      return nodestring + numstring;
-        case AST_IF:        return nodestring + numstring;
-        case AST_IFELSE:    return nodestring + numstring;
-        case AST_RETURN:    return nodestring + numstring;
-        case AST_VAR:       return nodestring + numstring;
-        case AST_GLOBVAR:   return nodestring + numstring;
+        case AST_BREAK:
+        case AST_FOR:
+        case AST_FUNC:
+        case AST_IF:
+        case AST_IFELSE:
+        case AST_RETURN:
+        case AST_VAR:
+        case AST_GLOBVAR:
 
-        case AST_PLUS:      return nodestring + numstring;
-        case AST_MINUS:     return nodestring + numstring;
-        case AST_UMINUS:    return nodestring + numstring;
-        case AST_MUL:       return nodestring + numstring;
-        case AST_DIV:       return nodestring + numstring;
-        case AST_MOD:       return nodestring + numstring;
-        case AST_ASSIGN:    return nodestring + numstring;
-        case AST_LOGIC_AND: return nodestring + numstring;
-        case AST_LOGIC_OR:  return nodestring + numstring;
-        case AST_LOGIC_NOT: return nodestring + numstring;
-        case AST_EQ:        return nodestring + numstring;
-        case AST_LT:        return nodestring + numstring;
-        case AST_GT:        return nodestring + numstring;
-        case AST_NEQ:       return nodestring + numstring;
-        case AST_LEQ:       return nodestring + numstring;
-        case AST_GEQ:       return nodestring + numstring;
+        case AST_PLUS:
+        case AST_MINUS:
+        case AST_UMINUS:
+        case AST_MUL:
+        case AST_DIV:
+        case AST_MOD:
+        case AST_ASSIGN:
+        case AST_LOGIC_AND:
+        case AST_LOGIC_OR:
+        case AST_LOGIC_NOT:
+        case AST_EQ:
+        case AST_LT:
+        case AST_GT:
+        case AST_NEQ:
+        case AST_LEQ:
+        case AST_GEQ:
+            result += numstring;
+            break;
 
         // identifiers
-        case AST_ID:        return nodestring + lexstring + numstring;
-        case AST_NEWID:     return nodestring + lexstring + numstring;
-        case AST_TYPEID:    return nodestring + lexstring + numstring;
-
+        case AST_ID:
+        case AST_NEWID:
+        case AST_TYPEID:
 
         // literals
-        case AST_INT:       return nodestring + lexstring + numstring;
-        case AST_STRING:    return nodestring + lexstring + numstring;
+        case AST_INT:
+        case AST_STRING:
+            result += lexstring + numstring;
+            break;
 
         // sadness :(
         case AST_UNSET: error( n.linenum, "internal error" );
     }
 
-    // this is unrachable, each case of the switch above returns or errors
-    error( -1, "unreachable in node printstring" );
-    return "";
+    return result;
 }
 
