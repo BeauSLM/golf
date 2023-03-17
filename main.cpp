@@ -44,7 +44,8 @@ int main( int argc, char *argv[] ) {
     auto root = parse();
 
     checksemantics( root );
-    puts( "milestone 3" );
+    printaast( root );
+    puts( "" );
 
 #else
 
