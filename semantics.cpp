@@ -90,7 +90,7 @@ void pass_2_pre
         {
             openscope();
 
-            for ( auto param : funcparams )
+            for ( ASTNode * param : funcparams )
             {
                 ASTNode & name = param->children[ 0 ];
                 ASTNode & type = param->children[ 1 ];
@@ -99,7 +99,6 @@ void pass_2_pre
                 type.symbolinfo = lookup( type.lexeme, type.linenum );
 
                 name.symbolinfo->signature = type.lexeme;
-                name.expressiontype = type.lexeme;
 
                 // store the symbol record in the formal node for convenience
                 param->symbolinfo = name.symbolinfo;
@@ -132,21 +131,20 @@ void pass_2_pre
         {
             std::vector<ASTNode> & children = node.children;
 
+            // get symbolinfo from symbol table
             ASTNode &funcname = children[ 0 ];
             node.symbolinfo   = lookup ( funcname.lexeme, funcname.linenum );
 
-            ASTNode &returntype = children[ 1 ].children[ 1 ];
-
+            // give the symboltable record its return type
+            ASTNode &returntype              = children[ 1 ].children[ 1 ];
             node.symbolinfo->returnsignature = returntype.lexeme;
 
+            // build the function's signature
             node.symbolinfo->signature = "f(";
-
-            // TODO: put all parameters in the symbol table
-
             std::vector<ASTNode> & params = children[ 1 ].children[ 0 ].children;
-            for ( auto & param : params )
+            for ( ASTNode & param : params )
             {
-                auto & typestring = param.children[ 1 ].lexeme;
+                std::string & typestring = param.children[ 1 ].lexeme;
 
                 node.symbolinfo->signature += typestring;
                 node.symbolinfo->signature += ",";
@@ -156,7 +154,6 @@ void pass_2_pre
 
             // remove trailing "," that I added
             if ( node.symbolinfo->signature.size() > 2 ) node.symbolinfo->signature.pop_back();
-
             node.symbolinfo->signature += ")";
 
             break;
@@ -193,14 +190,14 @@ void pass_2_post
         }
         case AST_FUNCCALL:
         {
-            auto linenum = node.children[ 0 ].linenum;
+            auto linenum    = node.children[ 0 ].linenum;
             auto stabrecord = node.children[ 0 ].symbolinfo;
 
             // REVIEW: don't i need look at the normal signature??
             if ( !stabrecord || !strncmp( stabrecord->returnsignature.data(), "f(", 2 ) )
                 error( linenum, "can't call something that isn't a function" );
 
-            node.expressiontype = node.children[ 0 ].symbolinfo->returnsignature;
+            node.symbolinfo = node.children[ 0 ].symbolinfo;
         }
         default:
             break;
@@ -232,6 +229,15 @@ void pass_3
             node.expressiontype = "string";
             break;
         }
+        case AST_ID:
+        {
+            if ( strncmp( node.symbolinfo->signature.data(), "f(", 2 ) )
+                node.expressiontype = node.symbolinfo->signature;
+            else
+                node.expressiontype = node.symbolinfo->returnsignature;
+
+            break;
+        }
         case AST_PLUS:
         case AST_MINUS:
         case AST_MUL:
@@ -242,15 +248,6 @@ void pass_3
             check_operand_types( "int", node );
 
             node.expressiontype = "int";
-            break;
-        }
-        case AST_ID:
-        {
-            if ( !strncmp( node.symbolinfo->signature.data(), "f(", 2 ) )
-                node.expressiontype = node.symbolinfo->returnsignature;
-            else
-                node.expressiontype = node.symbolinfo->signature;
-
             break;
         }
         case AST_ASSIGN:
@@ -315,6 +312,8 @@ void pass_3
         }
         case AST_FUNCCALL:
         {
+            node.expressiontype = node.symbolinfo->returnsignature;
+
             auto linenum = node.children[ 0 ].linenum;
 
             // TODO: stick in function with other signature builder
@@ -332,7 +331,7 @@ void pass_3
 
             callsig += ")";
 
-            if ( callsig != node.children[ 0 ].symbolinfo->signature )
+            if ( callsig != node.symbolinfo->signature )
                 error( linenum, "number/type of arguments doesn't match function declaration" );
 
             break;
@@ -343,6 +342,7 @@ void pass_3
         {
             if ( !check_child_type( 0, "bool", node ) )
                 error( node.linenum, "%s expression must be boolean type", ASTNode_to_string( node.type ).data() );
+
             break;
         }
         default:
