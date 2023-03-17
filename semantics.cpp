@@ -369,8 +369,8 @@ match_found:
 }
 
 static ASTNode * current_function = nullptr;
-static bool need_return = false;
-static int for_level = 0;
+static bool need_return = false, has_returned = false;
+static int for_level    = 0,     block_level  = 0;
 //pass 4: finish up
 void pass_4_pre
 ( ASTNode &node )
@@ -382,10 +382,16 @@ void pass_4_pre
             for_level++;
             break;
         }
+        case AST_BLOCK:
+        {
+            block_level++;
+            break;
+        }
         case AST_FUNC:
         {
             current_function = &node;
-            need_return = current_function->symbolinfo->returnsignature != "void";
+            need_return      = current_function->symbolinfo->returnsignature != "void";
+            has_returned     = !need_return;
 
             break;
         }
@@ -412,11 +418,17 @@ void pass_4_post
         }
         case AST_BLOCK:
         {
-            if ( need_return )
+            block_level--;
+
+            if ( !has_returned && block_level == 0 )
                 error( current_function->linenum, "no return statement in function" );
 
-            current_function = nullptr;
-            need_return = false;
+            if ( block_level == 0 )
+            {
+                current_function = nullptr;
+                need_return = false;
+            }
+
             break;
         }
         case AST_RETURN:
@@ -432,7 +444,7 @@ void pass_4_post
             if ( need_return && node.children.size() > 0 && returnvaltype != returntype )
                 error( node.linenum, "returned value has the wrong type" );
 
-            need_return = false;
+            has_returned = true;
 
             break;
         }
