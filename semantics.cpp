@@ -40,8 +40,9 @@ void check_operand_types( std::string type, ASTNode & node )
         error( node.linenum, "operand type mismatch for '%s'", ASTNode_to_string( node.type ).data() );
 }
 
+// pass 1: populate file block
 static bool main_is_defined = false;
-void define_globals
+void pass_1
 ( ASTNode & node )
 {
     if ( node.type != AST_GLOBVAR && node.type != AST_FUNC ) return;
@@ -73,6 +74,10 @@ void define_globals
     // OPTIMIZE: global declarations can't have children that are global declarations (I think)
     // this means I can simply prune the traversal of the children of this node
 }
+
+// pass 2: fully populate global symbol table records and annotate all identifier
+// nodes (and others) with their corresponding symbol table records
+// i.e. populate all symbol table records and annotate the AST with them
 
 // function parameters that we defer defining until we have opened the function's scope
 static std::vector<ASTNode *> funcparams;
@@ -202,6 +207,7 @@ void pass_2_post
     }
 }
 
+// pass 3: propagate type information up the AST, starting at the leaves
 void pass_3
 ( ASTNode &node )
 {
@@ -347,6 +353,7 @@ void pass_3
 static int for_level = 0;
 static std::string returntype;
 // TODO: typecheck assignments in pass 3 but check that the operands are legal in here
+// pass 4: finish up
 void pass_4_pre
 ( ASTNode &node )
 {
@@ -366,7 +373,6 @@ void pass_4_pre
             break;
     }
 };
-
 void pass_4_post
 ( ASTNode &node )
 {
@@ -415,21 +421,16 @@ void checksemantics
         }
     }
 
-    // pass 1: populate file block
     openscope(); // file block
-    preorder( root, define_globals);
+    preorder( root, pass_1);
 
     if ( !main_is_defined )
         error( -1, "missing main() function" );
 
-    // pass 2: fully populate global symbol table records and annotate all identifier
-    // notes with their corresponding symbol table records
     prepost( root, pass_2_pre, pass_2_post );
 
-    // pass 3: propagate type information up the AST, starting at the leaves
     postorder( root, pass_3 );
 
-    // pass 4: finish up
     prepost( root, pass_4_pre, pass_4_post );
 }
 
