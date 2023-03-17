@@ -178,8 +178,8 @@ void pass_2_pre
             node.symbolinfo   = lookup ( funcname.lexeme, funcname.linenum );
 
             // give the symboltable record its return type
-            ASTNode &returntype              = children[ 1 ].children[ 1 ];
-            node.symbolinfo->returnsignature = returntype.lexeme;
+            auto returntype = lookup( children[ 1 ].children[ 1 ].lexeme, children[ 1 ].children[ 1 ].linenum );
+            node.symbolinfo->returnsignature = returntype->signature;
 
             // build the function's signature
             node.symbolinfo->signature = "f(";
@@ -372,7 +372,7 @@ void pass_4_pre
         case AST_FUNC:
         {
             current_function = &node;
-            need_return = current_function->symbolinfo->returnsignature != "$void";
+            need_return = current_function->symbolinfo->returnsignature != "void";
 
             break;
         }
