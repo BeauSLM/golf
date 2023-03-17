@@ -235,18 +235,6 @@ void pass_2_post
 
             break;
         }
-        case AST_FUNCCALL:
-        {
-            auto linenum    = node.children[ 0 ].linenum;
-            auto stabrecord = node.children[ 0 ].symbolinfo;
-
-            // REVIEW: don't i need look at the normal signature??
-            if ( !stabrecord || !strncmp( stabrecord->returnsignature.data(), "f(", 2 ) )
-                error( linenum, "can't call something that isn't a function" );
-
-            node.symbolinfo = node.children[ 0 ].symbolinfo;
-            break;
-        }
         default:
             break;
     }
@@ -329,11 +317,15 @@ match_found:
         // check that our function call has the correct number and type of arguments
         case AST_FUNCCALL:
         {
+            // make sure the identifier we're calling is actually a function
+            int linenum     = node.children[ 0 ].linenum;
+            node.symbolinfo = node.children[ 0 ].symbolinfo; // TODO: make a local
+
+            if ( !node.symbolinfo || strncmp( node.symbolinfo->signature.data(), "f(", 2 ) )
+                error( linenum, "can't call something that isn't a function" );
+
             node.expressiontype = node.symbolinfo->returnsignature;
 
-            auto linenum = node.children[ 0 ].linenum;
-
-            // TODO: stick in function with other signature builder
             std::string callsig = "f(";
             std::vector<ASTNode> & arguments = node.children[ 1 ].children;
             for ( auto & param : arguments )
