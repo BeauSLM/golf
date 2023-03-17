@@ -5,8 +5,9 @@
 #include <limits.h>
 #include <string.h>
 
+// symbols in the universe block
 static const struct {
-    std::string name,
+    std::string symbolname,
                 signature,
                 returnsignature;
     bool        isconst = false,
@@ -29,11 +30,13 @@ static const struct {
     { "len",     "f(string)", "int",  false, false, },
 };
 
+// table that encodes the legal operand types of each operator,
+// as well as the type of the expression yielded by the operator
 static const struct {
     ASTNodeID operatorid;
     std::string lhs, rhs, expressiontype;
 } type_legals[] = {
-    // arithmatic ops
+    // arithmetic ops
     { AST_PLUS,      "int",    "int",    "int"  },
     { AST_MINUS,     "int",    "int",    "int"  },
     { AST_MUL,       "int",    "int",    "int"  },
@@ -72,19 +75,18 @@ static const struct {
     { AST_LOGIC_NOT, "bool",   "",       "bool" },
 };
 
-// pass 1: populate file block
+// pass 1: populate file block of symbol table
 static bool main_is_defined = false;
 void pass_1
 ( ASTNode & node )
 {
     if ( node.type != AST_GLOBVAR && node.type != AST_FUNC ) return;
 
-    // identifier (name) of the symbol
     ASTNode &ident = node.children[ 0 ];
 
     // functions and variables are not constants or types
     STabRecord *record = define( ident.lexeme, ident.linenum );
-    record->isconst    = record->istype = false;
+    record->isconst = record->istype = false;
 
     node.symbolinfo = record;
 
@@ -128,6 +130,10 @@ void pass_2_pre
         {
             openscope();
 
+            // if we visited a function node, we populated the list `funcparams`
+            // with the parameters of the function. defining them here ensures
+            // that we've already opened the scope corresponding to the function
+            // body. after defining them, the list is cleared
             for ( ASTNode * param : funcparams )
             {
                 ASTNode & name = param->children[ 0 ];
@@ -145,6 +151,7 @@ void pass_2_pre
             funcparams.clear();
             break;
         }
+        // make sure our types are actually types
         case AST_TYPEID:
         {
             auto sym = lookup( node.lexeme, node.linenum );
@@ -165,6 +172,7 @@ void pass_2_pre
 
             break;
         }
+        // with functions we need define both the arguments and the return type
         case AST_FUNC:
         {
             std::vector<ASTNode> & children = node.children;
@@ -174,7 +182,8 @@ void pass_2_pre
             node.symbolinfo   = lookup ( funcname.lexeme, funcname.linenum );
 
             // give the symboltable record its return type
-            auto returntype = lookup( children[ 1 ].children[ 1 ].lexeme, children[ 1 ].children[ 1 ].linenum );
+            ASTNode & returntype_ident = children[ 1 ].children[ 1 ];
+            STabRecord * returntype = lookup( returntype_ident.lexeme, returntype_ident.linenum );
             node.symbolinfo->returnsignature = returntype->signature;
 
             // build the function's signature
@@ -198,7 +207,6 @@ void pass_2_pre
         }
         default:
             break;
-            // error( node.linenum, "TODO" );
     }
 }
 
@@ -250,10 +258,13 @@ void pass_3
 {
     switch ( node.type )
     {
+        // check if int literal fits in 32 bits
         case AST_INT:
         {
+            // too many digits
             if ( node.lexeme.size() > 12 )
                 error( node.linenum, "integer literal out of range", node.lexeme.data() );
+
             int64_t value = std::stoll( node.lexeme );
             if ( value < INT_MIN )
                 error( node.linenum, "integer literal too small", node.lexeme.data() );
@@ -290,7 +301,7 @@ void pass_3
         case AST_GT:
         case AST_LEQ:
         case AST_GEQ:
-        // check operand types
+        // check operand types and give operator its expressiontype
         {
             for ( auto typecheck : type_legals )
             {
@@ -299,12 +310,15 @@ void pass_3
                 auto & lhs = node.children[ 0 ].expressiontype;
                 if ( lhs != typecheck.lhs ) continue;
 
+                // if typecheck.rhs is empty, we're looking at a unary operator
+                // i.e. one operand
                 if ( typecheck.rhs.size() > 0 )
                 {
                     auto & rhs = node.children[ 1 ].expressiontype;
                     if ( rhs != typecheck.rhs ) continue;
                 }
 
+                // passed the type check -> give node its expression type and skip the error
                 node.expressiontype = typecheck.expressiontype;
                 goto match_found;
             }
@@ -312,6 +326,7 @@ void pass_3
 match_found:
             break;
         }
+        // check that our function call has the correct number and type of arguments
         case AST_FUNCCALL:
         {
             node.expressiontype = node.symbolinfo->returnsignature;
@@ -341,6 +356,7 @@ match_found:
         case AST_IF:
         case AST_IFELSE:
         case AST_FOR:
+        // enforce that condition is boolean
         {
             if ( node.children[ 0 ].expressiontype != "bool" )
                 error( node.linenum, "%s expression must be boolean type", ASTNode_to_string( node.type ).data() );
@@ -431,10 +447,8 @@ void pass_4_post
             if ( lhs->isconst )
                 error( node.linenum, "can't assign to a constant" );
 
-            if ( lhs->istype )
+            if ( lhs->istype || ( rhs && rhs->istype ) )
                 error( node.linenum, "can't use type '%s' here", node.children[ 0 ].lexeme.data() );
-            if ( rhs && rhs->istype )
-                error( node.linenum, "can't use type '%s' here", node.children[ 1 ].lexeme.data() );
 
             break;
         }
@@ -463,7 +477,7 @@ void checksemantics
             };
 
             // NOTE: not using define() because I know the information of the predefined symbols
-            scopestack.back()[ symbol.name ] = record;
+            scopestack.back()[ symbol.symbolname ] = record;
         }
     }
 
