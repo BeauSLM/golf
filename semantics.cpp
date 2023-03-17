@@ -1,4 +1,3 @@
-// TODO: think long and hard abt where my symbol table pointers are gonna go
 #include "semantics.hpp"
 #include "symboltable.hpp"
 #include "error.hpp"
@@ -84,7 +83,6 @@ void pass_1
     ASTNode &ident = node.children[ 0 ];
 
     // functions and variables are not constants or types
-    // REVIEW: which linenum should the record get???
     STabRecord *record = define( ident.lexeme, ident.linenum );
     record->isconst    = record->istype = false;
 
@@ -147,8 +145,6 @@ void pass_2_pre
             funcparams.clear();
             break;
         }
-        // REVIEW: this can be done pre or post because we can't define
-        // custom types in this language
         case AST_TYPEID:
         {
             auto sym = lookup( node.lexeme, node.linenum );
