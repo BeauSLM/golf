@@ -346,10 +346,10 @@ match_found:
     }
 }
 
+static ASTNode * current_function = nullptr;
+static bool need_return = false;
 static int for_level = 0;
-static std::string returntype;
-// TODO: typecheck assignments in pass 3 but check that the operands are legal in here
-// pass 4: finish up
+//pass 4: finish up
 void pass_4_pre
 ( ASTNode &node )
 {
@@ -362,13 +362,16 @@ void pass_4_pre
         }
         case AST_FUNC:
         {
-            returntype = node.symbolinfo->returnsignature;
+            current_function = &node;
+            need_return = current_function->symbolinfo->returnsignature != "$void";
+
             break;
         }
         default:
             break;
     }
-};
+}
+
 void pass_4_post
 ( ASTNode &node )
 {
@@ -387,6 +390,30 @@ void pass_4_post
         }
         case AST_BLOCK:
         {
+            if ( need_return )
+                error( current_function->linenum, "no return statement in function" );
+
+            current_function = nullptr;
+            need_return = false;
+            break;
+        }
+        case AST_RETURN:
+        {
+            if ( !need_return && node.children.size() > 0 )
+                error( node.linenum, "this function can't return a value" );
+
+            if ( need_return && node.children.size() == 0 )
+                error( node.linenum, "this function must return a value" );
+
+            std::string returnvaltype = node.children[ 0 ].expressiontype;
+            std::string returntype    = current_function->symbolinfo->returnsignature;
+            if ( need_return && node.children.size() > 0 && returnvaltype != returntype )
+                error( node.linenum, "returned value has the wrong type" );
+
+            need_return = false;
+
+            break;
+        }
         case AST_ASSIGN:
         {
             auto lhs = node.children[ 0 ].symbolinfo;
