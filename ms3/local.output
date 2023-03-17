@@ -1,4 +1,4 @@
-Run started on Thu Mar 16 16:56:45 2023
+Run started on Thu Mar 16 20:44:14 2023
 
 Hostname: beau-Desktop
 
@@ -335,7 +335,7 @@ STDOUT:
 
 
 STDERR:
-error: cannot assign to a function at or near line 6
+error: operand type mismatch for '=' at or near line 6
 
 
 RETURN CODE: 1
@@ -437,13 +437,13 @@ Test: missing return statement |
 % ./golf ./ms3/check.t25
 
 STDOUT:
-milestone 3
 
 
 STDERR:
+error: no return statement in function at or near line 6
 
 
-RETURN CODE: 0
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: returning value from void function |
@@ -452,13 +452,13 @@ Test: returning value from void function |
 % ./golf ./ms3/check.t26
 
 STDOUT:
-milestone 3
 
 
 STDERR:
+error: this function can't return a value at or near line 4
 
 
-RETURN CODE: 0
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: return type mismatch |
@@ -467,13 +467,13 @@ Test: return type mismatch |
 % ./golf ./ms3/check.t27
 
 STDOUT:
-milestone 3
 
 
 STDERR:
+error: returned value has the wrong type at or near line 7
 
 
-RETURN CODE: 0
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: missing return type |
@@ -482,13 +482,13 @@ Test: missing return type |
 % ./golf ./ms3/check.t28
 
 STDOUT:
-milestone 3
 
 
 STDERR:
+error: this function must return a value at or near line 7
 
 
-RETURN CODE: 0
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: "if" expr not a boolean type |
@@ -745,5 +745,5 @@ error: can't use type 'int' here at or near line 5
 
 RETURN CODE: 1
 
-Run ended on Thu Mar 16 16:56:45 2023
+Run ended on Thu Mar 16 20:44:15 2023
 
