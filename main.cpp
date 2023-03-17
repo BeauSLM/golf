@@ -44,7 +44,7 @@ int main( int argc, char *argv[] ) {
     auto root = parse();
 
     checksemantics( root );
-    printaast( root );
+    printast( root );
     puts( "" );
 
 #else

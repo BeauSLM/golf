@@ -1,6 +1,8 @@
 #include "ast.hpp"
 #include "error.hpp"
 
+#include <strings.h>
+
 void preorder
 ( ASTNode & root, void ( *callback )( ASTNode & ) )
 {
@@ -122,20 +124,43 @@ std::string ASTNode_printstring( ASTNode &n ) {
     std::string lexstring;
     if ( n.lexeme.size() > 0 ) lexstring = " [" + n.lexeme + "]";
 
+#if MILESTONE == 3
+    std::string sigstring;
+    if ( n.expressiontype.size() > 0 ) sigstring = " sig=" + n.expressiontype;
+    // else if ( n.symbolinfo ) sigstring = " sig=" + n.symbolinfo->signature;
+
+    std::string stabstring;
+    if ( n.symbolinfo ) {
+        char hexstring[ 32 ];
+        bzero( hexstring, 32 );
+        sprintf( hexstring, "%lx", (uint64_t) n.symbolinfo );
+        stabstring = " sym=0x" + std::string( hexstring );
+    }
+
+    numstring = sigstring + stabstring + numstring;
+#endif
 
     switch ( n.type ) {
         // "program structure" or someth idk
-        case AST_PROGRAM:
         case AST_SIGNATURE:
         case AST_FORMAL:
         case AST_FORMALS:
         case AST_BLOCK:
         case AST_ACTUALS:
+
+#if MILESTONE == 2
+        case AST_PROGRAM:
         case AST_FUNCCALL:
+#endif
 
         // statements
         case AST_EMPTYSTMT:    break;
         case AST_EXPRSTMT:
+
+#if MILESTONE == 3
+        case AST_PROGRAM:
+        case AST_FUNCCALL:
+#endif
 
         // keywords
         case AST_BREAK:
