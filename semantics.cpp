@@ -387,6 +387,23 @@ void pass_4_post
         }
         case AST_BLOCK:
         {
+        case AST_ASSIGN:
+        {
+            auto lhs = node.children[ 0 ].symbolinfo;
+            auto rhs = node.children[ 1 ].symbolinfo;
+
+            if ( !lhs || lhs->signature.size() == 0 || lhs->returnsignature.size() > 0 )
+                error( node.linenum, "can only assign to a variable" );
+
+            if ( lhs->isconst )
+                error( node.linenum, "can't assign to a constant" );
+
+            if ( lhs->istype )
+                error( node.linenum, "can't use type '%s' here", node.children[ 0 ].lexeme.data() );
+            if ( rhs && rhs->istype )
+                error( node.linenum, "can't use type '%s' here", node.children[ 1 ].lexeme.data() );
+
+            break;
         }
         default:
             break;
