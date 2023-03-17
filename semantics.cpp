@@ -232,11 +232,7 @@ void pass_3
         }
         case AST_ID:
         {
-            if ( strncmp( node.symbolinfo->signature.data(), "f(", 2 ) )
-                node.expressiontype = node.symbolinfo->signature;
-            else
-                node.expressiontype = node.symbolinfo->returnsignature;
-
+            node.expressiontype = node.symbolinfo->signature;
             break;
         }
         case AST_PLUS:
