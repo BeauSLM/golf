@@ -318,13 +318,13 @@ match_found:
         case AST_FUNCCALL:
         {
             // make sure the identifier we're calling is actually a function
-            int linenum     = node.children[ 0 ].linenum;
-            node.symbolinfo = node.children[ 0 ].symbolinfo; // TODO: make a local
+            int linenum      = node.children[ 0 ].linenum;
+            STabRecord * sym = node.children[ 0 ].symbolinfo;
 
-            if ( !node.symbolinfo || strncmp( node.symbolinfo->signature.data(), "f(", 2 ) )
+            if ( !sym || strncmp( sym->signature.data(), "f(", 2 ) )
                 error( linenum, "can't call something that isn't a function" );
 
-            node.expressiontype = node.symbolinfo->returnsignature;
+            node.expressiontype = sym->returnsignature;
 
             std::string callsig = "f(";
             std::vector<ASTNode> & arguments = node.children[ 1 ].children;
@@ -340,7 +340,7 @@ match_found:
 
             callsig += ")";
 
-            if ( callsig != node.symbolinfo->signature )
+            if ( callsig != sym->signature )
                 error( linenum, "number/type of arguments doesn't match function declaration" );
 
             break;
