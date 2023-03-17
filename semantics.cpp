@@ -198,6 +198,7 @@ void pass_2_post
                 error( linenum, "can't call something that isn't a function" );
 
             node.symbolinfo = node.children[ 0 ].symbolinfo;
+            break;
         }
         default:
             break;
