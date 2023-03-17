@@ -88,6 +88,8 @@ void pass_1
     STabRecord *record = define( ident.lexeme, ident.linenum );
     record->isconst    = record->istype = false;
 
+    node.symbolinfo = record;
+
     // defining main:
     // error if it has arguments
     // error if it has a return type
