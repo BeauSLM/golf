@@ -155,6 +155,8 @@ void pass_2_pre
 
             if ( !sym->istype ) error( node.linenum, "expected type, got '%s'", node.lexeme.data() );
 
+            node.symbolinfo = sym;
+
             break;
         }
         case AST_GLOBVAR:
