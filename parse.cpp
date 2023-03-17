@@ -146,6 +146,8 @@ ASTNode UnaryExpr() {
 
                 result.add_child( left );
                 result.add_child( right );
+
+                result.linenum = left.linenum;
             }
 
             unlex( tok );
