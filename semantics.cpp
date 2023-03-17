@@ -13,6 +13,7 @@ static const struct {
     bool        isconst = false,
                 istype  = false;
 } universe[] = {
+    // TODO: in second column: string -> str
     { "$void",   "void",      "",     false, true,  },
     { "bool",    "bool",      "",     false, true,  },
     { "int",     "int",       "",     false, true,  },
@@ -29,16 +30,48 @@ static const struct {
     { "len",     "f(string)", "int",  false, false, },
 };
 
-bool check_child_type( int child_ix, std::string type, ASTNode & node )
-{
-    return node.children[ child_ix ].expressiontype == type;
-}
+static const struct {
+    ASTNodeID operatorid;
+    std::string lhs, rhs, expressiontype;
+} type_legals[] = {
+    // arithmatic ops
+    { AST_PLUS,      "int",    "int",    "int"  },
+    { AST_MINUS,     "int",    "int",    "int"  },
+    { AST_MUL,       "int",    "int",    "int"  },
+    { AST_DIV,       "int",    "int",    "int"  },
+    { AST_MOD,       "int",    "int",    "int"  },
 
-void check_operand_types( std::string type, ASTNode & node )
-{
-    if ( !check_child_type( 0, type, node ) || ( node.children.size() > 1 && !check_child_type( 1, type, node ) ) )
-        error( node.linenum, "operand type mismatch for '%s'", ASTNode_to_string( node.type ).data() );
-}
+    // ordering ops
+    { AST_LT,        "int",    "int",    "bool" },
+    { AST_LT,        "string", "string", "bool" },
+    { AST_GT,        "int",    "int",    "bool" },
+    { AST_GT,        "string", "string", "bool" },
+    { AST_LEQ,       "int",    "int",    "bool" },
+    { AST_LEQ,       "string", "string", "bool" },
+    { AST_GEQ,       "int",    "int",    "bool" },
+    { AST_GEQ,       "string", "string", "bool" },
+
+    // equality ops
+    { AST_EQ,        "int",    "int",    "bool" },
+    { AST_EQ,        "bool",   "bool",   "bool" },
+    { AST_EQ,        "string", "string", "bool" },
+    { AST_NEQ,       "int",    "int",    "bool" },
+    { AST_NEQ,       "bool",   "bool",   "bool" },
+    { AST_NEQ,       "string", "string", "bool" },
+
+    // binary ops
+    { AST_LOGIC_AND, "bool",   "bool",   "bool" },
+    { AST_LOGIC_OR,  "bool",   "bool",   "bool" },
+
+    // assignment
+    { AST_ASSIGN,    "int",    "int",    "void" },
+    { AST_ASSIGN,    "bool",   "bool",   "void" },
+    { AST_ASSIGN,    "string", "string", "void" },
+
+    // unary operators
+    { AST_UMINUS,    "int",    "",       "int"  },
+    { AST_LOGIC_NOT, "bool",   "",       "bool" },
+};
 
 // pass 1: populate file block
 static bool main_is_defined = false;
@@ -241,70 +274,36 @@ void pass_3
         case AST_DIV:
         case AST_MOD:
         case AST_UMINUS:
-        {
-            check_operand_types( "int", node );
-
-            node.expressiontype = "int";
-            break;
-        }
         case AST_ASSIGN:
-        {
-            auto lhs = node.children[ 0 ].symbolinfo;
-            auto rhs = node.children[ 1 ].symbolinfo;
-
-            if ( !lhs || lhs->signature.size() == 0 )
-                error( node.linenum, "can only assign to a variable" );
-
-            if ( lhs->isconst )
-                error( node.linenum, "can't assign to a constant" );
-
-            if ( lhs->istype )
-                error( node.linenum, "can't use type '%s' here", node.children[ 0 ].lexeme.data() );
-            if ( rhs && rhs->istype )
-                error( node.linenum, "can't use type '%s' here", node.children[ 1 ].lexeme.data() );
-
-            if ( lhs->returnsignature.size() > 0 || !strncmp( lhs->signature.data(), "f(", 2 ) )
-                error( node.linenum, "cannot assign to a function" );
-
-
-            // REVIEW: does every identifier have a valid type at this point?
-            std::string type = node.children[ 0 ].expressiontype;
-            check_operand_types( type, node );
-
-            node.expressiontype = "void";
-            break;
-        }
         case AST_LOGIC_AND:
         case AST_LOGIC_OR:
         case AST_LOGIC_NOT:
-        {
-            check_operand_types( "bool", node );
-
-            node.expressiontype = "bool";
-            break;
-        }
         case AST_EQ:
         case AST_NEQ:
-        {
-            std::string type = node.children[ 0 ].expressiontype;
-            check_operand_types( type, node );
-
-            node.expressiontype = "bool";
-            break;
-        }
         case AST_LT:
         case AST_GT:
         case AST_LEQ:
         case AST_GEQ:
+        // check operand types
         {
-            std::string type = node.children[ 0 ].expressiontype;
-            // XXX: bleh
-            if ( type == "int" )
-                check_operand_types( type, node );
-            else
-                check_operand_types( "string", node );
+            for ( auto typecheck : type_legals )
+            {
+                if ( typecheck.operatorid != node.type ) continue;
 
-            node.expressiontype = "bool";
+                auto & lhs = node.children[ 0 ].expressiontype;
+                if ( lhs != typecheck.lhs ) continue;
+
+                if ( typecheck.rhs.size() > 0 )
+                {
+                    auto & rhs = node.children[ 1 ].expressiontype;
+                    if ( rhs != typecheck.rhs ) continue;
+                }
+
+                node.expressiontype = typecheck.expressiontype;
+                goto match_found;
+            }
+            error( node.linenum, "operand type mismatch for '%s'", ASTNode_to_string( node.type ).data() );
+match_found:
             break;
         }
         case AST_FUNCCALL:
@@ -337,7 +336,7 @@ void pass_3
         case AST_IFELSE:
         case AST_FOR:
         {
-            if ( !check_child_type( 0, "bool", node ) )
+            if ( node.children[ 0 ].expressiontype != "bool" )
                 error( node.linenum, "%s expression must be boolean type", ASTNode_to_string( node.type ).data() );
 
             break;
