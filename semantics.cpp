@@ -451,8 +451,11 @@ void pass_4_post
             if ( lhs->isconst )
                 error( node.linenum, "can't assign to a constant" );
 
-            if ( lhs->istype || ( rhs && rhs->istype ) )
+            if ( lhs->istype )
                 error( node.linenum, "can't use type '%s' here", node.children[ 0 ].lexeme.data() );
+
+            if ( rhs && rhs->istype )
+                error( node.linenum, "can't use type '%s' here", node.children[ 1 ].lexeme.data() );
 
             break;
         }
