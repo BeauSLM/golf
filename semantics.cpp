@@ -86,7 +86,7 @@ void pass_1
 
     // functions and variables are not constants or types
     STabRecord *record = define( ident.lexeme, ident.linenum );
-    record->isconst = record->istype = false;
+    record->isconst    = record->istype = false;
 
     node.symbolinfo = record;
 
@@ -182,12 +182,12 @@ void pass_2_pre
             node.symbolinfo   = lookup ( funcname.lexeme, funcname.linenum );
 
             // give the symboltable record its return type
-            ASTNode & returntype_ident = children[ 1 ].children[ 1 ];
-            STabRecord * returntype = lookup( returntype_ident.lexeme, returntype_ident.linenum );
+            ASTNode & returntype_ident       = children[ 1 ].children[ 1 ];
+            STabRecord * returntype          = lookup( returntype_ident.lexeme, returntype_ident.linenum );
             node.symbolinfo->returnsignature = returntype->signature;
 
             // build the function's signature
-            node.symbolinfo->signature = "f(";
+            node.symbolinfo->signature    = "f(";
             std::vector<ASTNode> & params = children[ 1 ].children[ 0 ].children;
             for ( ASTNode & param : params )
             {
@@ -230,7 +230,7 @@ void pass_2_post
             ASTNode &varname = node.children[ 0 ];
             ASTNode &type    = node.children[ 1 ];
 
-            node.symbolinfo = define( varname.lexeme, varname.linenum );
+            node.symbolinfo            = define( varname.lexeme, varname.linenum );
             node.symbolinfo->signature = type.lexeme;
 
             break;
@@ -326,7 +326,7 @@ match_found:
 
             node.expressiontype = sym->returnsignature;
 
-            std::string callsig = "f(";
+            std::string callsig              = "f(";
             std::vector<ASTNode> & arguments = node.children[ 1 ].children;
             for ( auto & param : arguments )
             {
