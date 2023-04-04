@@ -110,7 +110,7 @@ std::string ASTNode_to_string( ASTNodeID n ) {
         case AST_UNSET: error( -1, "internal error" );
     }
 
-    // this is unrachable, each case of the switch above returns or errors
+    // this is unreachable, each case of the switch above returns or errors
     error( -1, "unreachable in node to_string" );
     return "";
 }
@@ -133,8 +133,8 @@ std::string ASTNode_printstring( ASTNode &n ) {
     if ( n.symbolinfo ) {
         char hexstring[ 32 ];
         bzero( hexstring, 32 );
-        sprintf( hexstring, "%lx", (uint64_t) n.symbolinfo );
-        stabstring = " sym=0x" + std::string( hexstring );
+        sprintf( hexstring, "%p", n.symbolinfo );
+        stabstring = " sym=" + std::string( hexstring );
     }
 
     numstring = sigstring + stabstring + numstring;
