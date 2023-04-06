@@ -82,7 +82,7 @@ void pass_1
 {
     if ( node.type != AST_GLOBVAR && node.type != AST_FUNC ) return;
 
-    ASTNode &ident = node.children[ 0 ];
+    ASTNode &ident = node[ 0 ];
 
     // functions and variables are not constants or types
     STabRecord *record = define( ident.lexeme, ident.linenum );
@@ -93,13 +93,13 @@ void pass_1
     // defining main:
     // error if it has arguments
     // error if it has a return type
-    if ( node.type == AST_FUNC && node.children[ 0 ].lexeme == "main" )
+    if ( node.type == AST_FUNC && node[ 0 ].lexeme == "main" )
     {
-        auto &arguments = node.children[ 1 ].children[ 0 ].children;
+        auto &arguments = node[ 1 ][ 0 ].children;
         if ( arguments.size() > 0 )
             error( node.linenum, "main() can't have arguments");
 
-        auto &returntype = node.children[ 1 ].children[ 1 ].lexeme;
+        auto &returntype = node[ 1 ][ 1 ].lexeme;
         if ( returntype != "$void" )
             error( node.linenum, "main() can't have a return value" );
 
@@ -136,8 +136,8 @@ void pass_2_pre
             // body. after defining them, the list is cleared
             for ( ASTNode * param : funcparams )
             {
-                ASTNode & name = param->children[ 0 ];
-                ASTNode & type = param->children[ 1 ];
+                ASTNode & name = ( *param )[ 0 ];
+                ASTNode & type = ( *param )[ 1 ];
 
                 name.symbolinfo = define( name.lexeme, name.linenum );
                 type.symbolinfo = lookup( type.lexeme, type.linenum );
@@ -164,8 +164,8 @@ void pass_2_pre
         }
         case AST_GLOBVAR:
         {
-            ASTNode &type    = node.children[ 1 ];
-            ASTNode &varname = node.children[ 0 ];
+            ASTNode &type    = node[ 1 ];
+            ASTNode &varname = node[ 0 ];
 
             node.symbolinfo            = lookup( varname.lexeme, varname.linenum );
             node.symbolinfo->signature = type.lexeme;
@@ -175,23 +175,21 @@ void pass_2_pre
         // with functions we need define both the arguments and the return type
         case AST_FUNC:
         {
-            std::vector<ASTNode> & children = node.children;
-
             // get symbolinfo from symbol table
-            ASTNode &funcname = children[ 0 ];
+            ASTNode &funcname = node[ 0 ];
             node.symbolinfo   = lookup ( funcname.lexeme, funcname.linenum );
 
             // give the symboltable record its return type
-            ASTNode & returntype_ident       = children[ 1 ].children[ 1 ];
+            ASTNode & returntype_ident       = node[ 1 ][ 1 ];
             STabRecord * returntype          = lookup( returntype_ident.lexeme, returntype_ident.linenum );
             node.symbolinfo->returnsignature = returntype->signature;
 
             // build the function's signature
             node.symbolinfo->signature    = "f(";
-            std::vector<ASTNode> & params = children[ 1 ].children[ 0 ].children;
+            std::vector<ASTNode> & params = node[ 1 ][ 0 ].children;
             for ( ASTNode & param : params )
             {
-                std::string & typestring = param.children[ 1 ].lexeme;
+                std::string & typestring = param[ 1 ].lexeme;
 
                 node.symbolinfo->signature += typestring;
                 node.symbolinfo->signature += ",";
@@ -227,8 +225,8 @@ void pass_2_post
         }
         case AST_VAR:
         {
-            ASTNode &varname = node.children[ 0 ];
-            ASTNode &type    = node.children[ 1 ];
+            ASTNode &varname = node[ 0 ];
+            ASTNode &type    = node[ 1 ];
 
             node.symbolinfo            = define( varname.lexeme, varname.linenum );
             node.symbolinfo->signature = type.lexeme;
@@ -295,14 +293,14 @@ void pass_3
             {
                 if ( typecheck.operatorid != node.type ) continue;
 
-                auto & lhs = node.children[ 0 ].expressiontype;
+                auto & lhs = node[ 0 ].expressiontype;
                 if ( lhs != typecheck.lhs ) continue;
 
                 // if typecheck.rhs is empty, we're looking at a unary operator
                 // i.e. one operand
                 if ( typecheck.rhs.size() > 0 )
                 {
-                    auto & rhs = node.children[ 1 ].expressiontype;
+                    auto & rhs = node[ 1 ].expressiontype;
                     if ( rhs != typecheck.rhs ) continue;
                 }
 
@@ -318,8 +316,8 @@ match_found:
         case AST_FUNCCALL:
         {
             // make sure the identifier we're calling is actually a function
-            int linenum      = node.children[ 0 ].linenum;
-            STabRecord * sym = node.children[ 0 ].symbolinfo;
+            int linenum      = node[ 0 ].linenum;
+            STabRecord * sym = node[ 0 ].symbolinfo;
 
             if ( !sym || strncmp( sym->signature.data(), "f(", 2 ) )
                 error( linenum, "can't call something that isn't a function" );
@@ -327,7 +325,7 @@ match_found:
             node.expressiontype = sym->returnsignature;
 
             std::string callsig              = "f(";
-            std::vector<ASTNode> & arguments = node.children[ 1 ].children;
+            std::vector<ASTNode> & arguments = node[ 1 ].children;
             for ( auto & param : arguments )
             {
                 auto & typestring = param.expressiontype;
@@ -350,7 +348,7 @@ match_found:
         case AST_FOR:
         // enforce that condition is boolean
         {
-            if ( node.children[ 0 ].expressiontype != "bool" )
+            if ( node[ 0 ].expressiontype != "bool" )
                 error( node.linenum, "%s expression must be boolean type", ASTNode_to_string( node.type ).data() );
 
             break;
@@ -431,7 +429,7 @@ void pass_4_post
             if ( need_return && node.children.size() == 0 )
                 error( node.linenum, "this function must return a value" );
 
-            std::string returnvaltype = node.children[ 0 ].expressiontype;
+            std::string returnvaltype = node[ 0 ].expressiontype;
             std::string returntype    = current_function->symbolinfo->returnsignature;
             if ( need_return && node.children.size() > 0 && returnvaltype != returntype )
                 error( node.linenum, "returned value has the wrong type" );
@@ -442,8 +440,8 @@ void pass_4_post
         }
         case AST_ASSIGN:
         {
-            auto lhs = node.children[ 0 ].symbolinfo;
-            auto rhs = node.children[ 1 ].symbolinfo;
+            auto lhs = node[ 0 ].symbolinfo;
+            auto rhs = node[ 1 ].symbolinfo;
 
             if ( !lhs || lhs->signature.size() == 0 || lhs->returnsignature.size() > 0 )
                 error( node.linenum, "can only assign to a variable" );
@@ -452,10 +450,10 @@ void pass_4_post
                 error( node.linenum, "can't assign to a constant" );
 
             if ( lhs->istype )
-                error( node.linenum, "can't use type '%s' here", node.children[ 0 ].lexeme.data() );
+                error( node.linenum, "can't use type '%s' here", node[ 0 ].lexeme.data() );
 
             if ( rhs && rhs->istype )
-                error( node.linenum, "can't use type '%s' here", node.children[ 1 ].lexeme.data() );
+                error( node.linenum, "can't use type '%s' here", node[ 1 ].lexeme.data() );
 
             break;
         }
