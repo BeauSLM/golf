@@ -29,24 +29,15 @@ import signal
 import socket
 import subprocess
 
-TESTPATH = '/home/profs/aycock/411/TEST/final'
+MILESTONE = 'final'
+
+TESTPATH = os.getenv( 'GOLF_TEST_PREFIX' ) + MILESTONE
 INPUTPATH = f'{TESTPATH}/input'
-LOGFILE = 'run.output'
+LOGFILE = MILESTONE + os.getenv( 'GOLF_LOG_SUFFIX' )
 JARCLASS = 'golf'
 JAR = 'golf.jar'
 EXE = './golf'
 TIMEOUT = 7		# was 5s, increased 24 March 2023
-
-#ASMBACKEND = False
-ASMBACKEND = True
-if ASMBACKEND:
-	OUTFILE = 'out.s'
-	RUNCMD = [ '/home/profs/aycock/411/bin/spim', '-file', OUTFILE ]
-else:
-	OUTFILE = 'out.c'
-	EXEFILE = './a.out'
-	CCCMD = [ '/usr/bin/gcc', '-Wall', '-o', EXEFILE, OUTFILE ]
-	RUNCMD = [ EXEFILE ]
 
 JAVA = '/usr/bin/java'
 MAKE = '/usr/bin/make'
@@ -236,24 +227,11 @@ def main():
 	# now the fun begins
 	for file, description in TESTS:
 		banner(f'Test: {description}')
-		# run compiler, capture generated code in OUTFILE
-		ok = run(cmd + [ f'{TESTPATH}/{file}' ], stdout=OUTFILE)
-		if not ok:
-			log('(GoLF compiler unsuccessful, skipping test)')
-			continue
-
-		if not ASMBACKEND:
-			ok = run(CCCMD)
-			if not ok:
-				log('(C compiler unsuccessful, skipping test)')
-				continue
-
-		infile = f'{INPUTPATH}/{file}.in'
-		if os.access(infile, os.R_OK):
-			stdin = infile
-		else:
-			infile = None
-		run(RUNCMD, stdin=infile)
+		# run compiler
+		ok = run(cmd + [ f'{TESTPATH}/{file}' ])
+		# if not ok:
+		# 	log('(GoLF compiler unsuccessful, skipping test)')
+		# 	continue
 
 	timestamp('ended')
 
