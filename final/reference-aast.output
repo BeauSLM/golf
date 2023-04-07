@@ -1,0 +1,4104 @@
+Run started on Fri Apr  7 11:37:16 2023
+
+Hostname: csx3.cs.ucalgary.ca
+
+-------------------------------------------------------------------------------
+Locating GoLF compiler |
+------------------------
+
+Compiler will be run as ./golf
+
+-------------------------------------------------------------------------------
+Test: too few arguments |
+-------------------------
+
+% ./golf
+
+STDOUT:
+
+
+STDERR:
+Usage: ./golf [option] file.golf
+  -show string
+    	show output from a specific part of the compiler;
+    	string can be:
+    	    tokens	tokens from scanner
+    	    ast		AST constructed by parser (textual)
+    	    astview	AST constructed by parser (graphical)
+    	    aast	annotated AST after semantic analysis (textual)
+    	    aastview	annotated AST after semantic analysis (graphical)
+    	    ir		internal intermediate representation
+    	    assembly	assembly language output
+    	 (default "assembly")
+
+
+RETURN CODE: 1
+
+-------------------------------------------------------------------------------
+Test: too many arguments |
+--------------------------
+
+% ./golf /dev/null /dev/zero
+
+STDOUT:
+
+
+STDERR:
+Usage: ./golf [option] file.golf
+  -show string
+    	show output from a specific part of the compiler;
+    	string can be:
+    	    tokens	tokens from scanner
+    	    ast		AST constructed by parser (textual)
+    	    astview	AST constructed by parser (graphical)
+    	    aast	annotated AST after semantic analysis (textual)
+    	    aastview	annotated AST after semantic analysis (graphical)
+    	    ir		internal intermediate representation
+    	    assembly	assembly language output
+    	 (default "assembly")
+
+
+RETURN CODE: 1
+
+-------------------------------------------------------------------------------
+Test: nonexistent file |
+------------------------
+
+% ./golf /i/do/not/exist
+
+STDOUT:
+
+
+STDERR:
+open /i/do/not/exist: no such file or directory
+
+
+RETURN CODE: 1
+
+-------------------------------------------------------------------------------
+Test: hello, world |
+--------------------
+
+% ./golf -show aast /home/profs/aycock/411/TEST/final/gen.t1
+
+STDOUT:
+program sym=0xc0000c6460
+    func sym=0xc0000c6460 @ line 1
+        newid [main] @ line 1
+        sig
+            formals
+            typeid [$void] sym=0xc0000c6000
+        block
+            exprstmt @ line 2
+                funccall sig=void @ line 2
+                    id [prints] sig=f(str) sym=0xc0000c6320 @ line 2
+                    actuals
+                        string [Hello, world!\n] sig=str @ line 2
+
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: var init in loop block |
+------------------------------
+
+% ./golf -show aast /home/profs/aycock/411/TEST/final/gen.t2
+
+STDOUT:
+program sym=0xc0000c64b0
+    globvar sym=0xc0000c6460 @ line 1
+        newid [NL] @ line 1
+        typeid [int] sym=0xc0000c60a0 @ line 1
+    func sym=0xc0000c64b0 @ line 3
+        newid [main] @ line 3
+        sig
+            formals
+            typeid [$void] sym=0xc0000c6000
+        block
+            = sig=void @ line 4
+                id [NL] sig=int sym=0xc0000c6460 @ line 4
+                int [10] sig=int @ line 4
+            var sym=0xc0000c6500 @ line 6
+                newid [i] @ line 6
+                typeid [int] sym=0xc0000c60a0 @ line 6
+            for @ line 7
+                < sig=bool @ line 7
+                    id [i] sig=int sym=0xc0000c6500 @ line 7
+                    int [4] sig=int @ line 7
+                block
+                    exprstmt @ line 8
+                        funccall sig=void @ line 8
+                            id [prints] sig=f(str) sym=0xc0000c6320 @ line 8
+                            actuals
+                                string [start of loop\n] sig=str @ line 8
+                    var sym=0xc0000c6550 @ line 9
+                        newid [v] @ line 9
+                        typeid [int] sym=0xc0000c60a0 @ line 9
+                    exprstmt @ line 10
+                        funccall sig=void @ line 10
+                            id [printi] sig=f(int) sym=0xc0000c62d0 @ line 10
+                            actuals
+                                id [v] sig=int sym=0xc0000c6550 @ line 10
+                    exprstmt @ line 10
+                        funccall sig=void @ line 10
+                            id [printc] sig=f(int) sym=0xc0000c6280 @ line 10
+                            actuals
+                                id [NL] sig=int sym=0xc0000c6460 @ line 10
+                    = sig=void @ line 11
+                        id [v] sig=int sym=0xc0000c6550 @ line 11
+                        int [42] sig=int @ line 11
+                    = sig=void @ line 12
+                        id [i] sig=int sym=0xc0000c6500 @ line 12
+                        + sig=int @ line 12
+                            id [i] sig=int sym=0xc0000c6500 @ line 12
+                            int [1] sig=int @ line 12
+            exprstmt @ line 14
+                funccall sig=void @ line 14
+                    id [printi] sig=f(int) sym=0xc0000c62d0 @ line 14
+                    actuals
+                        id [i] sig=int sym=0xc0000c6500 @ line 14
+            exprstmt @ line 14
+                funccall sig=void @ line 14
+                    id [printc] sig=f(int) sym=0xc0000c6280 @ line 14
+                    actuals
+                        id [NL] sig=int sym=0xc0000c6460 @ line 14
+
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: zero values |
+-------------------
+
+% ./golf -show aast /home/profs/aycock/411/TEST/final/gen.t3
+
+STDOUT:
+program sym=0xc00006a4b0
+    func sym=0xc00006a4b0 @ line 3
+        newid [main] @ line 3
+        sig
+            formals
+            typeid [$void] sym=0xc00006a050
+        block
+            = sig=void @ line 4
+                id [NL] sig=int sym=0xc00006a690 @ line 4
+                int [10] sig=int @ line 4
+            exprstmt @ line 6
+                funccall sig=void @ line 6
+                    id [prints] sig=f(str) sym=0xc00006a370 @ line 6
+                    actuals
+                        string [global zero values: \n] sig=str @ line 6
+            exprstmt @ line 7
+                funccall sig=void @ line 7
+                    id [printb] sig=f(bool) sym=0xc00006a280 @ line 7
+                    actuals
+                        id [b0] sig=bool sym=0xc00006a5f0 @ line 7
+            exprstmt @ line 7
+                funccall sig=void @ line 7
+                    id [printc] sig=f(int) sym=0xc00006a2d0 @ line 7
+                    actuals
+                        id [NL] sig=int sym=0xc00006a690 @ line 7
+            exprstmt @ line 8
+                funccall sig=void @ line 8
+                    id [printi] sig=f(int) sym=0xc00006a320 @ line 8
+                    actuals
+                        id [i0] sig=int sym=0xc00006a640 @ line 8
+            exprstmt @ line 8
+                funccall sig=void @ line 8
+                    id [printc] sig=f(int) sym=0xc00006a2d0 @ line 8
+                    actuals
+                        id [NL] sig=int sym=0xc00006a690 @ line 8
+            exprstmt @ line 9
+                funccall sig=void @ line 9
+                    id [prints] sig=f(str) sym=0xc00006a370 @ line 9
+                    actuals
+                        id [s0] sig=str sym=0xc00006a5a0 @ line 9
+            exprstmt @ line 9
+                funccall sig=void @ line 9
+                    id [printc] sig=f(int) sym=0xc00006a2d0 @ line 9
+                    actuals
+                        id [NL] sig=int sym=0xc00006a690 @ line 9
+            exprstmt @ line 11
+                funccall sig=void @ line 11
+                    id [foo] sig=f() sym=0xc00006a500 @ line 11
+                    actuals
+            exprstmt @ line 12
+                funccall sig=void @ line 12
+                    id [foo] sig=f() sym=0xc00006a500 @ line 12
+                    actuals
+            exprstmt @ line 14
+                funccall sig=void @ line 14
+                    id [bar] sig=f() sym=0xc00006a550 @ line 14
+                    actuals
+    func sym=0xc00006a500 @ line 17
+        newid [foo] @ line 17
+        sig
+            formals
+            typeid [$void] sym=0xc00006a050
+        block
+            var sym=0xc00006a6e0 @ line 18
+                newid [s1] @ line 18
+                typeid [string] sym=0xc00006a140 @ line 18
+            var sym=0xc00006a730 @ line 19
+                newid [b1] @ line 19
+                typeid [bool] sym=0xc00006a0a0 @ line 19
+            var sym=0xc00006a780 @ line 20
+                newid [i1] @ line 20
+                typeid [int] sym=0xc00006a0f0 @ line 20
+            exprstmt @ line 22
+                funccall sig=void @ line 22
+                    id [prints] sig=f(str) sym=0xc00006a370 @ line 22
+                    actuals
+                        string [local zero values: \n] sig=str @ line 22
+            exprstmt @ line 23
+                funccall sig=void @ line 23
+                    id [printb] sig=f(bool) sym=0xc00006a280 @ line 23
+                    actuals
+                        id [b1] sig=bool sym=0xc00006a730 @ line 23
+            exprstmt @ line 23
+                funccall sig=void @ line 23
+                    id [printc] sig=f(int) sym=0xc00006a2d0 @ line 23
+                    actuals
+                        id [NL] sig=int sym=0xc00006a690 @ line 23
+            exprstmt @ line 24
+                funccall sig=void @ line 24
+                    id [printi] sig=f(int) sym=0xc00006a320 @ line 24
+                    actuals
+                        id [i1] sig=int sym=0xc00006a780 @ line 24
+            exprstmt @ line 24
+                funccall sig=void @ line 24
+                    id [printc] sig=f(int) sym=0xc00006a2d0 @ line 24
+                    actuals
+                        id [NL] sig=int sym=0xc00006a690 @ line 24
+            exprstmt @ line 25
+                funccall sig=void @ line 25
+                    id [prints] sig=f(str) sym=0xc00006a370 @ line 25
+                    actuals
+                        id [s1] sig=str sym=0xc00006a6e0 @ line 25
+            exprstmt @ line 25
+                funccall sig=void @ line 25
+                    id [printc] sig=f(int) sym=0xc00006a2d0 @ line 25
+                    actuals
+                        id [NL] sig=int sym=0xc00006a690 @ line 25
+            = sig=void @ line 27
+                id [i1] sig=int sym=0xc00006a780 @ line 27
+                int [42] sig=int @ line 27
+            = sig=void @ line 28
+                id [b1] sig=bool sym=0xc00006a730 @ line 28
+                id [true] sig=bool sym=0xc00006a1e0 @ line 28
+            = sig=void @ line 29
+                id [s1] sig=str sym=0xc00006a6e0 @ line 29
+                string [blarg] sig=str @ line 29
+    func sym=0xc00006a550 @ line 32
+        newid [bar] @ line 32
+        sig
+            formals
+            typeid [$void] sym=0xc00006a050
+        block
+            var sym=0xc00006a7d0 @ line 33
+                newid [s1] @ line 33
+                typeid [string] sym=0xc00006a140 @ line 33
+            var sym=0xc00006a820 @ line 34
+                newid [b1] @ line 34
+                typeid [bool] sym=0xc00006a0a0 @ line 34
+            var sym=0xc00006a870 @ line 35
+                newid [i1] @ line 35
+                typeid [int] sym=0xc00006a0f0 @ line 35
+            block
+                = sig=void @ line 37
+                    id [s1] sig=str sym=0xc00006a7d0 @ line 37
+                    string [garble] sig=str @ line 37
+                = sig=void @ line 38
+                    id [b1] sig=bool sym=0xc00006a820 @ line 38
+                    id [true] sig=bool sym=0xc00006a1e0 @ line 38
+                = sig=void @ line 39
+                    id [i1] sig=int sym=0xc00006a870 @ line 39
+                    int [123] sig=int @ line 39
+                var sym=0xc00006a8c0 @ line 41
+                    newid [s1] @ line 41
+                    typeid [string] sym=0xc00006a140 @ line 41
+                var sym=0xc00006a910 @ line 42
+                    newid [b1] @ line 42
+                    typeid [bool] sym=0xc00006a0a0 @ line 42
+                var sym=0xc00006a960 @ line 43
+                    newid [i1] @ line 43
+                    typeid [int] sym=0xc00006a0f0 @ line 43
+                exprstmt @ line 45
+                    funccall sig=void @ line 45
+                        id [prints] sig=f(str) sym=0xc00006a370 @ line 45
+                        actuals
+                            string [sub-block zero values: \n] sig=str @ line 45
+                exprstmt @ line 46
+                    funccall sig=void @ line 46
+                        id [printb] sig=f(bool) sym=0xc00006a280 @ line 46
+                        actuals
+                            id [b1] sig=bool sym=0xc00006a910 @ line 46
+                exprstmt @ line 46
+                    funccall sig=void @ line 46
+                        id [printc] sig=f(int) sym=0xc00006a2d0 @ line 46
+                        actuals
+                            id [NL] sig=int sym=0xc00006a690 @ line 46
+                exprstmt @ line 47
+                    funccall sig=void @ line 47
+                        id [printi] sig=f(int) sym=0xc00006a320 @ line 47
+                        actuals
+                            id [i1] sig=int sym=0xc00006a960 @ line 47
+                exprstmt @ line 47
+                    funccall sig=void @ line 47
+                        id [printc] sig=f(int) sym=0xc00006a2d0 @ line 47
+                        actuals
+                            id [NL] sig=int sym=0xc00006a690 @ line 47
+                exprstmt @ line 48
+                    funccall sig=void @ line 48
+                        id [prints] sig=f(str) sym=0xc00006a370 @ line 48
+                        actuals
+                            id [s1] sig=str sym=0xc00006a8c0 @ line 48
+                exprstmt @ line 48
+                    funccall sig=void @ line 48
+                        id [printc] sig=f(int) sym=0xc00006a2d0 @ line 48
+                        actuals
+                            id [NL] sig=int sym=0xc00006a690 @ line 48
+                = sig=void @ line 50
+                    id [i1] sig=int sym=0xc00006a960 @ line 50
+                    int [42] sig=int @ line 50
+                = sig=void @ line 51
+                    id [b1] sig=bool sym=0xc00006a910 @ line 51
+                    id [true] sig=bool sym=0xc00006a1e0 @ line 51
+                = sig=void @ line 52
+                    id [s1] sig=str sym=0xc00006a8c0 @ line 52
+                    string [blarg] sig=str @ line 52
+            block
+                var sym=0xc00006a9b0 @ line 55
+                    newid [s1] @ line 55
+                    typeid [string] sym=0xc00006a140 @ line 55
+                var sym=0xc00006aa00 @ line 56
+                    newid [b1] @ line 56
+                    typeid [bool] sym=0xc00006a0a0 @ line 56
+                var sym=0xc00006aa50 @ line 57
+                    newid [i1] @ line 57
+                    typeid [int] sym=0xc00006a0f0 @ line 57
+                exprstmt @ line 59
+                    funccall sig=void @ line 59
+                        id [prints] sig=f(str) sym=0xc00006a370 @ line 59
+                        actuals
+                            string [sub-block zero values: \n] sig=str @ line 59
+                exprstmt @ line 60
+                    funccall sig=void @ line 60
+                        id [printb] sig=f(bool) sym=0xc00006a280 @ line 60
+                        actuals
+                            id [b1] sig=bool sym=0xc00006aa00 @ line 60
+                exprstmt @ line 60
+                    funccall sig=void @ line 60
+                        id [printc] sig=f(int) sym=0xc00006a2d0 @ line 60
+                        actuals
+                            id [NL] sig=int sym=0xc00006a690 @ line 60
+                exprstmt @ line 61
+                    funccall sig=void @ line 61
+                        id [printi] sig=f(int) sym=0xc00006a320 @ line 61
+                        actuals
+                            id [i1] sig=int sym=0xc00006aa50 @ line 61
+                exprstmt @ line 61
+                    funccall sig=void @ line 61
+                        id [printc] sig=f(int) sym=0xc00006a2d0 @ line 61
+                        actuals
+                            id [NL] sig=int sym=0xc00006a690 @ line 61
+                exprstmt @ line 62
+                    funccall sig=void @ line 62
+                        id [prints] sig=f(str) sym=0xc00006a370 @ line 62
+                        actuals
+                            id [s1] sig=str sym=0xc00006a9b0 @ line 62
+                exprstmt @ line 62
+                    funccall sig=void @ line 62
+                        id [printc] sig=f(int) sym=0xc00006a2d0 @ line 62
+                        actuals
+                            id [NL] sig=int sym=0xc00006a690 @ line 62
+            exprstmt @ line 64
+                funccall sig=void @ line 64
+                    id [prints] sig=f(str) sym=0xc00006a370 @ line 64
+                    actuals
+                        string [post-sub-block zero values: \n] sig=str @ line 64
+            exprstmt @ line 65
+                funccall sig=void @ line 65
+                    id [printb] sig=f(bool) sym=0xc00006a280 @ line 65
+                    actuals
+                        id [b1] sig=bool sym=0xc00006a820 @ line 65
+            exprstmt @ line 65
+                funccall sig=void @ line 65
+                    id [printc] sig=f(int) sym=0xc00006a2d0 @ line 65
+                    actuals
+                        id [NL] sig=int sym=0xc00006a690 @ line 65
+            exprstmt @ line 66
+                funccall sig=void @ line 66
+                    id [printi] sig=f(int) sym=0xc00006a320 @ line 66
+                    actuals
+                        id [i1] sig=int sym=0xc00006a870 @ line 66
+            exprstmt @ line 66
+                funccall sig=void @ line 66
+                    id [printc] sig=f(int) sym=0xc00006a2d0 @ line 66
+                    actuals
+                        id [NL] sig=int sym=0xc00006a690 @ line 66
+            exprstmt @ line 67
+                funccall sig=void @ line 67
+                    id [prints] sig=f(str) sym=0xc00006a370 @ line 67
+                    actuals
+                        id [s1] sig=str sym=0xc00006a7d0 @ line 67
+            exprstmt @ line 67
+                funccall sig=void @ line 67
+                    id [printc] sig=f(int) sym=0xc00006a2d0 @ line 67
+                    actuals
+                        id [NL] sig=int sym=0xc00006a690 @ line 67
+    globvar sym=0xc00006a5a0 @ line 71
+        newid [s0] @ line 71
+        typeid [string] sym=0xc00006a140 @ line 71
+    globvar sym=0xc00006a5f0 @ line 72
+        newid [b0] @ line 72
+        typeid [bool] sym=0xc00006a0a0 @ line 72
+    globvar sym=0xc00006a640 @ line 73
+        newid [i0] @ line 73
+        typeid [int] sym=0xc00006a0f0 @ line 73
+    globvar sym=0xc00006a690 @ line 75
+        newid [NL] @ line 75
+        typeid [int] sym=0xc00006a0f0 @ line 75
+
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: nested function calls |
+-----------------------------
+
+% ./golf -show aast /home/profs/aycock/411/TEST/final/gen.t4
+
+STDOUT:
+program sym=0xc00006a5f0
+    func sym=0xc00006a4b0 @ line 3
+        newid [foo] @ line 3
+        sig
+            formals
+                formal
+                    newid [a] sym=0xc00006a640 @ line 3
+                    typeid [int] sym=0xc00006a0f0 @ line 3
+                formal
+                    newid [b] sym=0xc00006a690 @ line 3
+                    typeid [int] sym=0xc00006a0f0 @ line 3
+                formal
+                    newid [c] sym=0xc00006a6e0 @ line 3
+                    typeid [int] sym=0xc00006a0f0 @ line 3
+                formal
+                    newid [d] sym=0xc00006a730 @ line 3
+                    typeid [int] sym=0xc00006a0f0 @ line 3
+            typeid [int] sym=0xc00006a0f0 @ line 3
+        block
+            return @ line 4
+                * sig=int @ line 4
+                    * sig=int @ line 4
+                        * sig=int @ line 4
+                            id [a] sig=int sym=0xc00006a640 @ line 4
+                            id [b] sig=int sym=0xc00006a690 @ line 4
+                        id [c] sig=int sym=0xc00006a6e0 @ line 4
+                    id [d] sig=int sym=0xc00006a730 @ line 4
+    globvar sym=0xc00006a500 @ line 7
+        newid [d] @ line 7
+        typeid [int] sym=0xc00006a0f0 @ line 7
+    func sym=0xc00006a550 @ line 9
+        newid [bar] @ line 9
+        sig
+            formals
+                formal
+                    newid [a] sym=0xc00006a780 @ line 9
+                    typeid [int] sym=0xc00006a0f0 @ line 9
+                formal
+                    newid [b] sym=0xc00006a7d0 @ line 9
+                    typeid [int] sym=0xc00006a0f0 @ line 9
+                formal
+                    newid [c] sym=0xc00006a820 @ line 9
+                    typeid [int] sym=0xc00006a0f0 @ line 9
+            typeid [int] sym=0xc00006a0f0 @ line 9
+        block
+            return @ line 10
+                funccall sig=int @ line 10
+                    id [foo] sig=f(int,int,int,int) sym=0xc00006a4b0 @ line 10
+                    actuals
+                        id [a] sig=int sym=0xc00006a780 @ line 10
+                        id [b] sig=int sym=0xc00006a7d0 @ line 10
+                        id [c] sig=int sym=0xc00006a820 @ line 10
+                        - sig=int @ line 10
+                            id [d] sig=int sym=0xc00006a500 @ line 10
+                            int [3] sig=int @ line 10
+    func sym=0xc00006a5a0 @ line 13
+        newid [baz] @ line 13
+        sig
+            formals
+                formal
+                    newid [a] sym=0xc00006a870 @ line 13
+                    typeid [int] sym=0xc00006a0f0 @ line 13
+            typeid [int] sym=0xc00006a0f0 @ line 13
+        block
+            = sig=void @ line 14
+                id [d] sig=int sym=0xc00006a500 @ line 14
+                + sig=int @ line 14
+                    id [d] sig=int sym=0xc00006a500 @ line 14
+                    int [1] sig=int @ line 14
+            return @ line 15
+                id [a] sig=int sym=0xc00006a870 @ line 15
+    func sym=0xc00006a5f0 @ line 19
+        newid [main] @ line 19
+        sig
+            formals
+            typeid [$void] sym=0xc00006a050
+        block
+            = sig=void @ line 20
+                id [d] sig=int sym=0xc00006a500 @ line 20
+                int [10] sig=int @ line 20
+            exprstmt @ line 21
+                funccall sig=void @ line 21
+                    id [printi] sig=f(int) sym=0xc00006a320 @ line 21
+                    actuals
+                        funccall sig=int @ line 21
+                            id [foo] sig=f(int,int,int,int) sym=0xc00006a4b0 @ line 21
+                            actuals
+                                int [1] sig=int @ line 21
+                                funccall sig=int @ line 21
+                                    id [bar] sig=f(int,int,int) sym=0xc00006a550 @ line 21
+                                    actuals
+                                        int [2] sig=int @ line 21
+                                        funccall sig=int @ line 21
+                                            id [baz] sig=f(int) sym=0xc00006a5a0 @ line 21
+                                            actuals
+                                                int [3] sig=int @ line 21
+                                        int [4] sig=int @ line 21
+                                funccall sig=int @ line 21
+                                    id [bar] sig=f(int,int,int) sym=0xc00006a550 @ line 21
+                                    actuals
+                                        int [5] sig=int @ line 21
+                                        funccall sig=int @ line 21
+                                            id [baz] sig=f(int) sym=0xc00006a5a0 @ line 21
+                                            actuals
+                                                int [6] sig=int @ line 21
+                                        int [7] sig=int @ line 21
+                                funccall sig=int @ line 21
+                                    id [baz] sig=f(int) sym=0xc00006a5a0 @ line 21
+                                    actuals
+                                        int [8] sig=int @ line 21
+            exprstmt @ line 22
+                funccall sig=void @ line 22
+                    id [prints] sig=f(str) sym=0xc00006a370 @ line 22
+                    actuals
+                        string [\n] sig=str @ line 22
+
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: recursive Fibonacci |
+---------------------------
+
+% ./golf -show aast /home/profs/aycock/411/TEST/final/gen.t5
+
+STDOUT:
+program sym=0xc00006a4b0
+    func sym=0xc00006a4b0 @ line 1
+        newid [main] @ line 1
+        sig
+            formals
+            typeid [$void] sym=0xc00006a050
+        block
+            var sym=0xc00006a550 @ line 2
+                newid [i] @ line 2
+                typeid [int] sym=0xc00006a0f0 @ line 2
+            = sig=void @ line 4
+                id [i] sig=int sym=0xc00006a550 @ line 4
+                int [0] sig=int @ line 4
+            for @ line 9
+                <= sig=bool @ line 9
+                    id [i] sig=int sym=0xc00006a550 @ line 9
+                    int [23] sig=int @ line 9
+                block
+                    exprstmt @ line 10
+                        funccall sig=void @ line 10
+                            id [prints] sig=f(str) sym=0xc00006a370 @ line 10
+                            actuals
+                                string [fib(] sig=str @ line 10
+                    exprstmt @ line 11
+                        funccall sig=void @ line 11
+                            id [printi] sig=f(int) sym=0xc00006a320 @ line 11
+                            actuals
+                                id [i] sig=int sym=0xc00006a550 @ line 11
+                    exprstmt @ line 12
+                        funccall sig=void @ line 12
+                            id [prints] sig=f(str) sym=0xc00006a370 @ line 12
+                            actuals
+                                string [) = ] sig=str @ line 12
+                    exprstmt @ line 13
+                        funccall sig=void @ line 13
+                            id [printi] sig=f(int) sym=0xc00006a320 @ line 13
+                            actuals
+                                funccall sig=int @ line 13
+                                    id [fib] sig=f(int) sym=0xc00006a500 @ line 13
+                                    actuals
+                                        id [i] sig=int sym=0xc00006a550 @ line 13
+                    exprstmt @ line 14
+                        funccall sig=void @ line 14
+                            id [prints] sig=f(str) sym=0xc00006a370 @ line 14
+                            actuals
+                                string [\n] sig=str @ line 14
+                    = sig=void @ line 15
+                        id [i] sig=int sym=0xc00006a550 @ line 15
+                        + sig=int @ line 15
+                            id [i] sig=int sym=0xc00006a550 @ line 15
+                            int [1] sig=int @ line 15
+    func sym=0xc00006a500 @ line 19
+        newid [fib] @ line 19
+        sig
+            formals
+                formal
+                    newid [n] sym=0xc00006a5a0 @ line 19
+                    typeid [int] sym=0xc00006a0f0 @ line 19
+            typeid [int] sym=0xc00006a0f0 @ line 19
+        block
+            if @ line 20
+                == sig=bool @ line 20
+                    id [n] sig=int sym=0xc00006a5a0 @ line 20
+                    int [0] sig=int @ line 20
+                block
+                    return @ line 20
+                        int [0] sig=int @ line 20
+            if @ line 21
+                == sig=bool @ line 21
+                    id [n] sig=int sym=0xc00006a5a0 @ line 21
+                    int [1] sig=int @ line 21
+                block
+                    return @ line 21
+                        int [1] sig=int @ line 21
+            return @ line 22
+                + sig=int @ line 22
+                    funccall sig=int @ line 22
+                        id [fib] sig=f(int) sym=0xc00006a500 @ line 22
+                        actuals
+                            - sig=int @ line 22
+                                id [n] sig=int sym=0xc00006a5a0 @ line 22
+                                int [1] sig=int @ line 22
+                    funccall sig=int @ line 22
+                        id [fib] sig=f(int) sym=0xc00006a500 @ line 22
+                        actuals
+                            - sig=int @ line 22
+                                id [n] sig=int sym=0xc00006a5a0 @ line 22
+                                int [2] sig=int @ line 22
+
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: iterative Fibonacci |
+---------------------------
+
+% ./golf -show aast /home/profs/aycock/411/TEST/final/gen.t6
+
+STDOUT:
+program sym=0xc00006a4b0
+    func sym=0xc00006a4b0 @ line 1
+        newid [main] @ line 1
+        sig
+            formals
+            typeid [$void] sym=0xc00006a050
+        block
+            var sym=0xc00006a500 @ line 2
+                newid [i] @ line 2
+                typeid [int] sym=0xc00006a0f0 @ line 2
+            var sym=0xc00006a550 @ line 3
+                newid [n] @ line 3
+                typeid [int] sym=0xc00006a0f0 @ line 3
+            var sym=0xc00006a5a0 @ line 4
+                newid [n_1] @ line 4
+                typeid [int] sym=0xc00006a0f0 @ line 4
+            var sym=0xc00006a5f0 @ line 5
+                newid [n_2] @ line 5
+                typeid [int] sym=0xc00006a0f0 @ line 5
+            = sig=void @ line 7
+                id [i] sig=int sym=0xc00006a500 @ line 7
+                int [2] sig=int @ line 7
+            = sig=void @ line 8
+                id [n_1] sig=int sym=0xc00006a5a0 @ line 8
+                int [1] sig=int @ line 8
+            = sig=void @ line 9
+                id [n_2] sig=int sym=0xc00006a5f0 @ line 9
+                int [0] sig=int @ line 9
+            exprstmt @ line 11
+                funccall sig=void @ line 11
+                    id [prints] sig=f(str) sym=0xc00006a370 @ line 11
+                    actuals
+                        string [fib(0) = 0\n] sig=str @ line 11
+            exprstmt @ line 12
+                funccall sig=void @ line 12
+                    id [prints] sig=f(str) sym=0xc00006a370 @ line 12
+                    actuals
+                        string [fib(1) = 1\n] sig=str @ line 12
+            for @ line 14
+                < sig=bool @ line 14
+                    id [i] sig=int sym=0xc00006a500 @ line 14
+                    int [47] sig=int @ line 14
+                block
+                    exprstmt @ line 15
+                        funccall sig=void @ line 15
+                            id [prints] sig=f(str) sym=0xc00006a370 @ line 15
+                            actuals
+                                string [fib(] sig=str @ line 15
+                    exprstmt @ line 16
+                        funccall sig=void @ line 16
+                            id [printi] sig=f(int) sym=0xc00006a320 @ line 16
+                            actuals
+                                id [i] sig=int sym=0xc00006a500 @ line 16
+                    exprstmt @ line 17
+                        funccall sig=void @ line 17
+                            id [prints] sig=f(str) sym=0xc00006a370 @ line 17
+                            actuals
+                                string [) = ] sig=str @ line 17
+                    = sig=void @ line 19
+                        id [n] sig=int sym=0xc00006a550 @ line 19
+                        + sig=int @ line 19
+                            id [n_1] sig=int sym=0xc00006a5a0 @ line 19
+                            id [n_2] sig=int sym=0xc00006a5f0 @ line 19
+                    exprstmt @ line 20
+                        funccall sig=void @ line 20
+                            id [printi] sig=f(int) sym=0xc00006a320 @ line 20
+                            actuals
+                                id [n] sig=int sym=0xc00006a550 @ line 20
+                    = sig=void @ line 21
+                        id [n_2] sig=int sym=0xc00006a5f0 @ line 21
+                        id [n_1] sig=int sym=0xc00006a5a0 @ line 21
+                    = sig=void @ line 22
+                        id [n_1] sig=int sym=0xc00006a5a0 @ line 22
+                        id [n] sig=int sym=0xc00006a550 @ line 22
+                    exprstmt @ line 24
+                        funccall sig=void @ line 24
+                            id [prints] sig=f(str) sym=0xc00006a370 @ line 24
+                            actuals
+                                string [\n] sig=str @ line 24
+                    = sig=void @ line 25
+                        id [i] sig=int sym=0xc00006a500 @ line 25
+                        + sig=int @ line 25
+                            id [i] sig=int sym=0xc00006a500 @ line 25
+                            int [1] sig=int @ line 25
+
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: string reversal |
+-----------------------
+
+% ./golf -show aast /home/profs/aycock/411/TEST/final/gen.t7
+
+STDOUT:
+program sym=0xc000100550
+    func sym=0xc0001004b0 @ line 1
+        newid [reverse] @ line 1
+        sig
+            formals
+            typeid [$void] sym=0xc000100050
+        block
+            var sym=0xc0001005a0 @ line 2
+                newid [c] @ line 2
+                typeid [int] sym=0xc0001000f0 @ line 2
+            = sig=void @ line 4
+                id [c] sig=int sym=0xc0001005a0 @ line 4
+                funccall sig=int @ line 4
+                    id [getchar] sig=f() sym=0xc0001003c0 @ line 4
+                    actuals
+            if @ line 5
+                != sig=bool @ line 5
+                    id [c] sig=int sym=0xc0001005a0 @ line 5
+                    id [NL] sig=int sym=0xc000100500 @ line 5
+                block
+                    exprstmt @ line 6
+                        funccall sig=void @ line 6
+                            id [reverse] sig=f() sym=0xc0001004b0 @ line 6
+                            actuals
+                    exprstmt @ line 7
+                        funccall sig=void @ line 7
+                            id [printc] sig=f(int) sym=0xc0001002d0 @ line 7
+                            actuals
+                                id [c] sig=int sym=0xc0001005a0 @ line 7
+    globvar sym=0xc000100500 @ line 11
+        newid [NL] @ line 11
+        typeid [int] sym=0xc0001000f0 @ line 11
+    func sym=0xc000100550 @ line 13
+        newid [main] @ line 13
+        sig
+            formals
+            typeid [$void] sym=0xc000100050
+        block
+            = sig=void @ line 14
+                id [NL] sig=int sym=0xc000100500 @ line 14
+                int [10] sig=int @ line 14
+            exprstmt @ line 15
+                funccall sig=void @ line 15
+                    id [reverse] sig=f() sym=0xc0001004b0 @ line 15
+                    actuals
+
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: hunting minint |
+----------------------
+
+% ./golf -show aast /home/profs/aycock/411/TEST/final/gen.t8
+
+STDOUT:
+program sym=0xc00006a4b0
+    func sym=0xc00006a4b0 @ line 1
+        newid [main] @ line 1
+        sig
+            formals
+            typeid [$void] sym=0xc00006a050
+        block
+            var sym=0xc00006a500 @ line 2
+                newid [i] @ line 2
+                typeid [int] sym=0xc00006a0f0 @ line 2
+            var sym=0xc00006a550 @ line 3
+                newid [delta] @ line 3
+                typeid [int] sym=0xc00006a0f0 @ line 3
+            = sig=void @ line 5
+                id [delta] sig=int sym=0xc00006a550 @ line 5
+                int [1000000] sig=int @ line 5
+            for @ line 8
+                >= sig=bool @ line 8
+                    id [i] sig=int sym=0xc00006a500 @ line 8
+                    int [0] sig=int @ line 8
+                block
+                    = sig=void @ line 9
+                        id [i] sig=int sym=0xc00006a500 @ line 9
+                        + sig=int @ line 9
+                            id [i] sig=int sym=0xc00006a500 @ line 9
+                            id [delta] sig=int sym=0xc00006a550 @ line 9
+            for @ line 13
+                < sig=bool @ line 13
+                    id [i] sig=int sym=0xc00006a500 @ line 13
+                    int [0] sig=int @ line 13
+                block
+                    = sig=void @ line 14
+                        id [i] sig=int sym=0xc00006a500 @ line 14
+                        - sig=int @ line 14
+                            id [i] sig=int sym=0xc00006a500 @ line 14
+                            int [1] sig=int @ line 14
+            exprstmt @ line 17
+                funccall sig=void @ line 17
+                    id [prints] sig=f(str) sym=0xc00006a370 @ line 17
+                    actuals
+                        string [minint is ] sig=str @ line 17
+            exprstmt @ line 18
+                funccall sig=void @ line 18
+                    id [printi] sig=f(int) sym=0xc00006a320 @ line 18
+                    actuals
+                        + sig=int @ line 18
+                            id [i] sig=int sym=0xc00006a500 @ line 18
+                            int [1] sig=int @ line 18
+            exprstmt @ line 19
+                funccall sig=void @ line 19
+                    id [prints] sig=f(str) sym=0xc00006a370 @ line 19
+                    actuals
+                        string [\n] sig=str @ line 19
+
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: negating minint |
+-----------------------
+
+% ./golf -show aast /home/profs/aycock/411/TEST/final/gen.t9
+
+STDOUT:
+program sym=0xc00006a500
+    func sym=0xc00006a4b0 @ line 1
+        newid [nl] @ line 1
+        sig
+            formals
+            typeid [$void] sym=0xc00006a050
+        block
+            exprstmt @ line 2
+                funccall sig=void @ line 2
+                    id [prints] sig=f(str) sym=0xc00006a370 @ line 2
+                    actuals
+                        string [\n] sig=str @ line 2
+    func sym=0xc00006a500 @ line 5
+        newid [main] @ line 5
+        sig
+            formals
+            typeid [$void] sym=0xc00006a050
+        block
+            exprstmt @ line 6
+                funccall sig=void @ line 6
+                    id [printi] sig=f(int) sym=0xc00006a320 @ line 6
+                    actuals
+                        int [-123] sig=int @ line 6
+            exprstmt @ line 6
+                funccall sig=void @ line 6
+                    id [nl] sig=f() sym=0xc00006a4b0 @ line 6
+                    actuals
+            exprstmt @ line 7
+                funccall sig=void @ line 7
+                    id [printi] sig=f(int) sym=0xc00006a320 @ line 7
+                    actuals
+                        int [-2147483648] sig=int @ line 7
+            exprstmt @ line 7
+                funccall sig=void @ line 7
+                    id [nl] sig=f() sym=0xc00006a4b0 @ line 7
+                    actuals
+            exprstmt @ line 8
+                funccall sig=void @ line 8
+                    id [printi] sig=f(int) sym=0xc00006a320 @ line 8
+                    actuals
+                        u- sig=int @ line 8
+                            int [-2147483648] sig=int @ line 8
+            exprstmt @ line 8
+                funccall sig=void @ line 8
+                    id [nl] sig=f() sym=0xc00006a4b0 @ line 8
+                    actuals
+            exprstmt @ line 9
+                funccall sig=void @ line 9
+                    id [printi] sig=f(int) sym=0xc00006a320 @ line 9
+                    actuals
+                        u- sig=int @ line 9
+                            u- sig=int @ line 9
+                                int [-2147483648] sig=int @ line 9
+            exprstmt @ line 9
+                funccall sig=void @ line 9
+                    id [nl] sig=f() sym=0xc00006a4b0 @ line 9
+                    actuals
+
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: minint div and mod |
+--------------------------
+
+% ./golf -show aast /home/profs/aycock/411/TEST/final/gen.t10
+
+STDOUT:
+program sym=0xc00006a4b0
+    func sym=0xc00006a4b0 @ line 3
+        newid [main] @ line 3
+        sig
+            formals
+            typeid [$void] sym=0xc00006a050
+        block
+            exprstmt @ line 4
+                funccall sig=void @ line 4
+                    id [printi] sig=f(int) sym=0xc00006a320 @ line 4
+                    actuals
+                        / sig=int @ line 4
+                            int [-2147483648] sig=int @ line 4
+                            int [-1] sig=int @ line 4
+            exprstmt @ line 5
+                funccall sig=void @ line 5
+                    id [prints] sig=f(str) sym=0xc00006a370 @ line 5
+                    actuals
+                        string [\n] sig=str @ line 5
+            exprstmt @ line 7
+                funccall sig=void @ line 7
+                    id [printi] sig=f(int) sym=0xc00006a320 @ line 7
+                    actuals
+                        % sig=int @ line 7
+                            int [-2147483648] sig=int @ line 7
+                            int [-1] sig=int @ line 7
+            exprstmt @ line 8
+                funccall sig=void @ line 8
+                    id [prints] sig=f(str) sym=0xc00006a370 @ line 8
+                    actuals
+                        string [\n] sig=str @ line 8
+
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: division by zero |
+------------------------
+
+% ./golf -show aast /home/profs/aycock/411/TEST/final/gen.t11
+
+STDOUT:
+program sym=0xc0001004b0
+    func sym=0xc0001004b0 @ line 1
+        newid [main] @ line 1
+        sig
+            formals
+            typeid [$void] sym=0xc000100050
+        block
+            exprstmt @ line 2
+                funccall sig=void @ line 2
+                    id [printi] sig=f(int) sym=0xc000100320 @ line 2
+                    actuals
+                        / sig=int @ line 2
+                            int [123] sig=int @ line 2
+                            int [0] sig=int @ line 2
+            exprstmt @ line 3
+                funccall sig=void @ line 3
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 3
+                    actuals
+                        string [\n] sig=str @ line 3
+
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: basic Booleans |
+----------------------
+
+% ./golf -show aast /home/profs/aycock/411/TEST/final/gen.t12
+
+STDOUT:
+program sym=0xc0001004b0
+    func sym=0xc0001004b0 @ line 1
+        newid [main] @ line 1
+        sig
+            formals
+            typeid [$void] sym=0xc000100050
+        block
+            ifelse @ line 2
+                != sig=bool @ line 2
+                    id [false] sig=bool sym=0xc000100230 @ line 2
+                    ! sig=bool @ line 2
+                        id [true] sig=bool sym=0xc0001001e0 @ line 2
+                block
+                    exprstmt @ line 3
+                        funccall sig=void @ line 3
+                            id [prints] sig=f(str) sym=0xc000100370 @ line 3
+                            actuals
+                                string [Oops!\n] sig=str @ line 3
+                block
+                    exprstmt @ line 5
+                        funccall sig=void @ line 5
+                            id [prints] sig=f(str) sym=0xc000100370 @ line 5
+                            actuals
+                                string [OK\n] sig=str @ line 5
+
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: string escapes |
+----------------------
+
+% ./golf -show aast /home/profs/aycock/411/TEST/final/gen.t13
+
+STDOUT:
+program sym=0xc0001004b0
+    func sym=0xc0001004b0 @ line 3
+        newid [main] @ line 3
+        sig
+            formals
+            typeid [$void] sym=0xc000100050
+        block
+            exprstmt @ line 4
+                funccall sig=void @ line 4
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 4
+                    actuals
+                        string [backslash b = [\b]] sig=str @ line 4
+            exprstmt @ line 4
+                funccall sig=void @ line 4
+                    id [printc] sig=f(int) sym=0xc0001002d0 @ line 4
+                    actuals
+                        int [10] sig=int @ line 4
+            exprstmt @ line 5
+                funccall sig=void @ line 5
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 5
+                    actuals
+                        string [backslash t = [\t]] sig=str @ line 5
+            exprstmt @ line 5
+                funccall sig=void @ line 5
+                    id [printc] sig=f(int) sym=0xc0001002d0 @ line 5
+                    actuals
+                        int [10] sig=int @ line 5
+            exprstmt @ line 6
+                funccall sig=void @ line 6
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 6
+                    actuals
+                        string [backslash n = [\n]] sig=str @ line 6
+            exprstmt @ line 6
+                funccall sig=void @ line 6
+                    id [printc] sig=f(int) sym=0xc0001002d0 @ line 6
+                    actuals
+                        int [10] sig=int @ line 6
+            exprstmt @ line 7
+                funccall sig=void @ line 7
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 7
+                    actuals
+                        string [backslash f = [\f]] sig=str @ line 7
+            exprstmt @ line 7
+                funccall sig=void @ line 7
+                    id [printc] sig=f(int) sym=0xc0001002d0 @ line 7
+                    actuals
+                        int [10] sig=int @ line 7
+            exprstmt @ line 8
+                funccall sig=void @ line 8
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 8
+                    actuals
+                        string [backslash r = [\r]] sig=str @ line 8
+            exprstmt @ line 8
+                funccall sig=void @ line 8
+                    id [printc] sig=f(int) sym=0xc0001002d0 @ line 8
+                    actuals
+                        int [10] sig=int @ line 8
+            exprstmt @ line 9
+                funccall sig=void @ line 9
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 9
+                    actuals
+                        string [backslash quote = [\"]] sig=str @ line 9
+            exprstmt @ line 9
+                funccall sig=void @ line 9
+                    id [printc] sig=f(int) sym=0xc0001002d0 @ line 9
+                    actuals
+                        int [10] sig=int @ line 9
+            exprstmt @ line 10
+                funccall sig=void @ line 10
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 10
+                    actuals
+                        string [backslash backslash = [\\]] sig=str @ line 10
+            exprstmt @ line 10
+                funccall sig=void @ line 10
+                    id [printc] sig=f(int) sym=0xc0001002d0 @ line 10
+                    actuals
+                        int [10] sig=int @ line 10
+
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: all your base are belong to us |
+--------------------------------------
+
+% ./golf -show aast /home/profs/aycock/411/TEST/final/gen.t14
+
+STDOUT:
+program sym=0xc0000ca500
+    func sym=0xc0000ca460 @ line 1
+        newid [convert] @ line 1
+        sig
+            formals
+                formal
+                    newid [n] sym=0xc0000ca550 @ line 1
+                    typeid [int] sym=0xc0000ca0a0 @ line 1
+                formal
+                    newid [base] sym=0xc0000ca5a0 @ line 1
+                    typeid [int] sym=0xc0000ca0a0 @ line 1
+            typeid [$void] sym=0xc0000ca000
+        block
+            if @ line 2
+                == sig=bool @ line 2
+                    id [n] sig=int sym=0xc0000ca550 @ line 2
+                    int [0] sig=int @ line 2
+                block
+                    exprstmt @ line 3
+                        funccall sig=void @ line 3
+                            id [printi] sig=f(int) sym=0xc0000ca2d0 @ line 3
+                            actuals
+                                int [0] sig=int @ line 3
+                    return @ line 4
+            exprstmt @ line 6
+                funccall sig=void @ line 6
+                    id [convert] sig=f(int,int) sym=0xc0000ca460 @ line 6
+                    actuals
+                        / sig=int @ line 6
+                            id [n] sig=int sym=0xc0000ca550 @ line 6
+                            id [base] sig=int sym=0xc0000ca5a0 @ line 6
+                        id [base] sig=int sym=0xc0000ca5a0 @ line 6
+            exprstmt @ line 7
+                funccall sig=void @ line 7
+                    id [printi] sig=f(int) sym=0xc0000ca2d0 @ line 7
+                    actuals
+                        % sig=int @ line 7
+                            id [n] sig=int sym=0xc0000ca550 @ line 7
+                            id [base] sig=int sym=0xc0000ca5a0 @ line 7
+    func sym=0xc0000ca4b0 @ line 10
+        newid [do] @ line 10
+        sig
+            formals
+                formal
+                    newid [i] sym=0xc0000ca5f0 @ line 10
+                    typeid [int] sym=0xc0000ca0a0 @ line 10
+            typeid [$void] sym=0xc0000ca000
+        block
+            exprstmt @ line 11
+                funccall sig=void @ line 11
+                    id [printi] sig=f(int) sym=0xc0000ca2d0 @ line 11
+                    actuals
+                        id [i] sig=int sym=0xc0000ca5f0 @ line 11
+            exprstmt @ line 11
+                funccall sig=void @ line 11
+                    id [prints] sig=f(str) sym=0xc0000ca320 @ line 11
+                    actuals
+                        string [ = \n] sig=str @ line 11
+            exprstmt @ line 12
+                funccall sig=void @ line 12
+                    id [prints] sig=f(str) sym=0xc0000ca320 @ line 12
+                    actuals
+                        string [\t] sig=str @ line 12
+            exprstmt @ line 12
+                funccall sig=void @ line 12
+                    id [convert] sig=f(int,int) sym=0xc0000ca460 @ line 12
+                    actuals
+                        id [i] sig=int sym=0xc0000ca5f0 @ line 12
+                        int [2] sig=int @ line 12
+            exprstmt @ line 12
+                funccall sig=void @ line 12
+                    id [prints] sig=f(str) sym=0xc0000ca320 @ line 12
+                    actuals
+                        string [ (base 2)\n] sig=str @ line 12
+            exprstmt @ line 13
+                funccall sig=void @ line 13
+                    id [prints] sig=f(str) sym=0xc0000ca320 @ line 13
+                    actuals
+                        string [\t] sig=str @ line 13
+            exprstmt @ line 13
+                funccall sig=void @ line 13
+                    id [convert] sig=f(int,int) sym=0xc0000ca460 @ line 13
+                    actuals
+                        id [i] sig=int sym=0xc0000ca5f0 @ line 13
+                        int [8] sig=int @ line 13
+            exprstmt @ line 13
+                funccall sig=void @ line 13
+                    id [prints] sig=f(str) sym=0xc0000ca320 @ line 13
+                    actuals
+                        string [ (base 8)\n] sig=str @ line 13
+            exprstmt @ line 14
+                funccall sig=void @ line 14
+                    id [prints] sig=f(str) sym=0xc0000ca320 @ line 14
+                    actuals
+                        string [\t] sig=str @ line 14
+            exprstmt @ line 14
+                funccall sig=void @ line 14
+                    id [convert] sig=f(int,int) sym=0xc0000ca460 @ line 14
+                    actuals
+                        id [i] sig=int sym=0xc0000ca5f0 @ line 14
+                        int [10] sig=int @ line 14
+            exprstmt @ line 14
+                funccall sig=void @ line 14
+                    id [prints] sig=f(str) sym=0xc0000ca320 @ line 14
+                    actuals
+                        string [ (base 10)\n] sig=str @ line 14
+    func sym=0xc0000ca500 @ line 17
+        newid [main] @ line 17
+        sig
+            formals
+            typeid [$void] sym=0xc0000ca000
+        block
+            exprstmt @ line 18
+                funccall sig=void @ line 18
+                    id [do] sig=f(int) sym=0xc0000ca4b0 @ line 18
+                    actuals
+                        int [0] sig=int @ line 18
+            exprstmt @ line 19
+                funccall sig=void @ line 19
+                    id [do] sig=f(int) sym=0xc0000ca4b0 @ line 19
+                    actuals
+                        int [17] sig=int @ line 19
+            exprstmt @ line 20
+                funccall sig=void @ line 20
+                    id [do] sig=f(int) sym=0xc0000ca4b0 @ line 20
+                    actuals
+                        int [42] sig=int @ line 20
+
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: short-circuiting |
+------------------------
+
+% ./golf -show aast /home/profs/aycock/411/TEST/final/gen.t15
+
+STDOUT:
+program sym=0xc000100730
+    globvar sym=0xc0001004b0 @ line 1
+        newid [a] @ line 1
+        typeid [bool] sym=0xc0001000a0 @ line 1
+    globvar sym=0xc000100500 @ line 2
+        newid [b] @ line 2
+        typeid [bool] sym=0xc0001000a0 @ line 2
+    globvar sym=0xc000100550 @ line 3
+        newid [c] @ line 3
+        typeid [bool] sym=0xc0001000a0 @ line 3
+    func sym=0xc0001005a0 @ line 5
+        newid [A] @ line 5
+        sig
+            formals
+            typeid [bool] sym=0xc0001000a0 @ line 5
+        block
+            exprstmt @ line 6
+                funccall sig=void @ line 6
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 6
+                    actuals
+                        string [evaluated A\n] sig=str @ line 6
+            return @ line 7
+                id [a] sig=bool sym=0xc0001004b0 @ line 7
+    func sym=0xc0001005f0 @ line 9
+        newid [B] @ line 9
+        sig
+            formals
+            typeid [bool] sym=0xc0001000a0 @ line 9
+        block
+            exprstmt @ line 10
+                funccall sig=void @ line 10
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 10
+                    actuals
+                        string [evaluated B\n] sig=str @ line 10
+            return @ line 11
+                id [b] sig=bool sym=0xc000100500 @ line 11
+    func sym=0xc000100640 @ line 13
+        newid [C] @ line 13
+        sig
+            formals
+            typeid [bool] sym=0xc0001000a0 @ line 13
+        block
+            exprstmt @ line 14
+                funccall sig=void @ line 14
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 14
+                    actuals
+                        string [evaluated C\n] sig=str @ line 14
+            return @ line 15
+                id [c] sig=bool sym=0xc000100550 @ line 15
+    func sym=0xc000100690 @ line 18
+        newid [eval] @ line 18
+        sig
+            formals
+                formal
+                    newid [newa] sym=0xc000100780 @ line 18
+                    typeid [bool] sym=0xc0001000a0 @ line 18
+                formal
+                    newid [n00b] sym=0xc0001007d0 @ line 18
+                    typeid [bool] sym=0xc0001000a0 @ line 18
+                formal
+                    newid [newc] sym=0xc000100820 @ line 18
+                    typeid [bool] sym=0xc0001000a0 @ line 18
+            typeid [$void] sym=0xc000100050
+        block
+            = sig=void @ line 19
+                id [a] sig=bool sym=0xc0001004b0 @ line 19
+                id [newa] sig=bool sym=0xc000100780 @ line 19
+            = sig=void @ line 20
+                id [b] sig=bool sym=0xc000100500 @ line 20
+                id [n00b] sig=bool sym=0xc0001007d0 @ line 20
+            = sig=void @ line 21
+                id [c] sig=bool sym=0xc000100550 @ line 21
+                id [newc] sig=bool sym=0xc000100820 @ line 21
+            exprstmt @ line 23
+                funccall sig=void @ line 23
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 23
+                    actuals
+                        string [if ((A && B) || C) {...} else {...}, with A=] sig=str @ line 23
+            exprstmt @ line 24
+                funccall sig=void @ line 24
+                    id [printb] sig=f(bool) sym=0xc000100280 @ line 24
+                    actuals
+                        id [a] sig=bool sym=0xc0001004b0 @ line 24
+            exprstmt @ line 25
+                funccall sig=void @ line 25
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 25
+                    actuals
+                        string [ B=] sig=str @ line 25
+            exprstmt @ line 26
+                funccall sig=void @ line 26
+                    id [printb] sig=f(bool) sym=0xc000100280 @ line 26
+                    actuals
+                        id [b] sig=bool sym=0xc000100500 @ line 26
+            exprstmt @ line 27
+                funccall sig=void @ line 27
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 27
+                    actuals
+                        string [ C=] sig=str @ line 27
+            exprstmt @ line 28
+                funccall sig=void @ line 28
+                    id [printb] sig=f(bool) sym=0xc000100280 @ line 28
+                    actuals
+                        id [c] sig=bool sym=0xc000100550 @ line 28
+            exprstmt @ line 29
+                funccall sig=void @ line 29
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 29
+                    actuals
+                        string [\n] sig=str @ line 29
+            ifelse @ line 31
+                || sig=bool @ line 31
+                    && sig=bool @ line 31
+                        funccall sig=bool @ line 31
+                            id [A] sig=f() sym=0xc0001005a0 @ line 31
+                            actuals
+                        funccall sig=bool @ line 31
+                            id [B] sig=f() sym=0xc0001005f0 @ line 31
+                            actuals
+                    funccall sig=bool @ line 31
+                        id [C] sig=f() sym=0xc000100640 @ line 31
+                        actuals
+                block
+                    exprstmt @ line 32
+                        funccall sig=void @ line 32
+                            id [prints] sig=f(str) sym=0xc000100370 @ line 32
+                            actuals
+                                string [if-part executed\n] sig=str @ line 32
+                block
+                    exprstmt @ line 34
+                        funccall sig=void @ line 34
+                            id [prints] sig=f(str) sym=0xc000100370 @ line 34
+                            actuals
+                                string [else-part executed\n] sig=str @ line 34
+    func sym=0xc0001006e0 @ line 38
+        newid [assign] @ line 38
+        sig
+            formals
+                formal
+                    newid [newa] sym=0xc000100870 @ line 38
+                    typeid [bool] sym=0xc0001000a0 @ line 38
+                formal
+                    newid [newb] sym=0xc0001008c0 @ line 38
+                    typeid [bool] sym=0xc0001000a0 @ line 38
+                formal
+                    newid [newc] sym=0xc000100910 @ line 38
+                    typeid [bool] sym=0xc0001000a0 @ line 38
+            typeid [$void] sym=0xc000100050
+        block
+            = sig=void @ line 39
+                id [a] sig=bool sym=0xc0001004b0 @ line 39
+                id [newa] sig=bool sym=0xc000100870 @ line 39
+            = sig=void @ line 40
+                id [b] sig=bool sym=0xc000100500 @ line 40
+                id [newb] sig=bool sym=0xc0001008c0 @ line 40
+            = sig=void @ line 41
+                id [c] sig=bool sym=0xc000100550 @ line 41
+                id [newc] sig=bool sym=0xc000100910 @ line 41
+            exprstmt @ line 43
+                funccall sig=void @ line 43
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 43
+                    actuals
+                        string [x = (A && !B) || C, with A=] sig=str @ line 43
+            exprstmt @ line 44
+                funccall sig=void @ line 44
+                    id [printb] sig=f(bool) sym=0xc000100280 @ line 44
+                    actuals
+                        id [a] sig=bool sym=0xc0001004b0 @ line 44
+            exprstmt @ line 45
+                funccall sig=void @ line 45
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 45
+                    actuals
+                        string [ B=] sig=str @ line 45
+            exprstmt @ line 46
+                funccall sig=void @ line 46
+                    id [printb] sig=f(bool) sym=0xc000100280 @ line 46
+                    actuals
+                        id [b] sig=bool sym=0xc000100500 @ line 46
+            exprstmt @ line 47
+                funccall sig=void @ line 47
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 47
+                    actuals
+                        string [ C=] sig=str @ line 47
+            exprstmt @ line 48
+                funccall sig=void @ line 48
+                    id [printb] sig=f(bool) sym=0xc000100280 @ line 48
+                    actuals
+                        id [c] sig=bool sym=0xc000100550 @ line 48
+            exprstmt @ line 49
+                funccall sig=void @ line 49
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 49
+                    actuals
+                        string [\n] sig=str @ line 49
+            var sym=0xc000100960 @ line 51
+                newid [x] @ line 51
+                typeid [bool] sym=0xc0001000a0 @ line 51
+            = sig=void @ line 52
+                id [x] sig=bool sym=0xc000100960 @ line 52
+                || sig=bool @ line 52
+                    && sig=bool @ line 52
+                        funccall sig=bool @ line 52
+                            id [A] sig=f() sym=0xc0001005a0 @ line 52
+                            actuals
+                        ! sig=bool @ line 52
+                            funccall sig=bool @ line 52
+                                id [B] sig=f() sym=0xc0001005f0 @ line 52
+                                actuals
+                    funccall sig=bool @ line 52
+                        id [C] sig=f() sym=0xc000100640 @ line 52
+                        actuals
+            exprstmt @ line 53
+                funccall sig=void @ line 53
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 53
+                    actuals
+                        string [x=] sig=str @ line 53
+            exprstmt @ line 54
+                funccall sig=void @ line 54
+                    id [printb] sig=f(bool) sym=0xc000100280 @ line 54
+                    actuals
+                        id [x] sig=bool sym=0xc000100960 @ line 54
+            exprstmt @ line 55
+                funccall sig=void @ line 55
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 55
+                    actuals
+                        string [\n] sig=str @ line 55
+    func sym=0xc000100730 @ line 58
+        newid [main] @ line 58
+        sig
+            formals
+            typeid [$void] sym=0xc000100050
+        block
+            exprstmt @ line 59
+                funccall sig=void @ line 59
+                    id [eval] sig=f(bool,bool,bool) sym=0xc000100690 @ line 59
+                    actuals
+                        id [false] sig=bool sym=0xc000100230 @ line 59
+                        id [false] sig=bool sym=0xc000100230 @ line 59
+                        id [false] sig=bool sym=0xc000100230 @ line 59
+            exprstmt @ line 59
+                funccall sig=void @ line 59
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 59
+                    actuals
+                        string [\n] sig=str @ line 59
+            exprstmt @ line 60
+                funccall sig=void @ line 60
+                    id [eval] sig=f(bool,bool,bool) sym=0xc000100690 @ line 60
+                    actuals
+                        id [false] sig=bool sym=0xc000100230 @ line 60
+                        id [false] sig=bool sym=0xc000100230 @ line 60
+                        id [true] sig=bool sym=0xc0001001e0 @ line 60
+            exprstmt @ line 60
+                funccall sig=void @ line 60
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 60
+                    actuals
+                        string [\n] sig=str @ line 60
+            exprstmt @ line 61
+                funccall sig=void @ line 61
+                    id [eval] sig=f(bool,bool,bool) sym=0xc000100690 @ line 61
+                    actuals
+                        id [false] sig=bool sym=0xc000100230 @ line 61
+                        id [true] sig=bool sym=0xc0001001e0 @ line 61
+                        id [false] sig=bool sym=0xc000100230 @ line 61
+            exprstmt @ line 61
+                funccall sig=void @ line 61
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 61
+                    actuals
+                        string [\n] sig=str @ line 61
+            exprstmt @ line 62
+                funccall sig=void @ line 62
+                    id [eval] sig=f(bool,bool,bool) sym=0xc000100690 @ line 62
+                    actuals
+                        id [false] sig=bool sym=0xc000100230 @ line 62
+                        id [true] sig=bool sym=0xc0001001e0 @ line 62
+                        id [true] sig=bool sym=0xc0001001e0 @ line 62
+            exprstmt @ line 62
+                funccall sig=void @ line 62
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 62
+                    actuals
+                        string [\n] sig=str @ line 62
+            exprstmt @ line 63
+                funccall sig=void @ line 63
+                    id [eval] sig=f(bool,bool,bool) sym=0xc000100690 @ line 63
+                    actuals
+                        id [true] sig=bool sym=0xc0001001e0 @ line 63
+                        id [false] sig=bool sym=0xc000100230 @ line 63
+                        id [false] sig=bool sym=0xc000100230 @ line 63
+            exprstmt @ line 63
+                funccall sig=void @ line 63
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 63
+                    actuals
+                        string [\n] sig=str @ line 63
+            exprstmt @ line 64
+                funccall sig=void @ line 64
+                    id [eval] sig=f(bool,bool,bool) sym=0xc000100690 @ line 64
+                    actuals
+                        id [true] sig=bool sym=0xc0001001e0 @ line 64
+                        id [false] sig=bool sym=0xc000100230 @ line 64
+                        id [true] sig=bool sym=0xc0001001e0 @ line 64
+            exprstmt @ line 64
+                funccall sig=void @ line 64
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 64
+                    actuals
+                        string [\n] sig=str @ line 64
+            exprstmt @ line 65
+                funccall sig=void @ line 65
+                    id [eval] sig=f(bool,bool,bool) sym=0xc000100690 @ line 65
+                    actuals
+                        id [true] sig=bool sym=0xc0001001e0 @ line 65
+                        id [true] sig=bool sym=0xc0001001e0 @ line 65
+                        id [false] sig=bool sym=0xc000100230 @ line 65
+            exprstmt @ line 65
+                funccall sig=void @ line 65
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 65
+                    actuals
+                        string [\n] sig=str @ line 65
+            exprstmt @ line 66
+                funccall sig=void @ line 66
+                    id [eval] sig=f(bool,bool,bool) sym=0xc000100690 @ line 66
+                    actuals
+                        id [true] sig=bool sym=0xc0001001e0 @ line 66
+                        id [true] sig=bool sym=0xc0001001e0 @ line 66
+                        id [true] sig=bool sym=0xc0001001e0 @ line 66
+            exprstmt @ line 66
+                funccall sig=void @ line 66
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 66
+                    actuals
+                        string [\n] sig=str @ line 66
+            exprstmt @ line 68
+                funccall sig=void @ line 68
+                    id [assign] sig=f(bool,bool,bool) sym=0xc0001006e0 @ line 68
+                    actuals
+                        id [false] sig=bool sym=0xc000100230 @ line 68
+                        id [false] sig=bool sym=0xc000100230 @ line 68
+                        id [false] sig=bool sym=0xc000100230 @ line 68
+            exprstmt @ line 68
+                funccall sig=void @ line 68
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 68
+                    actuals
+                        string [\n] sig=str @ line 68
+            exprstmt @ line 69
+                funccall sig=void @ line 69
+                    id [assign] sig=f(bool,bool,bool) sym=0xc0001006e0 @ line 69
+                    actuals
+                        id [false] sig=bool sym=0xc000100230 @ line 69
+                        id [false] sig=bool sym=0xc000100230 @ line 69
+                        id [true] sig=bool sym=0xc0001001e0 @ line 69
+            exprstmt @ line 69
+                funccall sig=void @ line 69
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 69
+                    actuals
+                        string [\n] sig=str @ line 69
+            exprstmt @ line 70
+                funccall sig=void @ line 70
+                    id [assign] sig=f(bool,bool,bool) sym=0xc0001006e0 @ line 70
+                    actuals
+                        id [false] sig=bool sym=0xc000100230 @ line 70
+                        id [true] sig=bool sym=0xc0001001e0 @ line 70
+                        id [false] sig=bool sym=0xc000100230 @ line 70
+            exprstmt @ line 70
+                funccall sig=void @ line 70
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 70
+                    actuals
+                        string [\n] sig=str @ line 70
+            exprstmt @ line 71
+                funccall sig=void @ line 71
+                    id [assign] sig=f(bool,bool,bool) sym=0xc0001006e0 @ line 71
+                    actuals
+                        id [false] sig=bool sym=0xc000100230 @ line 71
+                        id [true] sig=bool sym=0xc0001001e0 @ line 71
+                        id [true] sig=bool sym=0xc0001001e0 @ line 71
+            exprstmt @ line 71
+                funccall sig=void @ line 71
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 71
+                    actuals
+                        string [\n] sig=str @ line 71
+            exprstmt @ line 72
+                funccall sig=void @ line 72
+                    id [assign] sig=f(bool,bool,bool) sym=0xc0001006e0 @ line 72
+                    actuals
+                        id [true] sig=bool sym=0xc0001001e0 @ line 72
+                        id [false] sig=bool sym=0xc000100230 @ line 72
+                        id [false] sig=bool sym=0xc000100230 @ line 72
+            exprstmt @ line 72
+                funccall sig=void @ line 72
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 72
+                    actuals
+                        string [\n] sig=str @ line 72
+            exprstmt @ line 73
+                funccall sig=void @ line 73
+                    id [assign] sig=f(bool,bool,bool) sym=0xc0001006e0 @ line 73
+                    actuals
+                        id [true] sig=bool sym=0xc0001001e0 @ line 73
+                        id [false] sig=bool sym=0xc000100230 @ line 73
+                        id [true] sig=bool sym=0xc0001001e0 @ line 73
+            exprstmt @ line 73
+                funccall sig=void @ line 73
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 73
+                    actuals
+                        string [\n] sig=str @ line 73
+            exprstmt @ line 74
+                funccall sig=void @ line 74
+                    id [assign] sig=f(bool,bool,bool) sym=0xc0001006e0 @ line 74
+                    actuals
+                        id [true] sig=bool sym=0xc0001001e0 @ line 74
+                        id [true] sig=bool sym=0xc0001001e0 @ line 74
+                        id [false] sig=bool sym=0xc000100230 @ line 74
+            exprstmt @ line 74
+                funccall sig=void @ line 74
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 74
+                    actuals
+                        string [\n] sig=str @ line 74
+            exprstmt @ line 75
+                funccall sig=void @ line 75
+                    id [assign] sig=f(bool,bool,bool) sym=0xc0001006e0 @ line 75
+                    actuals
+                        id [true] sig=bool sym=0xc0001001e0 @ line 75
+                        id [true] sig=bool sym=0xc0001001e0 @ line 75
+                        id [true] sig=bool sym=0xc0001001e0 @ line 75
+
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: dynamic semantic check |
+------------------------------
+
+% ./golf -show aast /home/profs/aycock/411/TEST/final/gen.t16
+
+STDOUT:
+program sym=0xc00006a500
+    func sym=0xc00006a4b0 @ line 3
+        newid [foo] @ line 3
+        sig
+            formals
+                formal
+                    newid [x] sym=0xc00006a550 @ line 3
+                    typeid [int] sym=0xc00006a0f0 @ line 3
+            typeid [int] sym=0xc00006a0f0 @ line 3
+        block
+            if @ line 4
+                < sig=bool @ line 4
+                    * sig=int @ line 4
+                        id [x] sig=int sym=0xc00006a550 @ line 4
+                        id [x] sig=int sym=0xc00006a550 @ line 4
+                    int [0] sig=int @ line 4
+                block
+                    return @ line 5
+                        int [123] sig=int @ line 5
+    func sym=0xc00006a500 @ line 9
+        newid [main] @ line 9
+        sig
+            formals
+            typeid [$void] sym=0xc00006a050
+        block
+            exprstmt @ line 10
+                funccall sig=int @ line 10
+                    id [foo] sig=f(int) sym=0xc00006a4b0 @ line 10
+                    actuals
+                        int [-1] sig=int @ line 10
+
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: less obvious division by zero |
+-------------------------------------
+
+% ./golf -show aast /home/profs/aycock/411/TEST/final/gen.t17
+
+STDOUT:
+program sym=0xc00009c500
+    globvar sym=0xc00009c4b0 @ line 1
+        newid [j] @ line 1
+        typeid [int] sym=0xc00009c0f0 @ line 1
+    func sym=0xc00009c500 @ line 3
+        newid [main] @ line 3
+        sig
+            formals
+            typeid [$void] sym=0xc00009c050
+        block
+            = sig=void @ line 4
+                id [j] sig=int sym=0xc00009c4b0 @ line 4
+                int [12] sig=int @ line 4
+            exprstmt @ line 5
+                funccall sig=void @ line 5
+                    id [foo] sig=f() sym=0xc00009c5a0 @ line 5
+                    actuals
+            exprstmt @ line 6
+                funccall sig=void @ line 6
+                    id [printi] sig=f(int) sym=0xc00009c320 @ line 6
+                    actuals
+                        / sig=int @ line 6
+                            id [j] sig=int sym=0xc00009c4b0 @ line 6
+                            - sig=int @ line 6
+                                id [i] sig=int sym=0xc00009c550 @ line 6
+                                int [2] sig=int @ line 6
+    globvar sym=0xc00009c550 @ line 9
+        newid [i] @ line 9
+        typeid [int] sym=0xc00009c0f0 @ line 9
+    func sym=0xc00009c5a0 @ line 11
+        newid [foo] @ line 11
+        sig
+            formals
+            typeid [$void] sym=0xc00009c050
+        block
+            = sig=void @ line 12
+                id [i] sig=int sym=0xc00009c550 @ line 12
+                int [2] sig=int @ line 12
+
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: recursive-descent calculator |
+------------------------------------
+
+% ./golf -show aast /home/profs/aycock/411/TEST/final/gen.t18
+
+STDOUT:
+program sym=0xc000160460
+    func sym=0xc000160460 @ line 5
+        newid [main] @ line 5
+        sig
+            formals
+            typeid [$void] sym=0xc000160000
+        block
+            exprstmt @ line 6
+                funccall sig=void @ line 6
+                    id [init] sig=f() sym=0xc000161090 @ line 6
+                    actuals
+            exprstmt @ line 7
+                funccall sig=void @ line 7
+                    id [parser] sig=f() sym=0xc000160870 @ line 7
+                    actuals
+    globvar sym=0xc0001604b0 @ line 14
+        newid [_havechar] @ line 14
+        typeid [bool] sym=0xc000160050 @ line 14
+    globvar sym=0xc000160500 @ line 15
+        newid [_char] @ line 15
+        typeid [int] sym=0xc0001600a0 @ line 15
+    func sym=0xc000160550 @ line 17
+        newid [getc] @ line 17
+        sig
+            formals
+            typeid [int] sym=0xc0001600a0 @ line 17
+        block
+            if @ line 18
+                id [_havechar] sig=bool sym=0xc0001604b0 @ line 18
+                block
+                    = sig=void @ line 19
+                        id [_havechar] sig=bool sym=0xc0001604b0 @ line 19
+                        id [false] sig=bool sym=0xc0001601e0 @ line 19
+                    return @ line 20
+                        id [_char] sig=int sym=0xc000160500 @ line 20
+            return @ line 22
+                funccall sig=int @ line 22
+                    id [getchar] sig=f() sym=0xc000160370 @ line 22
+                    actuals
+    func sym=0xc0001605a0 @ line 25
+        newid [ungetc] @ line 25
+        sig
+            formals
+                formal
+                    newid [ch] sym=0xc0001610e0 @ line 25
+                    typeid [int] sym=0xc0001600a0 @ line 25
+            typeid [$void] sym=0xc000160000
+        block
+            if @ line 26
+                id [_havechar] sig=bool sym=0xc0001604b0 @ line 26
+                block
+                    exprstmt @ line 27
+                        funccall sig=void @ line 27
+                            id [prints] sig=f(str) sym=0xc000160320 @ line 27
+                            actuals
+                                string [Internal error: too many ungets!\n] sig=str @ line 27
+                    exprstmt @ line 28
+                        funccall sig=void @ line 28
+                            id [halt] sig=f() sym=0xc0001603c0 @ line 28
+                            actuals
+            = sig=void @ line 30
+                id [_havechar] sig=bool sym=0xc0001604b0 @ line 30
+                id [true] sig=bool sym=0xc000160190 @ line 30
+            = sig=void @ line 31
+                id [_char] sig=int sym=0xc000160500 @ line 31
+                id [ch] sig=int sym=0xc0001610e0 @ line 31
+    globvar sym=0xc0001605f0 @ line 38
+        newid [_havetoken] @ line 38
+        typeid [bool] sym=0xc000160050 @ line 38
+    globvar sym=0xc000160640 @ line 39
+        newid [_token] @ line 39
+        typeid [int] sym=0xc0001600a0 @ line 39
+    globvar sym=0xc000160690 @ line 40
+        newid [attr] @ line 40
+        typeid [int] sym=0xc0001600a0 @ line 40
+    func sym=0xc0001606e0 @ line 42
+        newid [peek] @ line 42
+        sig
+            formals
+            typeid [int] sym=0xc0001600a0 @ line 42
+        block
+            if @ line 43
+                id [_havetoken] sig=bool sym=0xc0001605f0 @ line 43
+                block
+                    return @ line 44
+                        id [_token] sig=int sym=0xc000160640 @ line 44
+            = sig=void @ line 46
+                id [_havetoken] sig=bool sym=0xc0001605f0 @ line 46
+                id [true] sig=bool sym=0xc000160190 @ line 46
+            = sig=void @ line 47
+                id [_token] sig=int sym=0xc000160640 @ line 47
+                funccall sig=int @ line 47
+                    id [scanner] sig=f() sym=0xc000160780 @ line 47
+                    actuals
+            return @ line 48
+                id [_token] sig=int sym=0xc000160640 @ line 48
+    func sym=0xc000160730 @ line 51
+        newid [match] @ line 51
+        sig
+            formals
+                formal
+                    newid [expect] sym=0xc000161130 @ line 51
+                    typeid [int] sym=0xc0001600a0 @ line 51
+            typeid [$void] sym=0xc000160000
+        block
+            if @ line 52
+                != sig=bool @ line 52
+                    funccall sig=int @ line 52
+                        id [peek] sig=f() sym=0xc0001606e0 @ line 52
+                        actuals
+                    id [expect] sig=int sym=0xc000161130 @ line 52
+                block
+                    exprstmt @ line 53
+                        funccall sig=void @ line 53
+                            id [prints] sig=f(str) sym=0xc000160320 @ line 53
+                            actuals
+                                string [Error: expected ] sig=str @ line 53
+                    exprstmt @ line 54
+                        funccall sig=void @ line 54
+                            id [printc] sig=f(int) sym=0xc000160280 @ line 54
+                            actuals
+                                id [expect] sig=int sym=0xc000161130 @ line 54
+                    exprstmt @ line 55
+                        funccall sig=void @ line 55
+                            id [prints] sig=f(str) sym=0xc000160320 @ line 55
+                            actuals
+                                string [\n] sig=str @ line 55
+                    exprstmt @ line 56
+                        funccall sig=void @ line 56
+                            id [halt] sig=f() sym=0xc0001603c0 @ line 56
+                            actuals
+            = sig=void @ line 58
+                id [_havetoken] sig=bool sym=0xc0001605f0 @ line 58
+                id [false] sig=bool sym=0xc0001601e0 @ line 58
+    func sym=0xc000160780 @ line 61
+        newid [scanner] @ line 61
+        sig
+            formals
+            typeid [int] sym=0xc0001600a0 @ line 61
+        block
+            var sym=0xc000161180 @ line 62
+                newid [ch] @ line 62
+                typeid [int] sym=0xc0001600a0 @ line 62
+            for @ line 64
+                id [$true] sig=bool sym=0xc000160140
+                block
+                    = sig=void @ line 65
+                        id [ch] sig=int sym=0xc000161180 @ line 65
+                        funccall sig=int @ line 65
+                            id [getc] sig=f() sym=0xc000160550 @ line 65
+                            actuals
+                    if @ line 66
+                        ! sig=bool @ line 66
+                            funccall sig=bool @ line 66
+                                id [isspace] sig=f(int) sym=0xc000160820 @ line 66
+                                actuals
+                                    id [ch] sig=int sym=0xc000161180 @ line 66
+                        block
+                            break @ line 67
+            if @ line 71
+                == sig=bool @ line 71
+                    id [ch] sig=int sym=0xc000161180 @ line 71
+                    id [EOF] sig=int sym=0xc0001609b0 @ line 71
+                block
+                    return @ line 71
+                        id [TK_EOF] sig=int sym=0xc000160a00 @ line 71
+            if @ line 72
+                == sig=bool @ line 72
+                    id [ch] sig=int sym=0xc000161180 @ line 72
+                    id [ASCII_NL] sig=int sym=0xc000161040 @ line 72
+                block
+                    return @ line 72
+                        id [TK_EOLN] sig=int sym=0xc000160a50 @ line 72
+            if @ line 73
+                == sig=bool @ line 73
+                    id [ch] sig=int sym=0xc000161180 @ line 73
+                    id [ASCII_PLUS] sig=int sym=0xc000160d70 @ line 73
+                block
+                    return @ line 73
+                        id [TK_ADD] sig=int sym=0xc000160af0 @ line 73
+            if @ line 74
+                == sig=bool @ line 74
+                    id [ch] sig=int sym=0xc000161180 @ line 74
+                    id [ASCII_MINUS] sig=int sym=0xc000160dc0 @ line 74
+                block
+                    return @ line 74
+                        id [TK_SUB] sig=int sym=0xc000160b40 @ line 74
+            if @ line 75
+                == sig=bool @ line 75
+                    id [ch] sig=int sym=0xc000161180 @ line 75
+                    id [ASCII_STAR] sig=int sym=0xc000160e10 @ line 75
+                block
+                    return @ line 75
+                        id [TK_MUL] sig=int sym=0xc000160b90 @ line 75
+            if @ line 76
+                == sig=bool @ line 76
+                    id [ch] sig=int sym=0xc000161180 @ line 76
+                    id [ASCII_SLASH] sig=int sym=0xc000160e60 @ line 76
+                block
+                    return @ line 76
+                        id [TK_DIV] sig=int sym=0xc000160be0 @ line 76
+            if @ line 77
+                == sig=bool @ line 77
+                    id [ch] sig=int sym=0xc000161180 @ line 77
+                    id [ASCII_LPAREN] sig=int sym=0xc000160eb0 @ line 77
+                block
+                    return @ line 77
+                        id [TK_LPAREN] sig=int sym=0xc000160c30 @ line 77
+            if @ line 78
+                == sig=bool @ line 78
+                    id [ch] sig=int sym=0xc000161180 @ line 78
+                    id [ASCII_RPAREN] sig=int sym=0xc000160f00 @ line 78
+                block
+                    return @ line 78
+                        id [TK_RPAREN] sig=int sym=0xc000160c80 @ line 78
+            if @ line 80
+                funccall sig=bool @ line 80
+                    id [isdigit] sig=f(int) sym=0xc0001607d0 @ line 80
+                    actuals
+                        id [ch] sig=int sym=0xc000161180 @ line 80
+                block
+                    = sig=void @ line 81
+                        id [attr] sig=int sym=0xc000160690 @ line 81
+                        int [0] sig=int @ line 81
+                    for @ line 82
+                        funccall sig=bool @ line 82
+                            id [isdigit] sig=f(int) sym=0xc0001607d0 @ line 82
+                            actuals
+                                id [ch] sig=int sym=0xc000161180 @ line 82
+                        block
+                            = sig=void @ line 83
+                                id [attr] sig=int sym=0xc000160690 @ line 83
+                                + sig=int @ line 83
+                                    * sig=int @ line 83
+                                        id [attr] sig=int sym=0xc000160690 @ line 83
+                                        int [10] sig=int @ line 83
+                                    - sig=int @ line 83
+                                        id [ch] sig=int sym=0xc000161180 @ line 83
+                                        id [ASCII_0] sig=int sym=0xc000160cd0 @ line 83
+                            = sig=void @ line 84
+                                id [ch] sig=int sym=0xc000161180 @ line 84
+                                funccall sig=int @ line 84
+                                    id [getc] sig=f() sym=0xc000160550 @ line 84
+                                    actuals
+                    exprstmt @ line 86
+                        funccall sig=void @ line 86
+                            id [ungetc] sig=f(int) sym=0xc0001605a0 @ line 86
+                            actuals
+                                id [ch] sig=int sym=0xc000161180 @ line 86
+                    return @ line 87
+                        id [TK_NUMBER] sig=int sym=0xc000160aa0 @ line 87
+            exprstmt @ line 90
+                funccall sig=void @ line 90
+                    id [prints] sig=f(str) sym=0xc000160320 @ line 90
+                    actuals
+                        string [Error: invalid character.\n] sig=str @ line 90
+            exprstmt @ line 91
+                funccall sig=void @ line 91
+                    id [halt] sig=f() sym=0xc0001603c0 @ line 91
+                    actuals
+    func sym=0xc0001607d0 @ line 94
+        newid [isdigit] @ line 94
+        sig
+            formals
+                formal
+                    newid [ch] sym=0xc0001611d0 @ line 94
+                    typeid [int] sym=0xc0001600a0 @ line 94
+            typeid [bool] sym=0xc000160050 @ line 94
+        block
+            return @ line 95
+                && sig=bool @ line 95
+                    >= sig=bool @ line 95
+                        id [ch] sig=int sym=0xc0001611d0 @ line 95
+                        id [ASCII_0] sig=int sym=0xc000160cd0 @ line 95
+                    <= sig=bool @ line 95
+                        id [ch] sig=int sym=0xc0001611d0 @ line 95
+                        id [ASCII_9] sig=int sym=0xc000160d20 @ line 95
+    func sym=0xc000160820 @ line 98
+        newid [isspace] @ line 98
+        sig
+            formals
+                formal
+                    newid [ch] sym=0xc000161220 @ line 98
+                    typeid [int] sym=0xc0001600a0 @ line 98
+            typeid [bool] sym=0xc000160050 @ line 98
+        block
+            return @ line 99
+                || sig=bool @ line 100
+                    || sig=bool @ line 99
+                        == sig=bool @ line 99
+                            id [ch] sig=int sym=0xc000161220 @ line 99
+                            id [ASCII_SPACE] sig=int sym=0xc000160f50 @ line 99
+                        == sig=bool @ line 100
+                            id [ch] sig=int sym=0xc000161220 @ line 100
+                            id [ASCII_TAB] sig=int sym=0xc000160fa0 @ line 100
+                    == sig=bool @ line 101
+                        id [ch] sig=int sym=0xc000161220 @ line 101
+                        id [ASCII_CR] sig=int sym=0xc000160ff0 @ line 101
+    func sym=0xc000160870 @ line 108
+        newid [parser] @ line 108
+        sig
+            formals
+            typeid [$void] sym=0xc000160000
+        block
+            var sym=0xc000161270 @ line 109
+                newid [result] @ line 109
+                typeid [int] sym=0xc0001600a0 @ line 109
+            for @ line 111
+                != sig=bool @ line 111
+                    funccall sig=int @ line 111
+                        id [peek] sig=f() sym=0xc0001606e0 @ line 111
+                        actuals
+                    id [TK_EOF] sig=int sym=0xc000160a00 @ line 111
+                block
+                    = sig=void @ line 112
+                        id [result] sig=int sym=0xc000161270 @ line 112
+                        funccall sig=int @ line 112
+                            id [E] sig=f() sym=0xc0001608c0 @ line 112
+                            actuals
+                    exprstmt @ line 113
+                        funccall sig=void @ line 113
+                            id [match] sig=f(int) sym=0xc000160730 @ line 113
+                            actuals
+                                id [TK_EOLN] sig=int sym=0xc000160a50 @ line 113
+                    exprstmt @ line 115
+                        funccall sig=void @ line 115
+                            id [prints] sig=f(str) sym=0xc000160320 @ line 115
+                            actuals
+                                string [ = ] sig=str @ line 115
+                    exprstmt @ line 116
+                        funccall sig=void @ line 116
+                            id [printi] sig=f(int) sym=0xc0001602d0 @ line 116
+                            actuals
+                                id [result] sig=int sym=0xc000161270 @ line 116
+                    exprstmt @ line 117
+                        funccall sig=void @ line 117
+                            id [prints] sig=f(str) sym=0xc000160320 @ line 117
+                            actuals
+                                string [\n] sig=str @ line 117
+    func sym=0xc0001608c0 @ line 121
+        newid [E] @ line 121
+        sig
+            formals
+            typeid [int] sym=0xc0001600a0 @ line 121
+        block
+            var sym=0xc0001612c0 @ line 122
+                newid [l] @ line 122
+                typeid [int] sym=0xc0001600a0 @ line 122
+            var sym=0xc000161310 @ line 123
+                newid [r] @ line 123
+                typeid [int] sym=0xc0001600a0 @ line 123
+            var sym=0xc000161360 @ line 124
+                newid [token] @ line 124
+                typeid [int] sym=0xc0001600a0 @ line 124
+            = sig=void @ line 126
+                id [l] sig=int sym=0xc0001612c0 @ line 126
+                funccall sig=int @ line 126
+                    id [T] sig=f() sym=0xc000160910 @ line 126
+                    actuals
+            for @ line 127
+                || sig=bool @ line 127
+                    == sig=bool @ line 127
+                        funccall sig=int @ line 127
+                            id [peek] sig=f() sym=0xc0001606e0 @ line 127
+                            actuals
+                        id [TK_ADD] sig=int sym=0xc000160af0 @ line 127
+                    == sig=bool @ line 127
+                        funccall sig=int @ line 127
+                            id [peek] sig=f() sym=0xc0001606e0 @ line 127
+                            actuals
+                        id [TK_SUB] sig=int sym=0xc000160b40 @ line 127
+                block
+                    = sig=void @ line 128
+                        id [token] sig=int sym=0xc000161360 @ line 128
+                        funccall sig=int @ line 128
+                            id [peek] sig=f() sym=0xc0001606e0 @ line 128
+                            actuals
+                    exprstmt @ line 129
+                        funccall sig=void @ line 129
+                            id [match] sig=f(int) sym=0xc000160730 @ line 129
+                            actuals
+                                id [token] sig=int sym=0xc000161360 @ line 129
+                    = sig=void @ line 130
+                        id [r] sig=int sym=0xc000161310 @ line 130
+                        funccall sig=int @ line 130
+                            id [T] sig=f() sym=0xc000160910 @ line 130
+                            actuals
+                    ifelse @ line 132
+                        == sig=bool @ line 132
+                            id [token] sig=int sym=0xc000161360 @ line 132
+                            id [TK_ADD] sig=int sym=0xc000160af0 @ line 132
+                        block
+                            = sig=void @ line 133
+                                id [l] sig=int sym=0xc0001612c0 @ line 133
+                                + sig=int @ line 133
+                                    id [l] sig=int sym=0xc0001612c0 @ line 133
+                                    id [r] sig=int sym=0xc000161310 @ line 133
+                        block
+                            = sig=void @ line 135
+                                id [l] sig=int sym=0xc0001612c0 @ line 135
+                                - sig=int @ line 135
+                                    id [l] sig=int sym=0xc0001612c0 @ line 135
+                                    id [r] sig=int sym=0xc000161310 @ line 135
+            return @ line 138
+                id [l] sig=int sym=0xc0001612c0 @ line 138
+    func sym=0xc000160910 @ line 141
+        newid [T] @ line 141
+        sig
+            formals
+            typeid [int] sym=0xc0001600a0 @ line 141
+        block
+            var sym=0xc0001613b0 @ line 142
+                newid [l] @ line 142
+                typeid [int] sym=0xc0001600a0 @ line 142
+            var sym=0xc000161400 @ line 143
+                newid [r] @ line 143
+                typeid [int] sym=0xc0001600a0 @ line 143
+            var sym=0xc000161450 @ line 144
+                newid [token] @ line 144
+                typeid [int] sym=0xc0001600a0 @ line 144
+            = sig=void @ line 146
+                id [l] sig=int sym=0xc0001613b0 @ line 146
+                funccall sig=int @ line 146
+                    id [F] sig=f() sym=0xc000160960 @ line 146
+                    actuals
+            for @ line 147
+                || sig=bool @ line 147
+                    == sig=bool @ line 147
+                        funccall sig=int @ line 147
+                            id [peek] sig=f() sym=0xc0001606e0 @ line 147
+                            actuals
+                        id [TK_MUL] sig=int sym=0xc000160b90 @ line 147
+                    == sig=bool @ line 147
+                        funccall sig=int @ line 147
+                            id [peek] sig=f() sym=0xc0001606e0 @ line 147
+                            actuals
+                        id [TK_DIV] sig=int sym=0xc000160be0 @ line 147
+                block
+                    = sig=void @ line 148
+                        id [token] sig=int sym=0xc000161450 @ line 148
+                        funccall sig=int @ line 148
+                            id [peek] sig=f() sym=0xc0001606e0 @ line 148
+                            actuals
+                    exprstmt @ line 149
+                        funccall sig=void @ line 149
+                            id [match] sig=f(int) sym=0xc000160730 @ line 149
+                            actuals
+                                id [token] sig=int sym=0xc000161450 @ line 149
+                    = sig=void @ line 150
+                        id [r] sig=int sym=0xc000161400 @ line 150
+                        funccall sig=int @ line 150
+                            id [F] sig=f() sym=0xc000160960 @ line 150
+                            actuals
+                    ifelse @ line 152
+                        == sig=bool @ line 152
+                            id [token] sig=int sym=0xc000161450 @ line 152
+                            id [TK_MUL] sig=int sym=0xc000160b90 @ line 152
+                        block
+                            = sig=void @ line 153
+                                id [l] sig=int sym=0xc0001613b0 @ line 153
+                                * sig=int @ line 153
+                                    id [l] sig=int sym=0xc0001613b0 @ line 153
+                                    id [r] sig=int sym=0xc000161400 @ line 153
+                        block
+                            = sig=void @ line 155
+                                id [l] sig=int sym=0xc0001613b0 @ line 155
+                                / sig=int @ line 155
+                                    id [l] sig=int sym=0xc0001613b0 @ line 155
+                                    id [r] sig=int sym=0xc000161400 @ line 155
+            return @ line 158
+                id [l] sig=int sym=0xc0001613b0 @ line 158
+    func sym=0xc000160960 @ line 161
+        newid [F] @ line 161
+        sig
+            formals
+            typeid [int] sym=0xc0001600a0 @ line 161
+        block
+            var sym=0xc0001614a0 @ line 162
+                newid [result] @ line 162
+                typeid [int] sym=0xc0001600a0 @ line 162
+            var sym=0xc0001614f0 @ line 164
+                newid [token] @ line 164
+                typeid [int] sym=0xc0001600a0 @ line 164
+            = sig=void @ line 165
+                id [token] sig=int sym=0xc0001614f0 @ line 165
+                funccall sig=int @ line 165
+                    id [peek] sig=f() sym=0xc0001606e0 @ line 165
+                    actuals
+            ifelse @ line 167
+                == sig=bool @ line 167
+                    id [token] sig=int sym=0xc0001614f0 @ line 167
+                    id [TK_LPAREN] sig=int sym=0xc000160c30 @ line 167
+                block
+                    exprstmt @ line 168
+                        funccall sig=void @ line 168
+                            id [match] sig=f(int) sym=0xc000160730 @ line 168
+                            actuals
+                                id [TK_LPAREN] sig=int sym=0xc000160c30 @ line 168
+                    = sig=void @ line 169
+                        id [result] sig=int sym=0xc0001614a0 @ line 169
+                        funccall sig=int @ line 169
+                            id [E] sig=f() sym=0xc0001608c0 @ line 169
+                            actuals
+                    exprstmt @ line 170
+                        funccall sig=void @ line 170
+                            id [match] sig=f(int) sym=0xc000160730 @ line 170
+                            actuals
+                                id [TK_RPAREN] sig=int sym=0xc000160c80 @ line 170
+                ifelse @ line 172
+                    == sig=bool @ line 172
+                        id [token] sig=int sym=0xc0001614f0 @ line 172
+                        id [TK_SUB] sig=int sym=0xc000160b40 @ line 172
+                    block
+                        exprstmt @ line 173
+                            funccall sig=void @ line 173
+                                id [match] sig=f(int) sym=0xc000160730 @ line 173
+                                actuals
+                                    id [TK_SUB] sig=int sym=0xc000160b40 @ line 173
+                        = sig=void @ line 174
+                            id [result] sig=int sym=0xc0001614a0 @ line 174
+                            u- sig=int @ line 174
+                                funccall sig=int @ line 174
+                                    id [F] sig=f() sym=0xc000160960 @ line 174
+                                    actuals
+                    ifelse @ line 176
+                        == sig=bool @ line 176
+                            id [token] sig=int sym=0xc0001614f0 @ line 176
+                            id [TK_NUMBER] sig=int sym=0xc000160aa0 @ line 176
+                        block
+                            exprstmt @ line 177
+                                funccall sig=void @ line 177
+                                    id [match] sig=f(int) sym=0xc000160730 @ line 177
+                                    actuals
+                                        id [TK_NUMBER] sig=int sym=0xc000160aa0 @ line 177
+                            = sig=void @ line 178
+                                id [result] sig=int sym=0xc0001614a0 @ line 178
+                                id [attr] sig=int sym=0xc000160690 @ line 178
+                        block
+                            exprstmt @ line 181
+                                funccall sig=void @ line 181
+                                    id [prints] sig=f(str) sym=0xc000160320 @ line 181
+                                    actuals
+                                        string [Error: expected factor.\n] sig=str @ line 181
+                            exprstmt @ line 182
+                                funccall sig=void @ line 182
+                                    id [halt] sig=f() sym=0xc0001603c0 @ line 182
+                                    actuals
+            return @ line 184
+                id [result] sig=int sym=0xc0001614a0 @ line 184
+    globvar sym=0xc0001609b0 @ line 191
+        newid [EOF] @ line 191
+        typeid [int] sym=0xc0001600a0 @ line 191
+    globvar sym=0xc000160a00 @ line 193
+        newid [TK_EOF] @ line 193
+        typeid [int] sym=0xc0001600a0 @ line 193
+    globvar sym=0xc000160a50 @ line 194
+        newid [TK_EOLN] @ line 194
+        typeid [int] sym=0xc0001600a0 @ line 194
+    globvar sym=0xc000160aa0 @ line 195
+        newid [TK_NUMBER] @ line 195
+        typeid [int] sym=0xc0001600a0 @ line 195
+    globvar sym=0xc000160af0 @ line 196
+        newid [TK_ADD] @ line 196
+        typeid [int] sym=0xc0001600a0 @ line 196
+    globvar sym=0xc000160b40 @ line 197
+        newid [TK_SUB] @ line 197
+        typeid [int] sym=0xc0001600a0 @ line 197
+    globvar sym=0xc000160b90 @ line 198
+        newid [TK_MUL] @ line 198
+        typeid [int] sym=0xc0001600a0 @ line 198
+    globvar sym=0xc000160be0 @ line 199
+        newid [TK_DIV] @ line 199
+        typeid [int] sym=0xc0001600a0 @ line 199
+    globvar sym=0xc000160c30 @ line 200
+        newid [TK_LPAREN] @ line 200
+        typeid [int] sym=0xc0001600a0 @ line 200
+    globvar sym=0xc000160c80 @ line 201
+        newid [TK_RPAREN] @ line 201
+        typeid [int] sym=0xc0001600a0 @ line 201
+    globvar sym=0xc000160cd0 @ line 203
+        newid [ASCII_0] @ line 203
+        typeid [int] sym=0xc0001600a0 @ line 203
+    globvar sym=0xc000160d20 @ line 204
+        newid [ASCII_9] @ line 204
+        typeid [int] sym=0xc0001600a0 @ line 204
+    globvar sym=0xc000160d70 @ line 205
+        newid [ASCII_PLUS] @ line 205
+        typeid [int] sym=0xc0001600a0 @ line 205
+    globvar sym=0xc000160dc0 @ line 206
+        newid [ASCII_MINUS] @ line 206
+        typeid [int] sym=0xc0001600a0 @ line 206
+    globvar sym=0xc000160e10 @ line 207
+        newid [ASCII_STAR] @ line 207
+        typeid [int] sym=0xc0001600a0 @ line 207
+    globvar sym=0xc000160e60 @ line 208
+        newid [ASCII_SLASH] @ line 208
+        typeid [int] sym=0xc0001600a0 @ line 208
+    globvar sym=0xc000160eb0 @ line 209
+        newid [ASCII_LPAREN] @ line 209
+        typeid [int] sym=0xc0001600a0 @ line 209
+    globvar sym=0xc000160f00 @ line 210
+        newid [ASCII_RPAREN] @ line 210
+        typeid [int] sym=0xc0001600a0 @ line 210
+    globvar sym=0xc000160f50 @ line 211
+        newid [ASCII_SPACE] @ line 211
+        typeid [int] sym=0xc0001600a0 @ line 211
+    globvar sym=0xc000160fa0 @ line 212
+        newid [ASCII_TAB] @ line 212
+        typeid [int] sym=0xc0001600a0 @ line 212
+    globvar sym=0xc000160ff0 @ line 213
+        newid [ASCII_CR] @ line 213
+        typeid [int] sym=0xc0001600a0 @ line 213
+    globvar sym=0xc000161040 @ line 214
+        newid [ASCII_NL] @ line 214
+        typeid [int] sym=0xc0001600a0 @ line 214
+    func sym=0xc000161090 @ line 216
+        newid [init] @ line 216
+        sig
+            formals
+            typeid [$void] sym=0xc000160000
+        block
+            = sig=void @ line 217
+                id [EOF] sig=int sym=0xc0001609b0 @ line 217
+                int [-1] sig=int @ line 217
+            = sig=void @ line 219
+                id [ASCII_0] sig=int sym=0xc000160cd0 @ line 219
+                int [48] sig=int @ line 219
+            = sig=void @ line 220
+                id [ASCII_9] sig=int sym=0xc000160d20 @ line 220
+                int [57] sig=int @ line 220
+            = sig=void @ line 221
+                id [ASCII_PLUS] sig=int sym=0xc000160d70 @ line 221
+                int [43] sig=int @ line 221
+            = sig=void @ line 222
+                id [ASCII_MINUS] sig=int sym=0xc000160dc0 @ line 222
+                int [45] sig=int @ line 222
+            = sig=void @ line 223
+                id [ASCII_STAR] sig=int sym=0xc000160e10 @ line 223
+                int [42] sig=int @ line 223
+            = sig=void @ line 224
+                id [ASCII_SLASH] sig=int sym=0xc000160e60 @ line 224
+                int [47] sig=int @ line 224
+            = sig=void @ line 225
+                id [ASCII_LPAREN] sig=int sym=0xc000160eb0 @ line 225
+                int [40] sig=int @ line 225
+            = sig=void @ line 226
+                id [ASCII_RPAREN] sig=int sym=0xc000160f00 @ line 226
+                int [41] sig=int @ line 226
+            = sig=void @ line 227
+                id [ASCII_SPACE] sig=int sym=0xc000160f50 @ line 227
+                int [32] sig=int @ line 227
+            = sig=void @ line 228
+                id [ASCII_TAB] sig=int sym=0xc000160fa0 @ line 228
+                int [9] sig=int @ line 228
+            = sig=void @ line 229
+                id [ASCII_CR] sig=int sym=0xc000160ff0 @ line 229
+                int [13] sig=int @ line 229
+            = sig=void @ line 230
+                id [ASCII_NL] sig=int sym=0xc000161040 @ line 230
+                int [10] sig=int @ line 230
+            = sig=void @ line 232
+                id [TK_EOF] sig=int sym=0xc000160a00 @ line 232
+                int [256] sig=int @ line 232
+            = sig=void @ line 233
+                id [TK_NUMBER] sig=int sym=0xc000160aa0 @ line 233
+                int [257] sig=int @ line 233
+            = sig=void @ line 234
+                id [TK_ADD] sig=int sym=0xc000160af0 @ line 234
+                id [ASCII_PLUS] sig=int sym=0xc000160d70 @ line 234
+            = sig=void @ line 235
+                id [TK_SUB] sig=int sym=0xc000160b40 @ line 235
+                id [ASCII_MINUS] sig=int sym=0xc000160dc0 @ line 235
+            = sig=void @ line 236
+                id [TK_MUL] sig=int sym=0xc000160b90 @ line 236
+                id [ASCII_STAR] sig=int sym=0xc000160e10 @ line 236
+            = sig=void @ line 237
+                id [TK_DIV] sig=int sym=0xc000160be0 @ line 237
+                id [ASCII_SLASH] sig=int sym=0xc000160e60 @ line 237
+            = sig=void @ line 238
+                id [TK_LPAREN] sig=int sym=0xc000160c30 @ line 238
+                id [ASCII_LPAREN] sig=int sym=0xc000160eb0 @ line 238
+            = sig=void @ line 239
+                id [TK_RPAREN] sig=int sym=0xc000160c80 @ line 239
+                id [ASCII_RPAREN] sig=int sym=0xc000160f00 @ line 239
+            = sig=void @ line 240
+                id [TK_EOLN] sig=int sym=0xc000160a50 @ line 240
+                id [ASCII_NL] sig=int sym=0xc000161040 @ line 240
+
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: string operations |
+-------------------------
+
+% ./golf -show aast /home/profs/aycock/411/TEST/final/gen.t19
+
+STDOUT:
+program sym=0xc0001005a0
+    func sym=0xc0001004b0 @ line 1
+        newid [hi] @ line 1
+        sig
+            formals
+            typeid [string] sym=0xc000100140 @ line 1
+        block
+            return @ line 2
+                string [H] sig=str @ line 2
+    func sym=0xc000100500 @ line 5
+        newid [prlen] @ line 5
+        sig
+            formals
+                formal
+                    newid [s] sym=0xc0001006e0 @ line 5
+                    typeid [string] sym=0xc000100140 @ line 5
+                formal
+                    newid [label] sym=0xc000100730 @ line 5
+                    typeid [string] sym=0xc000100140 @ line 5
+                formal
+                    newid [correct] sym=0xc000100780 @ line 5
+                    typeid [int] sym=0xc0001000f0 @ line 5
+            typeid [$void] sym=0xc000100050
+        block
+            exprstmt @ line 6
+                funccall sig=void @ line 6
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 6
+                    actuals
+                        id [label] sig=str sym=0xc000100730 @ line 6
+            exprstmt @ line 7
+                funccall sig=void @ line 7
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 7
+                    actuals
+                        string [: len(\"] sig=str @ line 7
+            exprstmt @ line 8
+                funccall sig=void @ line 8
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 8
+                    actuals
+                        id [s] sig=str sym=0xc0001006e0 @ line 8
+            exprstmt @ line 9
+                funccall sig=void @ line 9
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 9
+                    actuals
+                        string [\") = ] sig=str @ line 9
+            exprstmt @ line 10
+                funccall sig=void @ line 10
+                    id [printi] sig=f(int) sym=0xc000100320 @ line 10
+                    actuals
+                        funccall sig=int @ line 10
+                            id [len] sig=f(str) sym=0xc000100460 @ line 10
+                            actuals
+                                id [s] sig=str sym=0xc0001006e0 @ line 10
+            exprstmt @ line 11
+                funccall sig=void @ line 11
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 11
+                    actuals
+                        string [, correct answer is ] sig=str @ line 11
+            exprstmt @ line 12
+                funccall sig=void @ line 12
+                    id [printi] sig=f(int) sym=0xc000100320 @ line 12
+                    actuals
+                        id [correct] sig=int sym=0xc000100780 @ line 12
+            exprstmt @ line 13
+                funccall sig=void @ line 13
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 13
+                    actuals
+                        string [\n] sig=str @ line 13
+    func sym=0xc000100550 @ line 16
+        newid [planet] @ line 16
+        sig
+            formals
+                formal
+                    newid [n] sym=0xc0001007d0 @ line 16
+                    typeid [int] sym=0xc0001000f0 @ line 16
+            typeid [string] sym=0xc000100140 @ line 16
+        block
+            ifelse @ line 17
+                == sig=bool @ line 17
+                    id [n] sig=int sym=0xc0001007d0 @ line 17
+                    int [1] sig=int @ line 17
+                block
+                    return @ line 17
+                        string [Mercury] sig=str @ line 17
+                ifelse @ line 18
+                    == sig=bool @ line 18
+                        id [n] sig=int sym=0xc0001007d0 @ line 18
+                        int [2] sig=int @ line 18
+                    block
+                        return @ line 18
+                            string [Venus] sig=str @ line 18
+                    ifelse @ line 19
+                        == sig=bool @ line 19
+                            id [n] sig=int sym=0xc0001007d0 @ line 19
+                            int [3] sig=int @ line 19
+                        block
+                            return @ line 19
+                                string [Earth] sig=str @ line 19
+                        ifelse @ line 20
+                            == sig=bool @ line 20
+                                id [n] sig=int sym=0xc0001007d0 @ line 20
+                                int [4] sig=int @ line 20
+                            block
+                                return @ line 20
+                                    string [Mars] sig=str @ line 20
+                            ifelse @ line 21
+                                == sig=bool @ line 21
+                                    id [n] sig=int sym=0xc0001007d0 @ line 21
+                                    int [5] sig=int @ line 21
+                                block
+                                    return @ line 21
+                                        string [Jupiter] sig=str @ line 21
+                                ifelse @ line 22
+                                    == sig=bool @ line 22
+                                        id [n] sig=int sym=0xc0001007d0 @ line 22
+                                        int [6] sig=int @ line 22
+                                    block
+                                        return @ line 22
+                                            string [Saturn] sig=str @ line 22
+                                    ifelse @ line 23
+                                        == sig=bool @ line 23
+                                            id [n] sig=int sym=0xc0001007d0 @ line 23
+                                            int [7] sig=int @ line 23
+                                        block
+                                            return @ line 23
+                                                string [Uranus] sig=str @ line 23
+                                        ifelse @ line 24
+                                            == sig=bool @ line 24
+                                                id [n] sig=int sym=0xc0001007d0 @ line 24
+                                                int [8] sig=int @ line 24
+                                            block
+                                                return @ line 24
+                                                    string [Neptune] sig=str @ line 24
+                                            ifelse @ line 25
+                                                == sig=bool @ line 25
+                                                    id [n] sig=int sym=0xc0001007d0 @ line 25
+                                                    int [9] sig=int @ line 25
+                                                block
+                                                    return @ line 25
+                                                        string [Plato] sig=str @ line 25
+                                                block
+                                                    return @ line 27
+                                                        string [X] sig=str @ line 27
+    func sym=0xc0001005a0 @ line 31
+        newid [main] @ line 31
+        sig
+            formals
+            typeid [$void] sym=0xc000100050
+        block
+            var sym=0xc000100820 @ line 32
+                newid [z] @ line 32
+                typeid [string] sym=0xc000100140 @ line 32
+            var sym=0xc000100870 @ line 33
+                newid [twine] @ line 33
+                typeid [string] sym=0xc000100140 @ line 33
+            = sig=void @ line 34
+                id [twine] sig=str sym=0xc000100870 @ line 34
+                string sig=str @ line 34
+            exprstmt @ line 36
+                funccall sig=void @ line 36
+                    id [prlen] sig=f(str,str,int) sym=0xc000100500 @ line 36
+                    actuals
+                        id [z] sig=str sym=0xc000100820 @ line 36
+                        string [zero value] sig=str @ line 36
+                        int [0] sig=int @ line 36
+            exprstmt @ line 37
+                funccall sig=void @ line 37
+                    id [prlen] sig=f(str,str,int) sym=0xc000100500 @ line 37
+                    actuals
+                        string sig=str @ line 37
+                        string [empty string] sig=str @ line 37
+                        int [0] sig=int @ line 37
+            exprstmt @ line 38
+                funccall sig=void @ line 38
+                    id [prlen] sig=f(str,str,int) sym=0xc000100500 @ line 38
+                    actuals
+                        id [twine] sig=str sym=0xc000100870 @ line 38
+                        string [var assigned empty string] sig=str @ line 38
+                        int [0] sig=int @ line 38
+            = sig=void @ line 40
+                id [twine] sig=str sym=0xc000100870 @ line 40
+                string [boring string] sig=str @ line 40
+            exprstmt @ line 41
+                funccall sig=void @ line 41
+                    id [prlen] sig=f(str,str,int) sym=0xc000100500 @ line 41
+                    actuals
+                        id [twine] sig=str sym=0xc000100870 @ line 41
+                        string [yawn] sig=str @ line 41
+                        int [13] sig=int @ line 41
+            var sym=0xc0001008c0 @ line 43
+                newid [yarn] @ line 43
+                typeid [string] sym=0xc000100140 @ line 43
+            = sig=void @ line 44
+                id [yarn] sig=str sym=0xc0001008c0 @ line 44
+                string [Hello, world!\n] sig=str @ line 44
+            exprstmt @ line 45
+                funccall sig=void @ line 45
+                    id [prlen] sig=f(str,str,int) sym=0xc000100500 @ line 45
+                    actuals
+                        id [yarn] sig=str sym=0xc0001008c0 @ line 45
+                        string [string with \\n] sig=str @ line 45
+                        int [14] sig=int @ line 45
+            exprstmt @ line 47
+                funccall sig=void @ line 47
+                    id [prlen] sig=f(str,str,int) sym=0xc000100500 @ line 47
+                    actuals
+                        string [\\\"\b\rescape th\tn(] sig=str @ line 47
+                        string [silly string] sig=str @ line 47
+                        int [16] sig=int @ line 47
+            exprstmt @ line 49
+                funccall sig=void @ line 49
+                    id [append] sig=f(str,str) sym=0xc000100640 @ line 49
+                    actuals
+                        funccall sig=str @ line 49
+                            id [hi] sig=f() sym=0xc0001004b0 @ line 49
+                            actuals
+                        funccall sig=str @ line 49
+                            id [planet] sig=f(int) sym=0xc000100550 @ line 49
+                            actuals
+                                int [3] sig=int @ line 49
+            exprstmt @ line 50
+                funccall sig=void @ line 50
+                    id [append] sig=f(str,str) sym=0xc000100640 @ line 50
+                    actuals
+                        funccall sig=str @ line 50
+                            id [bye] sig=f() sym=0xc000100690 @ line 50
+                            actuals
+                        string [, world!] sig=str @ line 50
+            exprstmt @ line 52
+                funccall sig=void @ line 52
+                    id [there_is_no_comparison_there_is_only_zuul] sig=f(str,str) sym=0xc0001005f0 @ line 52
+                    actuals
+                        string [foo] sig=str @ line 52
+                        string [bar] sig=str @ line 52
+    func sym=0xc0001005f0 @ line 55
+        newid [there_is_no_comparison_there_is_only_zuul] @ line 55
+        sig
+            formals
+                formal
+                    newid [a] sym=0xc000100910 @ line 55
+                    typeid [string] sym=0xc000100140 @ line 55
+                formal
+                    newid [b] sym=0xc000100960 @ line 55
+                    typeid [string] sym=0xc000100140 @ line 55
+            typeid [$void] sym=0xc000100050
+        block
+            var sym=0xc0001009b0 @ line 56
+                newid [null] @ line 56
+                typeid [string] sym=0xc000100140 @ line 56
+            ifelse @ line 58
+                == sig=bool @ line 58
+                    string sig=str @ line 58
+                    id [null] sig=str sym=0xc0001009b0 @ line 58
+                block
+                    exprstmt @ line 59
+                        funccall sig=void @ line 59
+                            id [prints] sig=f(str) sym=0xc000100370 @ line 59
+                            actuals
+                                string [correct\n] sig=str @ line 59
+                block
+                    exprstmt @ line 61
+                        funccall sig=void @ line 61
+                            id [prints] sig=f(str) sym=0xc000100370 @ line 61
+                            actuals
+                                string [incorrect\n] sig=str @ line 61
+            ifelse @ line 63
+                != sig=bool @ line 63
+                    string sig=str @ line 63
+                    string sig=str @ line 63
+                block
+                    exprstmt @ line 64
+                        funccall sig=void @ line 64
+                            id [prints] sig=f(str) sym=0xc000100370 @ line 64
+                            actuals
+                                string [incorrect\n] sig=str @ line 64
+                block
+                    exprstmt @ line 66
+                        funccall sig=void @ line 66
+                            id [prints] sig=f(str) sym=0xc000100370 @ line 66
+                            actuals
+                                string [correct\n] sig=str @ line 66
+            ifelse @ line 69
+                == sig=bool @ line 69
+                    funccall sig=str @ line 69
+                        id [bye] sig=f() sym=0xc000100690 @ line 69
+                        actuals
+                    string [hello] sig=str @ line 69
+                block
+                    exprstmt @ line 70
+                        funccall sig=void @ line 70
+                            id [prints] sig=f(str) sym=0xc000100370 @ line 70
+                            actuals
+                                string [incorrect\n] sig=str @ line 70
+                block
+                    exprstmt @ line 72
+                        funccall sig=void @ line 72
+                            id [prints] sig=f(str) sym=0xc000100370 @ line 72
+                            actuals
+                                string [correct\n] sig=str @ line 72
+            ifelse @ line 74
+                == sig=bool @ line 74
+                    string [Hello] sig=str @ line 74
+                    funccall sig=str @ line 74
+                        id [bye] sig=f() sym=0xc000100690 @ line 74
+                        actuals
+                block
+                    exprstmt @ line 75
+                        funccall sig=void @ line 75
+                            id [prints] sig=f(str) sym=0xc000100370 @ line 75
+                            actuals
+                                string [correct\n] sig=str @ line 75
+                block
+                    exprstmt @ line 77
+                        funccall sig=void @ line 77
+                            id [prints] sig=f(str) sym=0xc000100370 @ line 77
+                            actuals
+                                string [incorrect\n] sig=str @ line 77
+            ifelse @ line 80
+                < sig=bool @ line 80
+                    id [b] sig=str sym=0xc000100960 @ line 80
+                    id [a] sig=str sym=0xc000100910 @ line 80
+                block
+                    exprstmt @ line 81
+                        funccall sig=void @ line 81
+                            id [prints] sig=f(str) sym=0xc000100370 @ line 81
+                            actuals
+                                string [correct\n] sig=str @ line 81
+                block
+                    exprstmt @ line 83
+                        funccall sig=void @ line 83
+                            id [prints] sig=f(str) sym=0xc000100370 @ line 83
+                            actuals
+                                string [incorrect\n] sig=str @ line 83
+            ifelse @ line 85
+                > sig=bool @ line 85
+                    id [a] sig=str sym=0xc000100910 @ line 85
+                    id [b] sig=str sym=0xc000100960 @ line 85
+                block
+                    exprstmt @ line 86
+                        funccall sig=void @ line 86
+                            id [prints] sig=f(str) sym=0xc000100370 @ line 86
+                            actuals
+                                string [correct\n] sig=str @ line 86
+                block
+                    exprstmt @ line 88
+                        funccall sig=void @ line 88
+                            id [prints] sig=f(str) sym=0xc000100370 @ line 88
+                            actuals
+                                string [incorrect\n] sig=str @ line 88
+            ifelse @ line 90
+                < sig=bool @ line 90
+                    id [b] sig=str sym=0xc000100960 @ line 90
+                    string [barf] sig=str @ line 90
+                block
+                    exprstmt @ line 91
+                        funccall sig=void @ line 91
+                            id [prints] sig=f(str) sym=0xc000100370 @ line 91
+                            actuals
+                                string [correct\n] sig=str @ line 91
+                block
+                    exprstmt @ line 93
+                        funccall sig=void @ line 93
+                            id [prints] sig=f(str) sym=0xc000100370 @ line 93
+                            actuals
+                                string [incorrect\n] sig=str @ line 93
+            ifelse @ line 95
+                <= sig=bool @ line 95
+                    id [b] sig=str sym=0xc000100960 @ line 95
+                    string [bard] sig=str @ line 95
+                block
+                    exprstmt @ line 96
+                        funccall sig=void @ line 96
+                            id [prints] sig=f(str) sym=0xc000100370 @ line 96
+                            actuals
+                                string [correct\n] sig=str @ line 96
+                block
+                    exprstmt @ line 98
+                        funccall sig=void @ line 98
+                            id [prints] sig=f(str) sym=0xc000100370 @ line 98
+                            actuals
+                                string [incorrect\n] sig=str @ line 98
+            ifelse @ line 100
+                <= sig=bool @ line 100
+                    id [b] sig=str sym=0xc000100960 @ line 100
+                    id [b] sig=str sym=0xc000100960 @ line 100
+                block
+                    exprstmt @ line 101
+                        funccall sig=void @ line 101
+                            id [prints] sig=f(str) sym=0xc000100370 @ line 101
+                            actuals
+                                string [correct\n] sig=str @ line 101
+                block
+                    exprstmt @ line 103
+                        funccall sig=void @ line 103
+                            id [prints] sig=f(str) sym=0xc000100370 @ line 103
+                            actuals
+                                string [incorrect\n] sig=str @ line 103
+            ifelse @ line 105
+                >= sig=bool @ line 105
+                    id [a] sig=str sym=0xc000100910 @ line 105
+                    id [a] sig=str sym=0xc000100910 @ line 105
+                block
+                    exprstmt @ line 106
+                        funccall sig=void @ line 106
+                            id [prints] sig=f(str) sym=0xc000100370 @ line 106
+                            actuals
+                                string [correct\n] sig=str @ line 106
+                block
+                    exprstmt @ line 108
+                        funccall sig=void @ line 108
+                            id [prints] sig=f(str) sym=0xc000100370 @ line 108
+                            actuals
+                                string [incorrect\n] sig=str @ line 108
+            ifelse @ line 110
+                >= sig=bool @ line 110
+                    string [FOO] sig=str @ line 110
+                    id [a] sig=str sym=0xc000100910 @ line 110
+                block
+                    exprstmt @ line 111
+                        funccall sig=void @ line 111
+                            id [prints] sig=f(str) sym=0xc000100370 @ line 111
+                            actuals
+                                string [incorrect\n] sig=str @ line 111
+                block
+                    exprstmt @ line 113
+                        funccall sig=void @ line 113
+                            id [prints] sig=f(str) sym=0xc000100370 @ line 113
+                            actuals
+                                string [correct\n] sig=str @ line 113
+            ifelse @ line 115
+                != sig=bool @ line 115
+                    string [	] sig=str @ line 115
+                    string [\t] sig=str @ line 115
+                block
+                    exprstmt @ line 116
+                        funccall sig=void @ line 116
+                            id [prints] sig=f(str) sym=0xc000100370 @ line 116
+                            actuals
+                                string [incorrect\n] sig=str @ line 116
+                block
+                    exprstmt @ line 118
+                        funccall sig=void @ line 118
+                            id [prints] sig=f(str) sym=0xc000100370 @ line 118
+                            actuals
+                                string [correct\n] sig=str @ line 118
+    func sym=0xc000100640 @ line 122
+        newid [append] @ line 122
+        sig
+            formals
+                formal
+                    newid [s1] sym=0xc000100a00 @ line 122
+                    typeid [string] sym=0xc000100140 @ line 122
+                formal
+                    newid [s2] sym=0xc000100a50 @ line 122
+                    typeid [string] sym=0xc000100140 @ line 122
+            typeid [$void] sym=0xc000100050
+        block
+            exprstmt @ line 123
+                funccall sig=void @ line 123
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 123
+                    actuals
+                        id [s1] sig=str sym=0xc000100a00 @ line 123
+            exprstmt @ line 124
+                funccall sig=void @ line 124
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 124
+                    actuals
+                        id [s2] sig=str sym=0xc000100a50 @ line 124
+            exprstmt @ line 125
+                funccall sig=void @ line 125
+                    id [prints] sig=f(str) sym=0xc000100370 @ line 125
+                    actuals
+                        string [\n] sig=str @ line 125
+    func sym=0xc000100690 @ line 128
+        newid [bye] @ line 128
+        sig
+            formals
+            typeid [string] sym=0xc000100140 @ line 128
+        block
+            return @ line 129
+                string [Hello] sig=str @ line 129
+
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: redefining built-ins |
+----------------------------
+
+% ./golf -show aast /home/profs/aycock/411/TEST/final/gen.t20
+
+STDOUT:
+program sym=0xc00009c4b0
+    func sym=0xc00009c4b0 @ line 3
+        newid [main] @ line 3
+        sig
+            formals
+            typeid [$void] sym=0xc00009c050
+        block
+            exprstmt @ line 4
+                funccall sig=void @ line 4
+                    id [printi] sig=f(int) sym=0xc00009c320 @ line 4
+                    actuals
+                        funccall sig=int @ line 4
+                            id [len] sig=f(str) sym=0xc00009c460 @ line 4
+                            actuals
+                                string [blarg] sig=str @ line 4
+            exprstmt @ line 4
+                funccall sig=void @ line 4
+                    id [printc] sig=f(int) sym=0xc00009c2d0 @ line 4
+                    actuals
+                        int [10] sig=int @ line 4
+            var sym=0xc00009c5a0 @ line 5
+                newid [len] @ line 5
+                typeid [string] sym=0xc00009c140 @ line 5
+            = sig=void @ line 6
+                id [len] sig=str sym=0xc00009c5a0 @ line 6
+                string [garble\n] sig=str @ line 6
+            exprstmt @ line 7
+                funccall sig=void @ line 7
+                    id [prints] sig=f(str) sym=0xc00009c370 @ line 7
+                    actuals
+                        id [len] sig=str sym=0xc00009c5a0 @ line 7
+            exprstmt @ line 9
+                funccall sig=void @ line 9
+                    id [printb] sig=f(bool) sym=0xc00009c280 @ line 9
+                    actuals
+                        id [true] sig=bool sym=0xc00009c1e0 @ line 9
+            exprstmt @ line 9
+                funccall sig=void @ line 9
+                    id [printc] sig=f(int) sym=0xc00009c2d0 @ line 9
+                    actuals
+                        int [10] sig=int @ line 9
+            exprstmt @ line 10
+                funccall sig=void @ line 10
+                    id [printb] sig=f(bool) sym=0xc00009c280 @ line 10
+                    actuals
+                        id [false] sig=bool sym=0xc00009c230 @ line 10
+            exprstmt @ line 10
+                funccall sig=void @ line 10
+                    id [printc] sig=f(int) sym=0xc00009c2d0 @ line 10
+                    actuals
+                        int [10] sig=int @ line 10
+            var sym=0xc00009c5f0 @ line 11
+                newid [bool] @ line 11
+                typeid [string] sym=0xc00009c140 @ line 11
+            exprstmt @ line 12
+                funccall sig=void @ line 12
+                    id [printb] sig=f(bool) sym=0xc00009c280 @ line 12
+                    actuals
+                        id [true] sig=bool sym=0xc00009c1e0 @ line 12
+            exprstmt @ line 12
+                funccall sig=void @ line 12
+                    id [printc] sig=f(int) sym=0xc00009c2d0 @ line 12
+                    actuals
+                        int [10] sig=int @ line 12
+            exprstmt @ line 13
+                funccall sig=void @ line 13
+                    id [printb] sig=f(bool) sym=0xc00009c280 @ line 13
+                    actuals
+                        id [false] sig=bool sym=0xc00009c230 @ line 13
+            exprstmt @ line 13
+                funccall sig=void @ line 13
+                    id [printc] sig=f(int) sym=0xc00009c2d0 @ line 13
+                    actuals
+                        int [10] sig=int @ line 13
+            = sig=void @ line 14
+                id [bool] sig=str sym=0xc00009c5f0 @ line 14
+                string [Why you'd want to do this, I have no idea...\n] sig=str @ line 14
+            exprstmt @ line 15
+                funccall sig=void @ line 15
+                    id [prints] sig=f(str) sym=0xc00009c370 @ line 15
+                    actuals
+                        id [bool] sig=str sym=0xc00009c5f0 @ line 15
+            var sym=0xc00009c640 @ line 16
+                newid [false] @ line 16
+                typeid [string] sym=0xc00009c140 @ line 16
+            = sig=void @ line 17
+                id [false] sig=str sym=0xc00009c640 @ line 17
+                string [untrue] sig=str @ line 17
+            exprstmt @ line 18
+                funccall sig=void @ line 18
+                    id [prints] sig=f(str) sym=0xc00009c370 @ line 18
+                    actuals
+                        id [false] sig=str sym=0xc00009c640 @ line 18
+            exprstmt @ line 18
+                funccall sig=void @ line 18
+                    id [printc] sig=f(int) sym=0xc00009c2d0 @ line 18
+                    actuals
+                        int [10] sig=int @ line 18
+            exprstmt @ line 20
+                funccall sig=void @ line 20
+                    id [foo] sig=f(bool) sym=0xc00009c550 @ line 20
+                    actuals
+                        id [true] sig=bool sym=0xc00009c1e0 @ line 20
+            exprstmt @ line 21
+                funccall sig=void @ line 21
+                    id [halt] sig=f() sym=0xc00009c500 @ line 21
+                    actuals
+    func sym=0xc00009c500 @ line 24
+        newid [halt] @ line 24
+        sig
+            formals
+            typeid [$void] sym=0xc00009c050
+        block
+            exprstmt @ line 25
+                funccall sig=void @ line 25
+                    id [prints] sig=f(str) sym=0xc00009c370 @ line 25
+                    actuals
+                        string [IT CAN'T BE STOPPED!\n] sig=str @ line 25
+    func sym=0xc00009c550 @ line 28
+        newid [foo] @ line 28
+        sig
+            formals
+                formal
+                    newid [b] sym=0xc00009c690 @ line 28
+                    typeid [bool] sym=0xc00009c0a0 @ line 28
+            typeid [$void] sym=0xc00009c050
+        block
+            exprstmt @ line 29
+                funccall sig=void @ line 29
+                    id [printb] sig=f(bool) sym=0xc00009c280 @ line 29
+                    actuals
+                        id [b] sig=bool sym=0xc00009c690 @ line 29
+            exprstmt @ line 29
+                funccall sig=void @ line 29
+                    id [printc] sig=f(int) sym=0xc00009c2d0 @ line 29
+                    actuals
+                        int [10] sig=int @ line 29
+            var sym=0xc00009c6e0 @ line 31
+                newid [printc] @ line 31
+                typeid [int] sym=0xc00009c0f0 @ line 31
+            = sig=void @ line 32
+                id [printc] sig=int sym=0xc00009c6e0 @ line 32
+                int [42] sig=int @ line 32
+            exprstmt @ line 33
+                funccall sig=void @ line 33
+                    id [printi] sig=f(int) sym=0xc00009c320 @ line 33
+                    actuals
+                        id [printc] sig=int sym=0xc00009c6e0 @ line 34
+            exprstmt @ line 36
+                funccall sig=void @ line 36
+                    id [prints] sig=f(str) sym=0xc00009c370 @ line 36
+                    actuals
+                        string [\n] sig=str @ line 36
+
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: register blow-out |
+-------------------------
+
+% ./golf -show aast /home/profs/aycock/411/TEST/final/gen.t21
+
+STDOUT:
+program sym=0xc00006a4b0
+    func sym=0xc00006a4b0 @ line 6
+        newid [main] @ line 6
+        sig
+            formals
+            typeid [$void] sym=0xc00006a050
+        block
+            var sym=0xc00006a500 @ line 7
+                newid [x] @ line 7
+                typeid [int] sym=0xc00006a0f0 @ line 7
+            = sig=void @ line 8
+                id [x] sig=int sym=0xc00006a500 @ line 8
+                + sig=int @ line 8
+                    int [1] sig=int @ line 8
+                    + sig=int @ line 9
+                        int [2] sig=int @ line 9
+                        + sig=int @ line 10
+                            int [3] sig=int @ line 10
+                            + sig=int @ line 11
+                                int [4] sig=int @ line 11
+                                + sig=int @ line 12
+                                    int [5] sig=int @ line 12
+                                    + sig=int @ line 13
+                                        int [6] sig=int @ line 13
+                                        + sig=int @ line 14
+                                            int [7] sig=int @ line 14
+                                            + sig=int @ line 15
+                                                int [8] sig=int @ line 15
+                                                + sig=int @ line 16
+                                                    int [9] sig=int @ line 16
+                                                    + sig=int @ line 17
+                                                        int [10] sig=int @ line 17
+                                                        + sig=int @ line 18
+                                                            int [11] sig=int @ line 18
+                                                            + sig=int @ line 19
+                                                                int [12] sig=int @ line 19
+                                                                + sig=int @ line 20
+                                                                    int [13] sig=int @ line 20
+                                                                    + sig=int @ line 21
+                                                                        int [14] sig=int @ line 21
+                                                                        + sig=int @ line 22
+                                                                            int [15] sig=int @ line 22
+                                                                            + sig=int @ line 23
+                                                                                int [16] sig=int @ line 23
+                                                                                + sig=int @ line 24
+                                                                                    int [17] sig=int @ line 24
+                                                                                    + sig=int @ line 25
+                                                                                        int [18] sig=int @ line 25
+                                                                                        + sig=int @ line 26
+                                                                                            int [19] sig=int @ line 26
+                                                                                            + sig=int @ line 27
+                                                                                                int [20] sig=int @ line 27
+                                                                                                + sig=int @ line 28
+                                                                                                    int [21] sig=int @ line 28
+                                                                                                    + sig=int @ line 29
+                                                                                                        int [22] sig=int @ line 29
+                                                                                                        + sig=int @ line 30
+                                                                                                            int [23] sig=int @ line 30
+                                                                                                            + sig=int @ line 31
+                                                                                                                int [24] sig=int @ line 31
+                                                                                                                + sig=int @ line 32
+                                                                                                                    int [25] sig=int @ line 32
+                                                                                                                    + sig=int @ line 33
+                                                                                                                        int [26] sig=int @ line 33
+                                                                                                                        + sig=int @ line 34
+                                                                                                                            int [27] sig=int @ line 34
+                                                                                                                            + sig=int @ line 35
+                                                                                                                                int [28] sig=int @ line 35
+                                                                                                                                + sig=int @ line 36
+                                                                                                                                    int [29] sig=int @ line 36
+                                                                                                                                    + sig=int @ line 37
+                                                                                                                                        int [30] sig=int @ line 37
+                                                                                                                                        + sig=int @ line 38
+                                                                                                                                            int [31] sig=int @ line 38
+                                                                                                                                            + sig=int @ line 39
+                                                                                                                                                int [32] sig=int @ line 39
+                                                                                                                                                + sig=int @ line 40
+                                                                                                                                                    int [33] sig=int @ line 40
+                                                                                                                                                    + sig=int @ line 41
+                                                                                                                                                        int [34] sig=int @ line 41
+                                                                                                                                                        + sig=int @ line 42
+                                                                                                                                                            int [35] sig=int @ line 42
+                                                                                                                                                            + sig=int @ line 43
+                                                                                                                                                                int [36] sig=int @ line 43
+                                                                                                                                                                + sig=int @ line 44
+                                                                                                                                                                    int [37] sig=int @ line 44
+                                                                                                                                                                    + sig=int @ line 45
+                                                                                                                                                                        int [38] sig=int @ line 45
+                                                                                                                                                                        + sig=int @ line 46
+                                                                                                                                                                            int [39] sig=int @ line 46
+                                                                                                                                                                            + sig=int @ line 47
+                                                                                                                                                                                int [40] sig=int @ line 47
+                                                                                                                                                                                + sig=int @ line 48
+                                                                                                                                                                                    int [41] sig=int @ line 48
+                                                                                                                                                                                    int [42] sig=int @ line 49
+            exprstmt @ line 50
+                funccall sig=void @ line 50
+                    id [printi] sig=f(int) sym=0xc00006a320 @ line 50
+                    actuals
+                        id [x] sig=int sym=0xc00006a500 @ line 50
+
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: nested "for" loops |
+--------------------------
+
+% ./golf -show aast /home/profs/aycock/411/TEST/final/gen.t22
+
+STDOUT:
+program sym=0xc00006a4b0
+    func sym=0xc00006a4b0 @ line 16
+        newid [main] @ line 16
+        sig
+            formals
+            typeid [$void] sym=0xc00006a050
+        block
+            var sym=0xc00006a500 @ line 17
+                newid [i] @ line 17
+                typeid [int] sym=0xc00006a0f0 @ line 17
+            var sym=0xc00006a550 @ line 18
+                newid [j] @ line 18
+                typeid [int] sym=0xc00006a0f0 @ line 18
+            = sig=void @ line 20
+                id [i] sig=int sym=0xc00006a500 @ line 20
+                int [0] sig=int @ line 20
+            for @ line 21
+                < sig=bool @ line 21
+                    id [i] sig=int sym=0xc00006a500 @ line 21
+                    int [10] sig=int @ line 21
+                block
+                    exprstmt @ line 22
+                        funccall sig=void @ line 22
+                            id [printi] sig=f(int) sym=0xc00006a320 @ line 22
+                            actuals
+                                id [i] sig=int sym=0xc00006a500 @ line 22
+                    exprstmt @ line 23
+                        funccall sig=void @ line 23
+                            id [prints] sig=f(str) sym=0xc00006a370 @ line 23
+                            actuals
+                                string [\n] sig=str @ line 23
+                    = sig=void @ line 24
+                        id [j] sig=int sym=0xc00006a550 @ line 24
+                        int [100] sig=int @ line 24
+                    for @ line 25
+                        < sig=bool @ line 25
+                            id [j] sig=int sym=0xc00006a550 @ line 25
+                            int [110] sig=int @ line 25
+                        block
+                            exprstmt @ line 26
+                                funccall sig=void @ line 26
+                                    id [printi] sig=f(int) sym=0xc00006a320 @ line 26
+                                    actuals
+                                        id [j] sig=int sym=0xc00006a550 @ line 26
+                            exprstmt @ line 27
+                                funccall sig=void @ line 27
+                                    id [prints] sig=f(str) sym=0xc00006a370 @ line 27
+                                    actuals
+                                        string [ ] sig=str @ line 27
+                            if @ line 28
+                                == sig=bool @ line 28
+                                    id [j] sig=int sym=0xc00006a550 @ line 28
+                                    int [105] sig=int @ line 28
+                                block
+                                    exprstmt @ line 29
+                                        funccall sig=void @ line 29
+                                            id [prints] sig=f(str) sym=0xc00006a370 @ line 29
+                                            actuals
+                                                string [\n] sig=str @ line 29
+                                    break @ line 30
+                            = sig=void @ line 32
+                                id [j] sig=int sym=0xc00006a550 @ line 32
+                                + sig=int @ line 32
+                                    id [j] sig=int sym=0xc00006a550 @ line 32
+                                    int [1] sig=int @ line 32
+                    if @ line 34
+                        == sig=bool @ line 34
+                            id [i] sig=int sym=0xc00006a500 @ line 34
+                            int [5] sig=int @ line 34
+                        block
+                            break @ line 35
+                    = sig=void @ line 37
+                        id [i] sig=int sym=0xc00006a500 @ line 37
+                        + sig=int @ line 37
+                            id [i] sig=int sym=0xc00006a500 @ line 37
+                            int [1] sig=int @ line 37
+
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: EOF and scope |
+---------------------
+
+% ./golf -show aast /home/profs/aycock/411/TEST/final/gen.t23
+
+STDOUT:
+program sym=0xc00006a4b0
+    func sym=0xc00006a4b0 @ line 3
+        newid [main] @ line 3
+        sig
+            formals
+            typeid [$void] sym=0xc00006a050
+        block
+            var sym=0xc00006a500 @ line 4
+                newid [i] @ line 4
+                typeid [string] sym=0xc00006a140 @ line 4
+            = sig=void @ line 5
+                id [i] sig=str sym=0xc00006a500 @ line 5
+                string [\nEND\n] sig=str @ line 5
+            for @ line 7
+                id [$true] sig=bool sym=0xc00006a190
+                block
+                    var sym=0xc00006a550 @ line 8
+                        newid [i] @ line 8
+                        typeid [int] sym=0xc00006a0f0 @ line 8
+                    = sig=void @ line 9
+                        id [i] sig=int sym=0xc00006a550 @ line 9
+                        funccall sig=int @ line 9
+                            id [getchar] sig=f() sym=0xc00006a3c0 @ line 9
+                            actuals
+                    if @ line 10
+                        == sig=bool @ line 10
+                            id [i] sig=int sym=0xc00006a550 @ line 10
+                            int [-1] sig=int @ line 10
+                        block
+                            break @ line 11
+                    exprstmt @ line 13
+                        funccall sig=void @ line 13
+                            id [printc] sig=f(int) sym=0xc00006a2d0 @ line 13
+                            actuals
+                                id [i] sig=int sym=0xc00006a550 @ line 13
+            exprstmt @ line 16
+                funccall sig=void @ line 16
+                    id [prints] sig=f(str) sym=0xc00006a370 @ line 16
+                    actuals
+                        id [i] sig=str sym=0xc00006a500 @ line 16
+
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: banners |
+---------------
+
+% ./golf -show aast /home/profs/aycock/411/TEST/final/gen.t24
+
+STDOUT:
+program sym=0xc00006a6e0
+    globvar sym=0xc00006a4b0 @ line 1
+        newid [STAR] @ line 1
+        typeid [int] sym=0xc00006a0f0 @ line 1
+    globvar sym=0xc00006a500 @ line 2
+        newid [SPACES] @ line 2
+        typeid [string] sym=0xc00006a140 @ line 2
+    func sym=0xc00006a550 @ line 4
+        newid [top] @ line 4
+        sig
+            formals
+                formal
+                    newid [n] sym=0xc00006a730 @ line 4
+                    typeid [int] sym=0xc00006a0f0 @ line 4
+            typeid [$void] sym=0xc00006a050
+        block
+            var sym=0xc00006a780 @ line 5
+                newid [i] @ line 5
+                typeid [int] sym=0xc00006a0f0 @ line 5
+            = sig=void @ line 7
+                id [i] sig=int sym=0xc00006a780 @ line 7
+                int [0] sig=int @ line 7
+            for @ line 8
+                < sig=bool @ line 8
+                    id [i] sig=int sym=0xc00006a780 @ line 8
+                    id [n] sig=int sym=0xc00006a730 @ line 8
+                block
+                    exprstmt @ line 9
+                        funccall sig=void @ line 9
+                            id [printc] sig=f(int) sym=0xc00006a2d0 @ line 9
+                            actuals
+                                id [STAR] sig=int sym=0xc00006a4b0 @ line 9
+                    = sig=void @ line 10
+                        id [i] sig=int sym=0xc00006a780 @ line 10
+                        + sig=int @ line 10
+                            id [i] sig=int sym=0xc00006a780 @ line 10
+                            int [1] sig=int @ line 10
+            exprstmt @ line 12
+                funccall sig=void @ line 12
+                    id [prints] sig=f(str) sym=0xc00006a370 @ line 12
+                    actuals
+                        string [\n] sig=str @ line 12
+            exprstmt @ line 14
+                funccall sig=void @ line 14
+                    id [printc] sig=f(int) sym=0xc00006a2d0 @ line 14
+                    actuals
+                        id [STAR] sig=int sym=0xc00006a4b0 @ line 14
+            = sig=void @ line 15
+                id [i] sig=int sym=0xc00006a780 @ line 15
+                int [0] sig=int @ line 15
+            for @ line 16
+                < sig=bool @ line 16
+                    id [i] sig=int sym=0xc00006a780 @ line 16
+                    - sig=int @ line 16
+                        id [n] sig=int sym=0xc00006a730 @ line 16
+                        int [2] sig=int @ line 16
+                block
+                    exprstmt @ line 17
+                        funccall sig=void @ line 17
+                            id [prints] sig=f(str) sym=0xc00006a370 @ line 17
+                            actuals
+                                string [ ] sig=str @ line 17
+                    = sig=void @ line 18
+                        id [i] sig=int sym=0xc00006a780 @ line 18
+                        + sig=int @ line 18
+                            id [i] sig=int sym=0xc00006a780 @ line 18
+                            int [1] sig=int @ line 18
+            exprstmt @ line 20
+                funccall sig=void @ line 20
+                    id [printc] sig=f(int) sym=0xc00006a2d0 @ line 20
+                    actuals
+                        id [STAR] sig=int sym=0xc00006a4b0 @ line 20
+            exprstmt @ line 21
+                funccall sig=void @ line 21
+                    id [prints] sig=f(str) sym=0xc00006a370 @ line 21
+                    actuals
+                        string [\n] sig=str @ line 21
+    func sym=0xc00006a5a0 @ line 24
+        newid [bottom] @ line 24
+        sig
+            formals
+                formal
+                    newid [n] sym=0xc00006a7d0 @ line 24
+                    typeid [int] sym=0xc00006a0f0 @ line 24
+            typeid [$void] sym=0xc00006a050
+        block
+            var sym=0xc00006a820 @ line 25
+                newid [i] @ line 25
+                typeid [int] sym=0xc00006a0f0 @ line 25
+            exprstmt @ line 27
+                funccall sig=void @ line 27
+                    id [printc] sig=f(int) sym=0xc00006a2d0 @ line 27
+                    actuals
+                        id [STAR] sig=int sym=0xc00006a4b0 @ line 27
+            = sig=void @ line 28
+                id [i] sig=int sym=0xc00006a820 @ line 28
+                int [0] sig=int @ line 28
+            for @ line 29
+                < sig=bool @ line 29
+                    id [i] sig=int sym=0xc00006a820 @ line 29
+                    - sig=int @ line 29
+                        id [n] sig=int sym=0xc00006a7d0 @ line 29
+                        int [2] sig=int @ line 29
+                block
+                    exprstmt @ line 30
+                        funccall sig=void @ line 30
+                            id [prints] sig=f(str) sym=0xc00006a370 @ line 30
+                            actuals
+                                string [ ] sig=str @ line 30
+                    = sig=void @ line 31
+                        id [i] sig=int sym=0xc00006a820 @ line 31
+                        + sig=int @ line 31
+                            id [i] sig=int sym=0xc00006a820 @ line 31
+                            int [1] sig=int @ line 31
+            exprstmt @ line 33
+                funccall sig=void @ line 33
+                    id [printc] sig=f(int) sym=0xc00006a2d0 @ line 33
+                    actuals
+                        id [STAR] sig=int sym=0xc00006a4b0 @ line 33
+            exprstmt @ line 34
+                funccall sig=void @ line 34
+                    id [prints] sig=f(str) sym=0xc00006a370 @ line 34
+                    actuals
+                        string [\n] sig=str @ line 34
+            = sig=void @ line 36
+                id [i] sig=int sym=0xc00006a820 @ line 36
+                int [0] sig=int @ line 36
+            for @ line 37
+                < sig=bool @ line 37
+                    id [i] sig=int sym=0xc00006a820 @ line 37
+                    id [n] sig=int sym=0xc00006a7d0 @ line 37
+                block
+                    exprstmt @ line 38
+                        funccall sig=void @ line 38
+                            id [printc] sig=f(int) sym=0xc00006a2d0 @ line 38
+                            actuals
+                                id [STAR] sig=int sym=0xc00006a4b0 @ line 38
+                    = sig=void @ line 39
+                        id [i] sig=int sym=0xc00006a820 @ line 39
+                        + sig=int @ line 39
+                            id [i] sig=int sym=0xc00006a820 @ line 39
+                            int [1] sig=int @ line 39
+            exprstmt @ line 41
+                funccall sig=void @ line 41
+                    id [prints] sig=f(str) sym=0xc00006a370 @ line 41
+                    actuals
+                        string [\n] sig=str @ line 41
+    func sym=0xc00006a5f0 @ line 44
+        newid [prline] @ line 44
+        sig
+            formals
+                formal
+                    newid [s] sym=0xc00006a870 @ line 44
+                    typeid [string] sym=0xc00006a140 @ line 44
+                formal
+                    newid [n] sym=0xc00006a8c0 @ line 44
+                    typeid [int] sym=0xc00006a0f0 @ line 44
+            typeid [$void] sym=0xc00006a050
+        block
+            exprstmt @ line 45
+                funccall sig=void @ line 45
+                    id [printc] sig=f(int) sym=0xc00006a2d0 @ line 45
+                    actuals
+                        id [STAR] sig=int sym=0xc00006a4b0 @ line 45
+            exprstmt @ line 46
+                funccall sig=void @ line 46
+                    id [prints] sig=f(str) sym=0xc00006a370 @ line 46
+                    actuals
+                        id [SPACES] sig=str sym=0xc00006a500 @ line 46
+            exprstmt @ line 47
+                funccall sig=void @ line 47
+                    id [prints] sig=f(str) sym=0xc00006a370 @ line 47
+                    actuals
+                        id [s] sig=str sym=0xc00006a870 @ line 47
+            if @ line 48
+                < sig=bool @ line 48
+                    + sig=int @ line 48
+                        + sig=int @ line 48
+                            + sig=int @ line 48
+                                + sig=int @ line 48
+                                    int [1] sig=int @ line 48
+                                    funccall sig=int @ line 48
+                                        id [len] sig=f(str) sym=0xc00006a460 @ line 48
+                                        actuals
+                                            id [SPACES] sig=str sym=0xc00006a500 @ line 48
+                                funccall sig=int @ line 48
+                                    id [len] sig=f(str) sym=0xc00006a460 @ line 48
+                                    actuals
+                                        id [s] sig=str sym=0xc00006a870 @ line 48
+                            funccall sig=int @ line 48
+                                id [len] sig=f(str) sym=0xc00006a460 @ line 48
+                                actuals
+                                    id [SPACES] sig=str sym=0xc00006a500 @ line 48
+                        int [1] sig=int @ line 48
+                    id [n] sig=int sym=0xc00006a8c0 @ line 48
+                block
+                    var sym=0xc00006a910 @ line 50
+                        newid [i] @ line 50
+                        typeid [int] sym=0xc00006a0f0 @ line 50
+                    = sig=void @ line 51
+                        id [i] sig=int sym=0xc00006a910 @ line 51
+                        - sig=int @ line 51
+                            id [n] sig=int sym=0xc00006a8c0 @ line 51
+                            + sig=int @ line 51
+                                + sig=int @ line 51
+                                    + sig=int @ line 51
+                                        + sig=int @ line 51
+                                            int [1] sig=int @ line 51
+                                            funccall sig=int @ line 51
+                                                id [len] sig=f(str) sym=0xc00006a460 @ line 51
+                                                actuals
+                                                    id [SPACES] sig=str sym=0xc00006a500 @ line 51
+                                        funccall sig=int @ line 51
+                                            id [len] sig=f(str) sym=0xc00006a460 @ line 51
+                                            actuals
+                                                id [s] sig=str sym=0xc00006a870 @ line 51
+                                    funccall sig=int @ line 51
+                                        id [len] sig=f(str) sym=0xc00006a460 @ line 51
+                                        actuals
+                                            id [SPACES] sig=str sym=0xc00006a500 @ line 51
+                                int [1] sig=int @ line 51
+                    for @ line 52
+                        > sig=bool @ line 52
+                            id [i] sig=int sym=0xc00006a910 @ line 52
+                            int [0] sig=int @ line 52
+                        block
+                            exprstmt @ line 53
+                                funccall sig=void @ line 53
+                                    id [prints] sig=f(str) sym=0xc00006a370 @ line 53
+                                    actuals
+                                        string [ ] sig=str @ line 53
+                            = sig=void @ line 54
+                                id [i] sig=int sym=0xc00006a910 @ line 54
+                                - sig=int @ line 54
+                                    id [i] sig=int sym=0xc00006a910 @ line 54
+                                    int [1] sig=int @ line 54
+            exprstmt @ line 57
+                funccall sig=void @ line 57
+                    id [prints] sig=f(str) sym=0xc00006a370 @ line 57
+                    actuals
+                        id [SPACES] sig=str sym=0xc00006a500 @ line 57
+            exprstmt @ line 58
+                funccall sig=void @ line 58
+                    id [printc] sig=f(int) sym=0xc00006a2d0 @ line 58
+                    actuals
+                        id [STAR] sig=int sym=0xc00006a4b0 @ line 58
+            exprstmt @ line 59
+                funccall sig=void @ line 59
+                    id [prints] sig=f(str) sym=0xc00006a370 @ line 59
+                    actuals
+                        string [\n] sig=str @ line 59
+    func sym=0xc00006a640 @ line 62
+        newid [banner] @ line 62
+        sig
+            formals
+                formal
+                    newid [s] sym=0xc00006a960 @ line 62
+                    typeid [string] sym=0xc00006a140 @ line 62
+            typeid [$void] sym=0xc00006a050
+        block
+            var sym=0xc00006a9b0 @ line 63
+                newid [n] @ line 63
+                typeid [int] sym=0xc00006a0f0 @ line 63
+            = sig=void @ line 65
+                id [n] sig=int sym=0xc00006a9b0 @ line 65
+                + sig=int @ line 65
+                    + sig=int @ line 65
+                        + sig=int @ line 65
+                            + sig=int @ line 65
+                                int [1] sig=int @ line 65
+                                funccall sig=int @ line 65
+                                    id [len] sig=f(str) sym=0xc00006a460 @ line 65
+                                    actuals
+                                        id [SPACES] sig=str sym=0xc00006a500 @ line 65
+                            funccall sig=int @ line 65
+                                id [len] sig=f(str) sym=0xc00006a460 @ line 65
+                                actuals
+                                    id [s] sig=str sym=0xc00006a960 @ line 65
+                        funccall sig=int @ line 65
+                            id [len] sig=f(str) sym=0xc00006a460 @ line 65
+                            actuals
+                                id [SPACES] sig=str sym=0xc00006a500 @ line 65
+                    int [1] sig=int @ line 65
+            exprstmt @ line 66
+                funccall sig=void @ line 66
+                    id [top] sig=f(int) sym=0xc00006a550 @ line 66
+                    actuals
+                        id [n] sig=int sym=0xc00006a9b0 @ line 66
+            exprstmt @ line 67
+                funccall sig=void @ line 67
+                    id [prline] sig=f(str,int) sym=0xc00006a5f0 @ line 67
+                    actuals
+                        id [s] sig=str sym=0xc00006a960 @ line 67
+                        id [n] sig=int sym=0xc00006a9b0 @ line 67
+            exprstmt @ line 68
+                funccall sig=void @ line 68
+                    id [bottom] sig=f(int) sym=0xc00006a5a0 @ line 68
+                    actuals
+                        id [n] sig=int sym=0xc00006a9b0 @ line 68
+    func sym=0xc00006a690 @ line 71
+        newid [banner2] @ line 71
+        sig
+            formals
+                formal
+                    newid [s1] sym=0xc00006aa00 @ line 71
+                    typeid [string] sym=0xc00006a140 @ line 71
+                formal
+                    newid [s2] sym=0xc00006aa50 @ line 71
+                    typeid [string] sym=0xc00006a140 @ line 71
+            typeid [$void] sym=0xc00006a050
+        block
+            var sym=0xc00006aaa0 @ line 72
+                newid [n1] @ line 72
+                typeid [int] sym=0xc00006a0f0 @ line 72
+            var sym=0xc00006aaf0 @ line 73
+                newid [n2] @ line 73
+                typeid [int] sym=0xc00006a0f0 @ line 73
+            = sig=void @ line 75
+                id [n1] sig=int sym=0xc00006aaa0 @ line 75
+                + sig=int @ line 75
+                    + sig=int @ line 75
+                        + sig=int @ line 75
+                            + sig=int @ line 75
+                                int [1] sig=int @ line 75
+                                funccall sig=int @ line 75
+                                    id [len] sig=f(str) sym=0xc00006a460 @ line 75
+                                    actuals
+                                        id [SPACES] sig=str sym=0xc00006a500 @ line 75
+                            funccall sig=int @ line 75
+                                id [len] sig=f(str) sym=0xc00006a460 @ line 75
+                                actuals
+                                    id [s1] sig=str sym=0xc00006aa00 @ line 75
+                        funccall sig=int @ line 75
+                            id [len] sig=f(str) sym=0xc00006a460 @ line 75
+                            actuals
+                                id [SPACES] sig=str sym=0xc00006a500 @ line 75
+                    int [1] sig=int @ line 75
+            = sig=void @ line 76
+                id [n2] sig=int sym=0xc00006aaf0 @ line 76
+                + sig=int @ line 76
+                    + sig=int @ line 76
+                        + sig=int @ line 76
+                            + sig=int @ line 76
+                                int [1] sig=int @ line 76
+                                funccall sig=int @ line 76
+                                    id [len] sig=f(str) sym=0xc00006a460 @ line 76
+                                    actuals
+                                        id [SPACES] sig=str sym=0xc00006a500 @ line 76
+                            funccall sig=int @ line 76
+                                id [len] sig=f(str) sym=0xc00006a460 @ line 76
+                                actuals
+                                    id [s2] sig=str sym=0xc00006aa50 @ line 76
+                        funccall sig=int @ line 76
+                            id [len] sig=f(str) sym=0xc00006a460 @ line 76
+                            actuals
+                                id [SPACES] sig=str sym=0xc00006a500 @ line 76
+                    int [1] sig=int @ line 76
+            var sym=0xc00006ab40 @ line 78
+                newid [n] @ line 78
+                typeid [int] sym=0xc00006a0f0 @ line 78
+            = sig=void @ line 79
+                id [n] sig=int sym=0xc00006ab40 @ line 79
+                id [n1] sig=int sym=0xc00006aaa0 @ line 79
+            if @ line 80
+                < sig=bool @ line 80
+                    id [n1] sig=int sym=0xc00006aaa0 @ line 80
+                    id [n2] sig=int sym=0xc00006aaf0 @ line 80
+                block
+                    = sig=void @ line 81
+                        id [n] sig=int sym=0xc00006ab40 @ line 81
+                        id [n2] sig=int sym=0xc00006aaf0 @ line 81
+            exprstmt @ line 84
+                funccall sig=void @ line 84
+                    id [top] sig=f(int) sym=0xc00006a550 @ line 84
+                    actuals
+                        id [n] sig=int sym=0xc00006ab40 @ line 84
+            exprstmt @ line 85
+                funccall sig=void @ line 85
+                    id [prline] sig=f(str,int) sym=0xc00006a5f0 @ line 85
+                    actuals
+                        id [s1] sig=str sym=0xc00006aa00 @ line 85
+                        id [n] sig=int sym=0xc00006ab40 @ line 85
+            exprstmt @ line 86
+                funccall sig=void @ line 86
+                    id [prline] sig=f(str,int) sym=0xc00006a5f0 @ line 86
+                    actuals
+                        id [s2] sig=str sym=0xc00006aa50 @ line 86
+                        id [n] sig=int sym=0xc00006ab40 @ line 86
+            exprstmt @ line 87
+                funccall sig=void @ line 87
+                    id [bottom] sig=f(int) sym=0xc00006a5a0 @ line 87
+                    actuals
+                        id [n] sig=int sym=0xc00006ab40 @ line 87
+    func sym=0xc00006a6e0 @ line 90
+        newid [main] @ line 90
+        sig
+            formals
+            typeid [$void] sym=0xc00006a050
+        block
+            = sig=void @ line 91
+                id [STAR] sig=int sym=0xc00006a4b0 @ line 91
+                int [42] sig=int @ line 91
+            = sig=void @ line 92
+                id [SPACES] sig=str sym=0xc00006a500 @ line 92
+                string [  ] sig=str @ line 92
+            exprstmt @ line 94
+                funccall sig=void @ line 94
+                    id [banner] sig=f(str) sym=0xc00006a640 @ line 94
+                    actuals
+                        string [Hello, world!] sig=str @ line 94
+            exprstmt @ line 95
+                funccall sig=void @ line 95
+                    id [banner] sig=f(str) sym=0xc00006a640 @ line 95
+                    actuals
+                        string sig=str @ line 95
+            exprstmt @ line 96
+                funccall sig=void @ line 96
+                    id [banner] sig=f(str) sym=0xc00006a640 @ line 96
+                    actuals
+                        string [GoLF] sig=str @ line 96
+            exprstmt @ line 98
+                funccall sig=void @ line 98
+                    id [banner2] sig=f(str,str) sym=0xc00006a690 @ line 98
+                    actuals
+                        string [Compiler Construction] sig=str @ line 98
+                        string [CPSC 411] sig=str @ line 98
+            exprstmt @ line 99
+                funccall sig=void @ line 99
+                    id [banner2] sig=f(str,str) sym=0xc00006a690 @ line 99
+                    actuals
+                        string [Computer Science] sig=str @ line 99
+                        string [University of Calgary] sig=str @ line 99
+
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: div and mod table |
+-------------------------
+
+% ./golf -show aast /home/profs/aycock/411/TEST/final/gen.t25
+
+STDOUT:
+program sym=0xc00006a4b0
+    func sym=0xc00006a4b0 @ line 3
+        newid [main] @ line 3
+        sig
+            formals
+            typeid [$void] sym=0xc00006a050
+        block
+            exprstmt @ line 4
+                funccall sig=void @ line 4
+                    id [prints] sig=f(str) sym=0xc00006a370 @ line 4
+                    actuals
+                        string [x\ty\tx / y\tx % y\n] sig=str @ line 4
+            exprstmt @ line 6
+                funccall sig=void @ line 6
+                    id [prdivmod] sig=f(int,int) sym=0xc00006a500 @ line 6
+                    actuals
+                        int [5] sig=int @ line 6
+                        int [3] sig=int @ line 6
+            exprstmt @ line 7
+                funccall sig=void @ line 7
+                    id [prdivmod] sig=f(int,int) sym=0xc00006a500 @ line 7
+                    actuals
+                        int [-5] sig=int @ line 7
+                        int [3] sig=int @ line 7
+            exprstmt @ line 8
+                funccall sig=void @ line 8
+                    id [prdivmod] sig=f(int,int) sym=0xc00006a500 @ line 8
+                    actuals
+                        int [5] sig=int @ line 8
+                        int [-3] sig=int @ line 8
+            exprstmt @ line 9
+                funccall sig=void @ line 9
+                    id [prdivmod] sig=f(int,int) sym=0xc00006a500 @ line 9
+                    actuals
+                        int [-5] sig=int @ line 9
+                        int [-3] sig=int @ line 9
+    func sym=0xc00006a500 @ line 12
+        newid [prdivmod] @ line 12
+        sig
+            formals
+                formal
+                    newid [x] sym=0xc00006a550 @ line 12
+                    typeid [int] sym=0xc00006a0f0 @ line 12
+                formal
+                    newid [y] sym=0xc00006a5a0 @ line 12
+                    typeid [int] sym=0xc00006a0f0 @ line 12
+            typeid [$void] sym=0xc00006a050
+        block
+            exprstmt @ line 13
+                funccall sig=void @ line 13
+                    id [printi] sig=f(int) sym=0xc00006a320 @ line 13
+                    actuals
+                        id [x] sig=int sym=0xc00006a550 @ line 13
+            exprstmt @ line 14
+                funccall sig=void @ line 14
+                    id [prints] sig=f(str) sym=0xc00006a370 @ line 14
+                    actuals
+                        string [\t] sig=str @ line 14
+            exprstmt @ line 15
+                funccall sig=void @ line 15
+                    id [printi] sig=f(int) sym=0xc00006a320 @ line 15
+                    actuals
+                        id [y] sig=int sym=0xc00006a5a0 @ line 15
+            exprstmt @ line 16
+                funccall sig=void @ line 16
+                    id [prints] sig=f(str) sym=0xc00006a370 @ line 16
+                    actuals
+                        string [\t] sig=str @ line 16
+            exprstmt @ line 17
+                funccall sig=void @ line 17
+                    id [printi] sig=f(int) sym=0xc00006a320 @ line 17
+                    actuals
+                        / sig=int @ line 17
+                            id [x] sig=int sym=0xc00006a550 @ line 17
+                            id [y] sig=int sym=0xc00006a5a0 @ line 17
+            exprstmt @ line 18
+                funccall sig=void @ line 18
+                    id [prints] sig=f(str) sym=0xc00006a370 @ line 18
+                    actuals
+                        string [\t] sig=str @ line 18
+            exprstmt @ line 19
+                funccall sig=void @ line 19
+                    id [printi] sig=f(int) sym=0xc00006a320 @ line 19
+                    actuals
+                        % sig=int @ line 19
+                            id [x] sig=int sym=0xc00006a550 @ line 19
+                            id [y] sig=int sym=0xc00006a5a0 @ line 19
+            exprstmt @ line 20
+                funccall sig=void @ line 20
+                    id [prints] sig=f(str) sym=0xc00006a370 @ line 20
+                    actuals
+                        string [\n] sig=str @ line 20
+
+
+
+STDERR:
+
+
+RETURN CODE: 0
+
+-------------------------------------------------------------------------------
+Test: basic maze generation from Entombed (1982) |
+--------------------------------------------------
+
+% ./golf -show aast /home/profs/aycock/411/TEST/final/gen.entombed
+
+*** TERMINATION VIA TIMEOUT
+
+-------------------------------------------------------------------------------
+Test: the Game of Life |
+------------------------
+
+% ./golf -show aast /home/profs/aycock/411/TEST/final/gen.life
+
+*** TERMINATION VIA TIMEOUT
+
+-------------------------------------------------------------------------------
+Test: selection sort |
+----------------------
+
+% ./golf -show aast /home/profs/aycock/411/TEST/final/gen.select
+
+*** TERMINATION VIA TIMEOUT
+
+-------------------------------------------------------------------------------
+Test: prime number sieve |
+--------------------------
+
+% ./golf -show aast /home/profs/aycock/411/TEST/final/gen.sieve
+
+*** TERMINATION VIA TIMEOUT
+
+Run ended on Fri Apr  7 11:37:44 2023
+
