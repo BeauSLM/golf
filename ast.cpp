@@ -157,7 +157,7 @@ std::string ASTNode_printstring( ASTNode &n ) {
         case AST_EMPTYSTMT:    break;
         case AST_EXPRSTMT:
 
-#if MILESTONE == 3
+#if MILESTONE > 2
         case AST_PROGRAM:
         case AST_FUNCCALL:
 #endif

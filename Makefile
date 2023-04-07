@@ -2,7 +2,10 @@ CXX      := clang++
 CXXFLAGS := -Wall -Wextra -std=c++17
 OBJS     := main.o error.o lex.o parse.o ast.o symboltable.o semantics.o
 
-release: CXXFLAGS += -O3 -DMILESTONE=3
+ms4: CXXFLAGS += -DMILESTONE=4 -g
+ms4: golf
+
+release: CXXFLAGS += -O3 -DMILESTONE=4
 release: golf
 
 ms3: CXXFLAGS += -DMILESTONE=3 -g

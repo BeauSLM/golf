@@ -47,6 +47,13 @@ int main( int argc, char *argv[] ) {
     printast( root );
     puts( "" );
 
+#elif MILESTONE == 4
+
+    auto root = parse();
+
+    checksemantics( root );
+    // TODO: codegen
+
 #else
 
     fprintf( stderr, "Invalid milestone number" );
