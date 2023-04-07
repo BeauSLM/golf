@@ -1,6 +1,6 @@
 CXX      := clang++
 CXXFLAGS := -Wall -Wextra -std=c++17
-OBJS     := main.o error.o lex.o parse.o ast.o symboltable.o semantics.o
+OBJS     := main.o error.o lex.o parse.o ast.o symboltable.o semantics.o codegen.o
 
 ms4: CXXFLAGS += -DMILESTONE=4 -g
 ms4: golf
