@@ -6,6 +6,7 @@
 #include "lex.hpp"
 #include "parse.hpp"
 #include "semantics.hpp"
+#include "codegen.hpp"
 
 int main( int argc, char *argv[] ) {
     if ( argc != 2 ) {
@@ -52,7 +53,7 @@ int main( int argc, char *argv[] ) {
     auto root = parse();
 
     checksemantics( root );
-    // TODO: codegen
+    gen_code( root );
 
 #else
 

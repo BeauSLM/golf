@@ -1,3 +1,3 @@
 #include "ast.hpp"
 
-void gen_code( ASTNode *root );
+void gen_code( ASTNode & root );
