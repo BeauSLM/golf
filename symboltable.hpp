@@ -8,10 +8,13 @@
 struct STabRecord
 {
     std::string signature,
-                returnsignature;
+                returnsignature,
+                label;
 
     bool        isconst = false,
                 istype  = false;
+
+    int         frame_offset_bytes = 1; // NOTE: < 0 cause stack grows down
 };
 
 // for my sanity

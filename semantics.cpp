@@ -475,10 +475,10 @@ void checksemantics
         {
             auto record = new STabRecord
             {
-                symbol.signature,
-                symbol.returnsignature,
-                symbol.isconst,
-                symbol.istype
+                .signature       = symbol.signature,
+                .returnsignature = symbol.returnsignature,
+                .isconst         = symbol.isconst,
+                .istype          = symbol.istype
             };
 
             // NOTE: not using define() because I know the information of the predefined symbols

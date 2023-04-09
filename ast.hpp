@@ -64,11 +64,13 @@ struct ASTNode {
     ASTNodeID type = AST_UNSET;
     int linenum    = -1;
 
-    std::string lexeme;
     std::vector<ASTNode> children;
 
     STabRecord * symbolinfo = nullptr;
-    std::string expressiontype;
+
+    std::string lexeme,
+                expressiontype,
+                reg;
 
     ASTNode( ASTNodeID type = AST_UNSET, int linenum = -1, std::string lexeme = "" )
         : type( type ), linenum( linenum ), lexeme( lexeme )
