@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <vector>
+#include <exception>
 
 #include "lex.hpp"
 #include "symboltable.hpp"
@@ -81,6 +82,8 @@ struct ASTNode {
 
     ASTNode & operator[]( size_t i ) { return children[ i ]; }
 };
+
+struct PruneTraversalException : public std::exception {};
 
 // traversal routines
 void preorder

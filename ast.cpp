@@ -21,9 +21,8 @@ void postorder
 void prepost
 ( ASTNode & root, void ( *precallback )( ASTNode & ), void ( *postcallback )( ASTNode & ) )
 {
-    precallback( root );
-
-    // TODO: if we need to prune, bail here
+    try { precallback( root ); }
+    catch ( PruneTraversalException & e ) { return; }
 
     for ( auto & child : root.children ) prepost( child, precallback, postcallback );
 

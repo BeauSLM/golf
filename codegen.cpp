@@ -19,6 +19,17 @@ inline std::string emitlabel
     return result;
 }
 
+void pass_1_pre( ASTNode & node )
+{
+    throw PruneTraversalException();
+}
+
+
+void pass_1_post( ASTNode & node )
+{
+    puts( "foo bar" );
+}
+
 void global_vars( ASTNode & node )
 {
     if ( node.type == AST_GLOBVAR )
@@ -54,6 +65,7 @@ void gen_code( ASTNode & root )
     //  - function prologue
     //  - jump and return address thing to function
     //  - function epilogue
+    prepost( root, pass_1_pre, pass_1_post );
 
     // - flush output
 
