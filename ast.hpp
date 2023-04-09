@@ -71,7 +71,9 @@ struct ASTNode {
 
     std::string lexeme,
                 expressiontype,
-                reg;
+                reg,
+                stringlabel; // strings don't have symbol table records so this
+                             // will be used to store the string's label
 
     ASTNode( ASTNodeID type = AST_UNSET, int linenum = -1, std::string lexeme = "" )
         : type( type ), linenum( linenum ), lexeme( lexeme )
