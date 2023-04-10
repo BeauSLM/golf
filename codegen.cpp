@@ -80,6 +80,8 @@ static std::string output;
 static int generic_labels = 0,
            string_labels  = 1; // S0 is reserved for included null string
 
+// TODO: div/mod by zero check and error
+// TODO: cite shankar's thing
 inline void asm_prologue()
 {
     output +=
