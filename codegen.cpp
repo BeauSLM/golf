@@ -314,6 +314,35 @@ void pass_1_post( ASTNode & node )
         {
             emitinstruction( "j " + break_to_labels.back() );
         } break;
+        case AST_LOGIC_AND:
+        case AST_LOGIC_OR:
+        {
+            node.reg = allocreg();
+
+            std::string bottom     = getlabel( "L", generic_labels++ ),
+                        // on &&, jump to bottom if false
+                        skip_instr = node.type == AST_LOGIC_AND ? "beqz" : "bnez",
+                        // on || jump to bottom if true
+                        oper_instr = node.type == AST_LOGIC_AND ? "and"  : "or";
+
+            prepost( node[ 0 ], pass_1_pre, pass_1_post );
+
+            emitinstruction( skip_instr + " " + node[ 0 ].reg + ", " + bottom );
+
+            prepost( node[ 1 ], pass_1_pre, pass_1_post );
+
+            emitlabel( bottom );
+
+            emitinstruction( oper_instr + " " + node.reg + ", " + node[ 0 ].reg + ", " + node[ 1 ].reg );
+
+            // result = result & 1
+            emitinstruction( "andi " + node.reg + ", " + node.reg + ", 1" );
+
+            freereg( node[ 0 ].reg );
+            freereg( node[ 1 ].reg );
+
+            throw PruneTraversalException();
+        } break;
         default:
         {
             for ( auto & mapping : op_instr_mapping )
