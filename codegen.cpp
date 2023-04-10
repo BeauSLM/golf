@@ -350,8 +350,6 @@ void pass_2_cb( ASTNode & node )
 
 void gen_code( ASTNode & root )
 {
-    // EMIT PROLOGUE
-    // - set up stuff and go to main
     asm_prologue();
 
     // pass 1 - code generation
@@ -363,12 +361,6 @@ void gen_code( ASTNode & root )
     prepost( root, pass_1_pre, pass_1_post );
 
     asm_epilogue();
-
-    // pass 2 - statically allocated things
-    // preorder to emit global var declarations
-    // - AST_GLOBVAR
-    //    - a label plus either a word or a string constant
-    // - AST_FUNC ( ????? )
 
     preorder( root, pass_2_cb );
 
