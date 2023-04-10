@@ -285,6 +285,7 @@ void pass_1_post( ASTNode & node )
         {
             emitinstruction( "j " + break_to_labels.back() );
         } break;
+        } break;
     }
 }
 
