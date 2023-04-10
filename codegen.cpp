@@ -236,6 +236,21 @@ void pass_1_post( ASTNode & node )
             // REVIEW: should I trim leading zeros?
             emitinstruction( "li " + node.reg + ", " + node.lexeme );
         } break;
+        case AST_RETURN:
+        {
+            if ( node.children.size() > 0 )
+            {
+                prepost( node[ 0 ], pass_1_pre, pass_1_post );
+
+                emitinstruction( "move $v0, " + node[ 0 ].reg );
+                freereg( node[ 0 ].reg );
+            }
+
+            // TODO: jump to epilogue which will return instead
+            emitinstruction( "jr $ra" );
+
+            throw PruneTraversalException();
+        } break;
         case AST_BREAK:
         {
             emitinstruction( "j " + break_to_labels.back() );
