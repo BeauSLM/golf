@@ -335,7 +335,7 @@ void pass_2_cb( ASTNode & node )
         std::string type = node.symbolinfo->signature;
         instruction      = type == "string" ? ".word S0" : ".word 0" ;
 
-        label = getlabel( "G", global_labels++ );
+        label = "G_" + node[ 0 ].lexeme;
         node.symbolinfo->label = label;
     }
     else
