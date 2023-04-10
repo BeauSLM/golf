@@ -181,7 +181,7 @@ void pass_1_pre( ASTNode & node )
 
             prepost( node[ 0 ], pass_1_pre, pass_1_post );
 
-            emitinstruction( "beq " + node[ 0 ].reg + ", $zero, " + bottom );
+            emitinstruction( "beqz " + node[ 0 ].reg + ", " + bottom );
 
             freereg( node[ 0 ].reg );
 
@@ -202,7 +202,7 @@ void pass_1_pre( ASTNode & node )
 
             prepost( node[ 0 ], pass_1_pre, pass_1_post );
 
-            emitinstruction( "beq " + node[ 0 ].reg + ", $zero, " + bottom );
+            emitinstruction( "beqz " + node[ 0 ].reg + ", " + bottom );
 
             prepost( node[ 1 ], pass_1_pre, pass_1_post );
 
