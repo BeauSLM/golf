@@ -166,20 +166,64 @@ inline std::string getlabel
     return prefix + std::to_string( num );
 }
 
+void pass_1_pre( ASTNode & node );
+void pass_1_post( ASTNode & node );
+
+static std::vector<std::string> break_to_labels;
+
 void pass_1_pre( ASTNode & node )
 {
     switch ( node.type )
     {
-        case AST_STRING:
+        case AST_IF:
         {
-            node.stringlabel = getlabel( "S", string_labels++ );
+            std::string bottom = getlabel( "L", generic_labels++ );
+
+            prepost( node[ 0 ], pass_1_pre, pass_1_post );
+
+            emitinstruction( "beq " + node[ 0 ].reg + ", $zero, " + bottom );
+
+            freereg( node[ 0 ].reg );
+
+            prepost( node[ 1 ], pass_1_pre, pass_1_post );
+
+            emitlabel( bottom );
+
+            throw PruneTraversalException();
         } break;
+        case AST_FOR:
+        {
+            std::string top    = getlabel( "L", generic_labels++ );
+            std::string bottom = getlabel( "L", generic_labels++ );
+
+            break_to_labels.push_back( bottom );
+
+            emitlabel( top );
+
+            prepost( node[ 0 ], pass_1_pre, pass_1_post );
+
+            emitinstruction( "beq " + node[ 0 ].reg + ", $zero, " + bottom );
+
+            prepost( node[ 1 ], pass_1_pre, pass_1_post );
+
+            emitinstruction( "j " + top );
+
+            emitlabel( bottom );
+
+            break_to_labels.pop_back();
+
+            throw PruneTraversalException();
+        }
         default: break;
     }
 }
 
 void pass_1_post( ASTNode & node )
 {
+        case AST_BREAK:
+        {
+            emitinstruction( "j " + break_to_labels.back() );
+        } break;
 }
 
 void pass_2_cb( ASTNode & node )
