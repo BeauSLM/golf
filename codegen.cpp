@@ -220,10 +220,20 @@ void pass_1_pre( ASTNode & node )
 
 void pass_1_post( ASTNode & node )
 {
+    switch ( node.type )
+    {
+        case AST_STRING:
+        {
+            node.reg         = allocreg();
+            node.stringlabel = getlabel( "S", string_labels++ );
+
+            emitinstruction( "la " + node.reg + ", " + node.stringlabel );
+        }
         case AST_BREAK:
         {
             emitinstruction( "j " + break_to_labels.back() );
         } break;
+    }
 }
 
 void pass_2_cb( ASTNode & node )
