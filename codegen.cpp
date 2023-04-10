@@ -182,7 +182,6 @@ void pass_1_pre( ASTNode & node )
             prepost( node[ 0 ], pass_1_pre, pass_1_post );
 
             emitinstruction( "beqz " + node[ 0 ].reg + ", " + bottom );
-
             freereg( node[ 0 ].reg );
 
             prepost( node[ 1 ], pass_1_pre, pass_1_post );
@@ -191,6 +190,31 @@ void pass_1_pre( ASTNode & node )
 
             throw PruneTraversalException();
         } break;
+        // REVIEW: does if else if just fall out?
+        case AST_IFELSE:
+        {
+            std::string bottom = getlabel( "L", generic_labels++ );
+            std::string else_  = getlabel( "L", generic_labels++ );
+
+            // guard expression
+            prepost( node[ 0 ], pass_1_pre, pass_1_post );
+
+            // if !guard expression, jump to else block
+            emitinstruction( "beqz " + node[ 0 ].reg + ", " + else_ );
+            freereg( node[ 0 ].reg );
+
+            // if block, then jump to end
+            prepost( node[ 1 ], pass_1_pre, pass_1_post );
+            emitinstruction( "j " + bottom );
+
+            // else block
+            emitlabel( else_ );
+            prepost( node[ 2 ], pass_1_pre, pass_1_post );
+
+            emitlabel( bottom );
+
+            throw PruneTraversalException();
+        }
         case AST_FOR:
         {
             std::string top    = getlabel( "L", generic_labels++ );
