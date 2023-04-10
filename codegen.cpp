@@ -236,6 +236,36 @@ void pass_1_post( ASTNode & node )
             // REVIEW: should I trim leading zeros?
             emitinstruction( "li " + node.reg + ", " + node.lexeme );
         } break;
+        case AST_ID:
+        {
+            STabRecord * sym = node.symbolinfo;
+
+            // REVIEW: should I just return??
+            if ( sym->istype ) break;
+
+            node.reg = allocreg();
+
+            if ( sym->isconst )
+            {
+                int val = node.lexeme == "false" ? 0 : 1;
+                emitinstruction( "li " + node.reg + ", " + std::to_string( val )  + "# " + node.lexeme);
+
+                break;
+            }
+
+            // not a symbol or a constant, its an identifier
+
+            std::string location = "LOCATION UNSET";
+            // FIXME: handle true/false constants
+            if ( node.symbolinfo->label.empty() )
+                // TODO: change this when I figure out how I know where stuff is
+                // on the stack
+                location = std::to_string( node.symbolinfo->frame_offset_bytes ) + "($fp)";
+            else
+                location = node.symbolinfo->label;
+
+            emitinstruction( "lw " + node.reg + ", " + location );
+        } break;
         case AST_RETURN:
         {
             if ( node.children.size() > 0 )
