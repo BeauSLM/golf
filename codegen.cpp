@@ -229,6 +229,13 @@ void pass_1_post( ASTNode & node )
 
             emitinstruction( "la " + node.reg + ", " + node.stringlabel );
         }
+        case AST_INT:
+        {
+            node.reg = allocreg();
+
+            // REVIEW: should I trim leading zeros?
+            emitinstruction( "li " + node.reg + ", " + node.lexeme );
+        } break;
         case AST_BREAK:
         {
             emitinstruction( "j " + break_to_labels.back() );
