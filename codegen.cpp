@@ -89,46 +89,46 @@ R"(
 
 .globl main
 main:
-    jal Lmain
-    j   halt
+        jal Lmain
+        j   halt
 
 getchar:
-    addi $sp, $sp, -4
-    sw $ra, 0($sp)
+        addi $sp, $sp, -4
+        sw $ra, 0($sp)
 
-    li $v0, 8                       # System call for read_string
-    la $a0, getcharbuf              # Pass in buffer (size = n+1)
-    li $a1, 2                       # Size = n+1 as read_string adds null
-    syscall
+        li $v0, 8                       # System call for read_string
+        la $a0, getcharbuf              # Pass in buffer (size = n+1)
+        li $a1, 2                       # Size = n+1 as read_string adds null
+        syscall
 
-    lb $v0, getcharbuf
-    bne $v0, $zero, ret
+        lb $v0, getcharbuf
+        bne $v0, $zero, ret
 
-    li $v0, -1                      # If 0, map to -1 and return
+        li $v0, -1                      # If 0, map to -1 and return
 ret:
-    lw $ra 0($sp)
-    addi $sp $sp, 4
-    jr $ra
+        lw $ra 0($sp)
+        addi $sp $sp, 4
+        jr $ra
 
 
 prints:
-    addi $sp, $sp, -4
-    sw $ra, 0($sp)
+        addi $sp, $sp, -4
+        sw $ra, 0($sp)
 
-    # $a0 contains the address of the string to print
-    li $v0, 4                       # System call for print_string
-    syscall
+        # $a0 contains the address of the string to print
+        li $v0, 4                       # System call for print_string
+        syscall
 
-    lw $ra 0($sp)
-    addi $sp $sp, 4
-    jr $ra
+        lw $ra 0($sp)
+        addi $sp $sp, 4
+        jr $ra
 
 
 # No need for stack here as
 # the program will halt after this
 halt:
-    li $v0, 10
-    syscall
+        li $v0, 10
+        syscall
     )";
 }
 
