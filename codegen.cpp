@@ -46,6 +46,34 @@ inline void freereg
     register_pool.push_back( reg );
 }
 
+const static struct
+{
+    ASTNodeID operatorid;
+
+    std::string instr,
+    // if this is "r", then the corresponding argument is a register
+                arg2 = "r";
+} op_instr_mapping[] =
+{
+
+        { AST_PLUS,      "addu",     },
+        { AST_MINUS,     "subu",     },
+        { AST_MUL,       "mul",      },
+
+        { AST_DIV,       "div",      },
+        { AST_MOD,       "div",      },
+
+        { AST_EQ,        "seq",      },
+        { AST_LT,        "slt",      },
+        { AST_LEQ,       "sle",      },
+
+        { AST_LOGIC_NOT, "xori", "1" },
+        { AST_UMINUS,    "negu", ""  },
+
+        // AST_LOGIC_AND,
+        // AST_LOGIC_OR,
+};
+
 static std::string output;
 
 // label counters
