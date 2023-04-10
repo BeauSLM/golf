@@ -77,9 +77,8 @@ const static struct
 static std::string output;
 
 // label counters
-static int global_labels   = 0,
-           function_labels = 0,
-           string_labels   = 1; // S0 is reserved for included null string
+static int generic_labels = 0,
+           string_labels  = 1; // S0 is reserved for included null string
 
 inline void asm_prologue()
 {
