@@ -336,6 +336,7 @@ void pass_1_post( ASTNode & node )
             emitinstruction( oper_instr + " " + node.reg + ", " + node[ 0 ].reg + ", " + node[ 1 ].reg );
 
             // result = result & 1
+            // TODO: comment about garbage in second operand's reg if we skip evaluating second operand
             emitinstruction( "andi " + node.reg + ", " + node.reg + ", 1" );
 
             freereg( node[ 0 ].reg );
