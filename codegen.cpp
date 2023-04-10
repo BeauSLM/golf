@@ -2,6 +2,50 @@
 #include "error.hpp"
 #include <cassert>
 
+std::string registers[] =
+{
+    "$s0",
+    "$s1",
+    "$s2",
+    "$s3",
+    "$s4",
+    "$s5",
+    "$s6",
+    "$s7",
+    "$t0",
+    "$t1",
+    "$t2",
+    "$t3",
+    "$t4",
+    "$t5",
+    "$t6",
+    "$t7",
+    "$t8",
+    "$t9",
+};
+
+static std::vector<std::string> register_pool(registers, registers + sizeof(registers) / sizeof(std::string));
+
+std::string allocreg()
+{
+    if ( register_pool.size() == 0 ) error( -1, "Ran out of registers!" );
+
+    std::string reg = register_pool.back();
+    register_pool.pop_back();
+
+    return reg;
+}
+
+inline void freereg
+( std::string reg )
+{
+    // check if the register is already in the pool
+    for ( auto & str : register_pool )
+        assert( str != reg );
+
+    register_pool.push_back( reg );
+}
+
 static std::string output;
 
 // label counters
