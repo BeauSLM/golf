@@ -224,6 +224,8 @@ void pass_1_pre( ASTNode & node )
 
             emitlabel( top );
 
+            // TODO: make sure registers used in test aren't freed until after the loop
+
             prepost( node[ 0 ], pass_1_pre, pass_1_post );
 
             emitinstruction( "beqz " + node[ 0 ].reg + ", " + bottom );
@@ -233,6 +235,9 @@ void pass_1_pre( ASTNode & node )
             emitinstruction( "j " + top );
 
             emitlabel( bottom );
+
+            // NOTE: we free here because the register won't be looked at again only after the loop
+            freereg( node[ 0 ].reg );
 
             break_to_labels.pop_back();
 
