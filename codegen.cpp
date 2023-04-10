@@ -285,6 +285,40 @@ void pass_1_post( ASTNode & node )
         {
             emitinstruction( "j " + break_to_labels.back() );
         } break;
+        default:
+        {
+            for ( auto & mapping : op_instr_mapping )
+            {
+                if ( mapping.operatorid != node.type ) continue;
+
+                std::string instruction;
+                std::string reg1 = node[ 0 ].reg,
+                            dest = allocreg();
+
+                // REVIEW: is this ordering valid for all the operators??
+
+                // instr dest, $reg1
+                instruction = mapping.instr + " " + dest + ", " + reg1;
+                freereg( reg1 );
+
+                std::string maparg2 = mapping.arg2;
+                if ( maparg2 == "r" )
+                {
+                    // instr dest, $reg1, $reg2
+                    std::string reg2 = node[ 1 ].reg;
+                    instruction += ", " + reg2;
+                    freereg( reg2 );
+                }
+                else if ( !maparg2.empty() )
+                    // instr dest, $reg1, hardcoded value
+                    instruction += ", " + maparg2;
+
+                // TODO: handle div/mod by zero
+
+                emitinstruction( instruction );
+                break;
+            }
+
         } break;
     }
 }
