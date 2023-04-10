@@ -52,8 +52,6 @@ void printast( ASTNode & root ) {
 }
 
 std::string ASTNode_to_string( ASTNodeID n ) {
-    std::string result;
-
     switch ( n ) {
         // "program structure" or someth idk
         case AST_PROGRAM:   return "program";
@@ -111,7 +109,6 @@ std::string ASTNode_to_string( ASTNodeID n ) {
 
     // this is unreachable, each case of the switch above returns or errors
     error( -1, "unreachable in node to_string" );
-    return "";
 }
 
 std::string ASTNode_printstring( ASTNode &n ) {
