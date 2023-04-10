@@ -385,25 +385,44 @@ void pass_2_cb( ASTNode & node )
 {
     if ( node.type != AST_GLOBVAR && node.type != AST_STRING ) return;
 
-    std::string label       = "LABEL UNSET";
-    std::string instruction = "INSTRUCTION UNSET";
-
     if ( node.type == AST_GLOBVAR )
     {
         std::string type = node.symbolinfo->signature;
-        instruction      = type == "string" ? ".word S0" : ".word 0" ;
 
-        label = "G_" + node[ 0 ].lexeme;
+        std::string label = "G_" + node[ 0 ].lexeme;
         node.symbolinfo->label = label;
+        emitlabel( label );
+
+        std::string instruction = type == "string" ? ".word S0" : ".word 0" ;
+        emitinstruction( instruction );
     }
     else
     {
-        label       = node.stringlabel;
-        instruction = ".asciiz \"" + node.lexeme + "\"" ;
+        emitlabel( node.stringlabel );
+        for ( size_t i = 0; i < node.lexeme.size(); i++ )
+        {
+            char charcode = node.lexeme[ i ];
+            if ( charcode == '\\' )
+            {
+                switch ( node.lexeme[ ++i ] )
+                {
+                    case 'b':  charcode = '\b'; break;
+                    case 'f':  charcode = '\f'; break;
+                    case 'n':  charcode = '\n'; break;
+                    case 'r':  charcode = '\r'; break;
+                    case 't':  charcode = '\t'; break;
+                    case '\\': charcode = '\\'; break;
+                    case '"':  charcode = '"'; break;
+                }
+            }
+
+            emitinstruction( ".byte " + std::to_string( charcode ) );
+        }
+
+        emitinstruction( ".byte 0" );
+        emitinstruction( ".align 2" ); // REVIEW: is it okay to do this for every string?
     }
 
-    emitlabel( label );
-    emitinstruction( instruction );
 }
 
 void gen_code( ASTNode & root )
