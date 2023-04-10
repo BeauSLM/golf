@@ -149,7 +149,7 @@ S0:
 inline void emitlabel
 ( std::string code )
 {
-    output += code + '\n';
+    output += code + ":\n";
 }
 
 inline void emitinstruction
@@ -161,7 +161,7 @@ inline void emitinstruction
 inline std::string getlabel
 ( std::string prefix, int num )
 {
-    return prefix + std::to_string( num ) + ':';
+    return prefix + std::to_string( num );
 }
 
 void pass_1_pre( ASTNode & node )
