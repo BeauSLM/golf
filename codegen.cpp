@@ -187,7 +187,7 @@ inline void emitlabel
 inline void emitinstruction
 ( std::string instruction )
 {
-    output += '\t' + instruction + '\n';
+    output += "\t\t" + instruction + '\n';
 }
 
 inline std::string getlabel
