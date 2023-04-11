@@ -140,7 +140,25 @@ error:
         li $a0, 1
         li $v0, 17
         syscall
-    )";
+
+divmodcheck:
+        addi $sp, $sp, -4
+        sw $ra, 0($sp)
+
+        # if divisor is zero, error
+        beqz $a1, divmoderror
+
+        lw $ra, 0($sp)
+        addi $sp, $sp, 4
+        jr $ra
+
+divmoderror:
+
+        la $a0, divbyzeromsg
+        j error
+
+# begin generated code
+)";
 }
 
 inline void asm_epilogue()
