@@ -90,7 +90,7 @@ R"(
 
 .globl main
 main:
-        jal Lmain
+        jal F_main
         j   halt
 
 getchar:
@@ -244,7 +244,7 @@ void pass_1_pre( ASTNode & node )
             emitlabel( bottom );
 
             throw PruneTraversalException();
-        }
+        } break;
         case AST_FOR:
         {
             std::string top    = getlabel( "L", generic_labels++ );
@@ -341,7 +341,7 @@ void pass_1_post( ASTNode & node )
             node.stringlabel = getlabel( "S", string_labels++ );
 
             emitinstruction( "la " + node.reg + ", " + node.stringlabel );
-        }
+        } break;
         case AST_INT:
         {
             node.reg = allocreg();
