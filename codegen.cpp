@@ -131,6 +131,15 @@ prints:
 halt:
         li $v0, 10
         syscall
+error:
+        # a0 should contain address of error message to print
+        li $v0, 4
+        syscall
+
+        # exit with error
+        li $a0, 1
+        li $v0, 17
+        syscall
     )";
 }
 
