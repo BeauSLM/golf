@@ -242,7 +242,61 @@ void pass_1_pre( ASTNode & node )
             break_to_labels.pop_back();
 
             throw PruneTraversalException();
-        }
+        } break;
+        case AST_FUNC:
+        {
+            {
+                std::string label = "F_" + node[ 0 ].lexeme;
+                node.symbolinfo->label = label;
+                emitlabel( label );
+            }
+
+            // TODO: room for args and locals on stack
+
+            // save return address
+            emitinstruction( "addi $sp, $sp, -4" );
+            emitinstruction( "sw $ra, 0($sp)" );
+
+            // generate code for funciton body
+            prepost( node[ 2 ], pass_1_pre, pass_1_post );
+
+            // if this function has a return value, and we fail to return, error
+            auto returnsignature = node.symbolinfo->returnsignature;
+            if ( returnsignature != "void" && returnsignature != "$void" )
+            {
+                emitinstruction( "la $a0, returnerror" );
+                emitinstruction( "j error" );
+            }
+            // otherwise, just return when we reach the end of execution
+            else
+            {
+                emitinstruction( "lw $ra, 0($sp)" );
+                emitinstruction( "addi $sp, $sp, 4" );
+                emitinstruction( "jr $ra" );
+            }
+
+            throw PruneTraversalException();
+        } break;
+        case AST_FUNCCALL:
+        {
+            auto &arguments = node[ 1 ].children;
+            // REVIEW: should I do this here or at the function definition?
+            if ( arguments.size() > 4 )
+                error ( -1, 0, "error: too many arguments to function '%s'", node.lexeme.c_str() );
+
+            for ( size_t i = 0; i < arguments.size(); i++ )
+            {
+                prepost( arguments[ i ], pass_1_pre, pass_1_post );
+
+                emitinstruction( "move $a" + std::to_string( i ) + ", " + arguments[ i ].reg );
+
+                freereg( arguments[ i ].reg );
+            }
+
+            emitinstruction( "jal " + node[ 0 ].symbolinfo->label );
+
+            throw PruneTraversalException();
+        } break;
         default: break;
     }
 }
