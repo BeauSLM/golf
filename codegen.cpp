@@ -68,6 +68,21 @@ main:
         jal F_main
         j   halt
 
+len:
+        # $a0 is address
+        # $v0 is counter
+        # $v1 is word at current string address
+        li $v0, 0
+
+lentop:
+        lb $v1, 0($a0)
+        beqz $v1, lenend
+        addi $v0, $v0, 1
+        addi $a0, $a0, 1
+
+        j lentop
+lenend:
+        jr $ra
 getchar:
         addi $sp, $sp, -4
         sw $ra, 0($sp)
