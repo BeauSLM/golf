@@ -439,22 +439,14 @@ void pass_1_post( ASTNode & node )
             if ( sym->isconst )
             {
                 int val = node.lexeme == "false" ? 0 : 1;
-                emitinstruction( "li " + node.reg + ", " + std::to_string( val )  + "# " + node.lexeme);
+                emitinstruction( "li " + node.reg + ", " + std::to_string( val )  + "# " + node.lexeme );
 
                 break;
             }
 
             // not a symbol or a constant, its an identifier
 
-            std::string location = "LOCATION UNSET";
-            // FIXME: handle true/false constants
-            if ( node.symbolinfo->label.empty() )
-                // TODO: change this when I figure out how I know where stuff is
-                // on the stack
-                location = std::to_string( node.symbolinfo->frame_offset_bytes ) + "($fp)";
-            else
-                location = node.symbolinfo->label;
-
+            std::string location = ident_location( node );
             emitinstruction( "lw " + node.reg + ", " + location );
         } break;
         case AST_RETURN:
