@@ -650,6 +650,14 @@ void pass_2_cb( ASTNode & node )
             emitinstruction( ".byte 0" );
             emitinstruction( ".align 2" ); // REVIEW: is it okay to do this for every string?
         } break;
+        case AST_FUNC:
+        {
+            auto sym = node.symbolinfo;
+            if ( sym->returnsignature == "void" || sym->returnsignature == "$void" ) break;
+
+            emitlabel( node[ 0 ].lexeme + "_reerr" );
+            emitinstruction( ".asciiz \"error: function '" + node[ 0 ].lexeme + "' must return a value\"" );
+        } break;
         default: break;
     }
 
