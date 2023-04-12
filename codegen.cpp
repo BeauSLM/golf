@@ -201,6 +201,56 @@ void pass_1_post( ASTNode & node );
 
 static std::vector<std::string> break_to_labels;
 
+// XXX: this sucks and needs to be better
+int function_prologue
+( std::vector<ASTNode> & args, std::vector<ASTNode *> & local_vars )
+{
+    // allocate 1 word for each arg, each local, and return address
+    size_t stack_words =  args.size() + local_vars.size() + 1;
+
+    emitinstruction( "addi $sp, $sp, -" + std::to_string( stack_words * 4 ) );
+    emitinstruction( "sw $ra, 0($sp)" );
+
+    for ( size_t i = 0; i < args.size(); i++ )
+    {
+        size_t offset_bytes = ( i + 1 ) * 4 ;
+        args[ i ][ 0 ].symbolinfo->stack_offset_bytes = offset_bytes;
+
+        emitinstruction( "sw $a" + std::to_string( i ) + ", " + std::to_string( offset_bytes ) + "($sp)" );
+    }
+
+    // local vars
+    for ( size_t i = 0 ; i < local_vars.size() ; i++ )
+    {
+        size_t offset_bytes = 4 + 4 * args.size() + 4 * i;
+
+        auto sym = local_vars[ i ]->symbolinfo;
+        sym->stack_offset_bytes = offset_bytes;
+
+
+        std::string stack_ref = std::to_string( offset_bytes ) + "($sp)" ;
+        // if local var is a string, point it at empty string in runtime
+        // else, set it to 0
+        if ( sym->signature == "string" )
+        {
+            emitinstruction( "la $a0, S0" );
+            emitinstruction( "sw $a0, " + stack_ref );
+        }
+        else
+            emitinstruction( "sw $zero, " + stack_ref );
+    }
+
+    return stack_words;
+}
+
+void function_epilogue
+( int stack_words )
+{
+    emitinstruction( "lw $ra, 0($sp)" );
+    emitinstruction( "addi $sp, $sp, " + std::to_string( 4 * stack_words ) );
+    emitinstruction( "jr $ra" );
+}
+
 void pass_1_pre( ASTNode & node )
 {
     switch ( node.type )
@@ -280,22 +330,30 @@ void pass_1_pre( ASTNode & node )
         } break;
         case AST_FUNC:
         {
+            // XXX: dear god I am sorry
             {
+                static std::vector<ASTNode *> local_vars;
+                local_vars.clear();
+
+                auto find_local_vars = +[]( ASTNode & node )
+                {
+                    if ( node.type == AST_VAR ) local_vars.push_back( &node );
+                };
+
+                preorder( node[ 2 ], find_local_vars );
+
+                node.symbolinfo->stack_size_words = function_prologue( node[ 1 ][ 0 ].children, local_vars );
+
                 std::string label = "F_" + node[ 0 ].lexeme;
                 node.symbolinfo->label = label;
                 emitlabel( label );
             }
 
-            // TODO: room for args and locals on stack
-
-            // save return address
-            emitinstruction( "addi $sp, $sp, -4" );
-            emitinstruction( "sw $ra, 0($sp)" );
-
-            // generate code for funciton body
+            // generate code for function body
             prepost( node[ 2 ], pass_1_pre, pass_1_post );
 
             // if this function has a return value, and we fail to return, error
+            // NOTE: I'll emit the epilogue at the return statement
             auto returnsignature = node.symbolinfo->returnsignature;
             if ( returnsignature != "void" && returnsignature != "$void" )
             {
@@ -304,11 +362,7 @@ void pass_1_pre( ASTNode & node )
             }
             // otherwise, just return when we reach the end of execution
             else
-            {
-                emitinstruction( "lw $ra, 0($sp)" );
-                emitinstruction( "addi $sp, $sp, 4" );
-                emitinstruction( "jr $ra" );
-            }
+                function_epilogue( node.symbolinfo->stack_size_words );
 
             throw PruneTraversalException();
         } break;

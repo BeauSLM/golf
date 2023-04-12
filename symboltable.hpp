@@ -14,7 +14,8 @@ struct STabRecord
     bool        isconst = false,
                 istype  = false;
 
-    int         frame_offset_bytes = 1; // NOTE: < 0 cause stack grows down
+    int         stack_offset_bytes = 0, // for local variables
+                stack_size_words   = 0; // for functions
 };
 
 // for my sanity
