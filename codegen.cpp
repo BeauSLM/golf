@@ -426,6 +426,10 @@ void pass_1_post( ASTNode & node )
 {
     switch ( node.type )
     {
+        case AST_EXPRSTMT:
+        {
+            freereg( node[ 0 ].reg );
+        } break;
         case AST_STRING:
         {
             node.reg         = allocreg();
