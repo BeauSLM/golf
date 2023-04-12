@@ -563,7 +563,6 @@ ASTNode TopLevelDecl() {
             result.type = AST_GLOBVAR;
             break;
         default:
-            printf("current token is: %s\n", tok.lexeme.data());
             error( tok.linenum, "top level declarations must begin with 'func' or 'var'" );
     }
 
