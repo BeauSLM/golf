@@ -444,21 +444,6 @@ void pass_1_pre( ASTNode & node )
 
             throw PruneTraversalException();
         } break;
-        case AST_RETURN:
-        {
-            if ( node.children.size() > 0 )
-            {
-                prepost( node[ 0 ], pass_1_pre, pass_1_post );
-
-                emitinstruction( "move $v0, " + node[ 0 ].reg );
-                assert( node[ 0 ].reg.size() > 0 );
-                freereg( node[ 0 ].reg );
-            }
-
-            function_epilogue( current_func->stack_size_words );
-
-            throw PruneTraversalException();
-        } break;
         default: break;
         case AST_LOGIC_AND:
         case AST_LOGIC_OR:
@@ -499,6 +484,17 @@ void pass_1_post( ASTNode & node )
 {
     switch ( node.type )
     {
+        case AST_RETURN:
+        {
+            if ( node.children.size() > 0 )
+            {
+                emitinstruction( "move $v0, " + node[ 0 ].reg );
+                assert( node[ 0 ].reg.size() > 0 );
+                freereg( node[ 0 ].reg );
+            }
+
+            function_epilogue( current_func->stack_size_words );
+        } break;
         case AST_EXPRSTMT:
         {
             // TODO: find where register isn't being allocated
