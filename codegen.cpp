@@ -39,6 +39,8 @@ std::string allocreg()
 inline void freereg
 ( std::string reg )
 {
+    assert( reg.size() > 0 );
+
     // check if the register is already in the pool
     for ( auto & str : register_pool )
         assert( str != reg );
@@ -320,6 +322,7 @@ void pass_1_pre( ASTNode & node )
             prepost( node[ 0 ], pass_1_pre, pass_1_post );
 
             emitinstruction( "beqz " + node[ 0 ].reg + ", " + bottom );
+            assert( node[ 0 ].reg.size() > 0 );
             freereg( node[ 0 ].reg );
 
             prepost( node[ 1 ], pass_1_pre, pass_1_post );
@@ -339,6 +342,7 @@ void pass_1_pre( ASTNode & node )
 
             // if !guard expression, jump to else block
             emitinstruction( "beqz " + node[ 0 ].reg + ", " + else_ );
+            assert( node[ 0 ].reg.size() > 0 );
             freereg( node[ 0 ].reg );
 
             // if block, then jump to end
@@ -375,6 +379,7 @@ void pass_1_pre( ASTNode & node )
             emitlabel( bottom );
 
             // NOTE: we free here because the register won't be looked at again only after the loop
+            assert( node[ 0 ].reg.size() > 0 );
             freereg( node[ 0 ].reg );
 
             break_to_labels.pop_back();
@@ -437,6 +442,7 @@ void pass_1_pre( ASTNode & node )
 
                 emitinstruction( "move $a" + std::to_string( i ) + ", " + arguments[ i ].reg );
 
+                assert( arguments[ i ].reg.size() > 0 );
                 freereg( arguments[ i ].reg );
             }
 
@@ -462,6 +468,7 @@ void pass_1_pre( ASTNode & node )
 
             emitinstruction( "sw " + node[ 1 ].reg + ", " + location );
 
+            assert( node[ 1 ].reg.size() > 0 );
             freereg( node[ 1 ].reg );
 
             throw PruneTraversalException();
@@ -473,6 +480,7 @@ void pass_1_pre( ASTNode & node )
                 prepost( node[ 0 ], pass_1_pre, pass_1_post );
 
                 emitinstruction( "move $v0, " + node[ 0 ].reg );
+                assert( node[ 0 ].reg.size() > 0 );
                 freereg( node[ 0 ].reg );
             }
 
@@ -507,7 +515,9 @@ void pass_1_pre( ASTNode & node )
             // TODO: comment about garbage in second operand's reg if we skip evaluating second operand
             emitinstruction( "andi " + node.reg + ", " + node.reg + ", 1" );
 
+            assert( node[ 0 ].reg.size() > 0 );
             freereg( node[ 0 ].reg );
+            assert( node[ 1 ].reg.size() > 0 );
             freereg( node[ 1 ].reg );
 
             throw PruneTraversalException();
@@ -521,6 +531,7 @@ void pass_1_post( ASTNode & node )
     {
         case AST_EXPRSTMT:
         {
+            assert( node[ 0 ].reg.size() > 0 );
             freereg( node[ 0 ].reg );
         } break;
         case AST_STRING:
@@ -572,11 +583,13 @@ void pass_1_post( ASTNode & node )
                 std::string instruction;
                 std::string reg1 = node[ 0 ].reg,
                             dest = allocreg();
+                node.reg = dest;
 
                 // REVIEW: is this ordering valid for all the operators??
 
                 // instr dest, $reg1
                 instruction = mapping.instr + " " + dest + ", " + reg1;
+                assert( reg1.size() > 0 );
                 freereg( reg1 );
 
                 std::string maparg2 = mapping.arg2;
@@ -585,6 +598,7 @@ void pass_1_post( ASTNode & node )
                     // instr dest, $reg1, $reg2
                     std::string reg2 = node[ 1 ].reg;
                     instruction += ", " + reg2;
+                    assert( reg2.size() > 0 );
                     freereg( reg2 );
                 }
                 else if ( !maparg2.empty() )
