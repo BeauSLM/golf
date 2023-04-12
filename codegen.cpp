@@ -2,6 +2,7 @@
 #include "error.hpp"
 #include "operator_rules.hpp"
 #include <cassert>
+#include <map>
 
 std::string registers[] =
 {
@@ -28,6 +29,8 @@ std::string registers[] =
 static std::vector<std::string> register_pool(registers, registers + sizeof(registers) / sizeof(std::string));
 
 static STabRecord * current_func = nullptr;
+
+static std::map<std::string, std::vector<ASTNode *>> string_literals;
 
 std::string allocreg()
 {
@@ -510,8 +513,7 @@ void pass_1_post( ASTNode & node )
         } break;
         case AST_STRING:
         {
-            node.reg         = allocreg();
-            node.stringlabel = getlabel( "S", string_labels++ );
+            node.reg = allocreg();
 
             emitinstruction( "la " + node.reg + ", " + node.stringlabel );
         } break;
@@ -622,32 +624,6 @@ void pass_2_cb( ASTNode & node )
             emitlabel( sym->label );
             emitinstruction( instruction );
         } break;
-        case AST_STRING:
-        {
-            emitlabel( node.stringlabel );
-            for ( size_t i = 0; i < node.lexeme.size(); i++ )
-            {
-                char charcode = node.lexeme[ i ];
-                if ( charcode == '\\' )
-                {
-                    switch ( node.lexeme[ ++i ] )
-                    {
-                        case 'b':  charcode = '\b'; break;
-                        case 'f':  charcode = '\f'; break;
-                        case 'n':  charcode = '\n'; break;
-                        case 'r':  charcode = '\r'; break;
-                        case 't':  charcode = '\t'; break;
-                        case '\\': charcode = '\\'; break;
-                        case '"':  charcode = '"'; break;
-                    }
-                }
-
-                emitinstruction( ".byte " + std::to_string( charcode ) );
-            }
-
-            emitinstruction( ".byte 0" );
-            emitinstruction( ".align 2" ); // REVIEW: is it okay to do this for every string?
-        } break;
         case AST_FUNC:
         {
             auto sym = node.symbolinfo;
@@ -686,10 +662,25 @@ void gen_code( ASTNode & root )
                     {
                         current_func->stack_size_words++;
                     } break;
+                    case AST_STRING:
+                    {
+                        string_literals [ node.lexeme ].push_back( &node );
+                    } break;
                     default: break;
                 }
             }
             );
+
+    for ( auto & lit : string_literals )
+    {
+        std::string label = lit.first.size() > 0
+            ? getlabel( "S", string_labels++ )
+            : "S0";
+        for ( auto & node : lit.second )
+        {
+            node->stringlabel = label;
+        }
+    }
 
     // pass 1 - code generation
     // prepost for everything else
@@ -702,4 +693,34 @@ void gen_code( ASTNode & root )
     asm_epilogue();
 
     preorder( root, pass_2_cb );
+
+    for ( auto & lit : string_literals )
+    {
+        std::string value = lit.first;
+        if ( value.size() == 0 ) continue;
+
+        emitlabel( lit.second[ 0 ]->stringlabel );
+        for ( size_t i = 0; i < value.size(); i++ )
+        {
+            char charcode = value[ i ];
+            if ( charcode == '\\' )
+            {
+                switch ( value[ ++i ] )
+                {
+                    case 'b':  charcode = '\b'; break;
+                    case 'f':  charcode = '\f'; break;
+                    case 'n':  charcode = '\n'; break;
+                    case 'r':  charcode = '\r'; break;
+                    case 't':  charcode = '\t'; break;
+                    case '\\': charcode = '\\'; break;
+                    case '"':  charcode = '"'; break;
+                }
+            }
+
+            emitinstruction( ".byte " + std::to_string( charcode ) );
+        }
+
+        emitinstruction( ".byte 0" );
+        emitinstruction( ".align 2" ); // REVIEW: is it okay to do this for every string?
+    }
 }
