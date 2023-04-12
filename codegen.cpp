@@ -530,8 +530,13 @@ void pass_1_post( ASTNode & node )
         case AST_EXPRSTMT:
         {
             // TODO: find where register isn't being allocated
-            // assert( node[ 0 ].reg.size() > 0 );
-            // freereg( node[ 0 ].reg );
+            ASTNode & expr = node[ 0 ];
+            auto sym = expr.symbolinfo;
+            if ( sym != nullptr && sym->returnsignature != "void" && sym->returnsignature != "$void" )
+            {
+                assert( expr.reg.size() > 0 );
+                freereg( expr.reg );
+            }
         } break;
         case AST_VAR:
         {
