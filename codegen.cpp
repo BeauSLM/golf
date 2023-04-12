@@ -342,6 +342,10 @@ void pass_1_pre( ASTNode & node )
         {
             // XXX: dear god I am sorry
             {
+                std::string label = "F_" + node[ 0 ].lexeme;
+                node.symbolinfo->label = label;
+                emitlabel( label );
+
                 static std::vector<ASTNode *> local_vars;
                 local_vars.clear();
 
@@ -353,10 +357,6 @@ void pass_1_pre( ASTNode & node )
                 preorder( node[ 2 ], find_local_vars );
 
                 node.symbolinfo->stack_size_words = function_prologue( node[ 1 ][ 0 ].children, local_vars );
-
-                std::string label = "F_" + node[ 0 ].lexeme;
-                node.symbolinfo->label = label;
-                emitlabel( label );
             }
 
             // generate code for function body
