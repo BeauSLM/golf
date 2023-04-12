@@ -26,6 +26,7 @@ std::string registers[] =
 
 static std::vector<std::string> register_pool(registers, registers + sizeof(registers) / sizeof(std::string));
 
+static STabRecord * current_func = nullptr;
 std::string allocreg()
 {
     if ( register_pool.size() == 0 ) error( -1, "Ran out of registers!" );
@@ -266,6 +267,7 @@ void emit_var_reset( STabRecord * sym )
 static std::vector<std::string> break_to_labels;
 
 // XXX: this sucks and needs to be better
+// TODO: don't return anything
 int function_prologue
 ( std::vector<ASTNode> & args, std::vector<ASTNode *> & local_vars )
 {
@@ -392,6 +394,7 @@ void pass_1_pre( ASTNode & node )
         } break;
         case AST_FUNC:
         {
+            current_func = node.symbolinfo;
             // XXX: dear god I am sorry
             {
                 emitlabel( node.symbolinfo->label );
@@ -406,7 +409,7 @@ void pass_1_pre( ASTNode & node )
 
                 preorder( node[ 2 ], find_local_vars );
 
-                node.symbolinfo->stack_size_words = function_prologue( node[ 1 ][ 0 ].children, local_vars );
+                assert ( node.symbolinfo->stack_size_words == function_prologue( node[ 1 ][ 0 ].children, local_vars ) );
             }
 
             // generate code for function body
@@ -482,8 +485,7 @@ void pass_1_pre( ASTNode & node )
                 freereg( node[ 0 ].reg );
             }
 
-            int stack_words = node.symbolinfo != nullptr ? node.symbolinfo->stack_size_words : 1;
-            function_epilogue( stack_words );
+            function_epilogue( current_func->stack_size_words );
 
             throw PruneTraversalException();
         } break;
@@ -671,15 +673,26 @@ void gen_code( ASTNode & root )
 
     preorder( root, +[]( ASTNode & node )
             {
-                if ( node.type == AST_FUNC )
+                switch ( node.type )
                 {
-                    std::string label = "F_" + node[ 0 ].lexeme;
-                    node.symbolinfo->label = label;
-                }
-                if ( node.type == AST_GLOBVAR )
-                {
-                    std::string label = "G_" + node[ 0 ].lexeme;
-                    node.symbolinfo->label = label;
+                    case AST_FUNC:
+                    {
+                        std::string label = "F_" + node[ 0 ].lexeme;
+                        node.symbolinfo->label = label;
+
+                        current_func = node.symbolinfo;
+                        current_func->stack_size_words = node[ 1 ][ 0 ].children.size() + 1;
+                    } break;
+                    case AST_GLOBVAR:
+                    {
+                        std::string label = "G_" + node[ 0 ].lexeme;
+                        node.symbolinfo->label = label;
+                    } break;
+                    case AST_VAR:
+                    {
+                        current_func->stack_size_words++;
+                    } break;
+                    default: break;
                 }
             }
             );
