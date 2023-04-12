@@ -67,8 +67,11 @@ const static struct
         { AST_MOD,       "div",      },
 
         { AST_EQ,        "seq",      },
+        { AST_NEQ,       "sne",      },
         { AST_LT,        "slt",      },
         { AST_LEQ,       "sle",      },
+        { AST_GT,        "sgt",      },
+        { AST_GEQ,       "sge",      },
 
         { AST_LOGIC_NOT, "xori", "1" },
         { AST_UMINUS,    "negu", ""  },
