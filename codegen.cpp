@@ -124,6 +124,48 @@ prints:
         addi $sp $sp, 4
         jr $ra
 
+printi:
+        addi $sp, $sp, -4
+        sw $ra, 0($sp)
+
+        # $a0 contains the int
+        li $v0, 1
+        syscall
+
+        lw $ra 0($sp)
+        addi $sp $sp, 4
+        jr $ra
+
+printc:
+        addi $sp, $sp, -4
+        sw $ra, 0($sp)
+
+        # $a0 contains the char
+        li $v0, 11
+        syscall
+
+        lw $ra 0($sp)
+        addi $sp $sp, 4
+        jr $ra
+printb:
+        addi $sp, $sp, -4
+        sw $ra, 0($sp)
+
+        move $v1, $a0
+        beqz $v1, printbelse
+
+        la $a0, Strue
+        j printbend
+printbelse:
+        la $a0, Sfalse
+printbend:
+        li $v0, 4
+        syscall
+
+        lw $ra 0($sp)
+        addi $sp $sp, 4
+        jr $ra
+
 
 # No need for stack here as
 # the program will halt after this
@@ -170,6 +212,12 @@ getcharbuf:
         .align 2
 S0:
         .byte 0
+        .align 2
+Strue:
+        .asciiz "true"
+        .align 2
+Sfalse:
+        .asciiz "false"
         .align 2
 returnerror:
         .asciiz "error: failed to return from function that needed a return"
