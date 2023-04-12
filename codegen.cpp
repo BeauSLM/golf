@@ -529,7 +529,7 @@ void pass_1_post( ASTNode & node )
             STabRecord * sym = node.symbolinfo;
 
             // REVIEW: should I just return??
-            if ( sym->istype ) break;
+            if ( sym->istype || sym->signature[ 0 ] == 'f' ) break;
 
             node.reg = allocreg();
 
