@@ -418,7 +418,52 @@ void pass_1_pre( ASTNode & node )
 
             throw PruneTraversalException();
         } break;
+        case AST_RETURN:
+        {
+            if ( node.children.size() > 0 )
+            {
+                prepost( node[ 0 ], pass_1_pre, pass_1_post );
+
+                emitinstruction( "move $v0, " + node[ 0 ].reg );
+                freereg( node[ 0 ].reg );
+            }
+
+            int stack_words = node.symbolinfo != nullptr ? node.symbolinfo->stack_size_words : 1;
+            function_epilogue( stack_words );
+
+            throw PruneTraversalException();
+        } break;
         default: break;
+        case AST_LOGIC_AND:
+        case AST_LOGIC_OR:
+        {
+            node.reg = allocreg();
+
+            std::string bottom     = getlabel( "L", generic_labels++ ),
+                        // on &&, jump to bottom if false
+                        skip_instr = node.type == AST_LOGIC_AND ? "beqz" : "bnez",
+                        // on || jump to bottom if true
+                        oper_instr = node.type == AST_LOGIC_AND ? "and"  : "or";
+
+            prepost( node[ 0 ], pass_1_pre, pass_1_post );
+
+            emitinstruction( skip_instr + " " + node[ 0 ].reg + ", " + bottom );
+
+            prepost( node[ 1 ], pass_1_pre, pass_1_post );
+
+            emitlabel( bottom );
+
+            emitinstruction( oper_instr + " " + node.reg + ", " + node[ 0 ].reg + ", " + node[ 1 ].reg );
+
+            // result = result & 1
+            // TODO: comment about garbage in second operand's reg if we skip evaluating second operand
+            emitinstruction( "andi " + node.reg + ", " + node.reg + ", 1" );
+
+            freereg( node[ 0 ].reg );
+            freereg( node[ 1 ].reg );
+
+            throw PruneTraversalException();
+        } break;
     }
 }
 
@@ -466,53 +511,9 @@ void pass_1_post( ASTNode & node )
             std::string location = ident_location( node );
             emitinstruction( "lw " + node.reg + ", " + location );
         } break;
-        case AST_RETURN:
-        {
-            if ( node.children.size() > 0 )
-            {
-                prepost( node[ 0 ], pass_1_pre, pass_1_post );
-
-                emitinstruction( "move $v0, " + node[ 0 ].reg );
-                freereg( node[ 0 ].reg );
-            }
-
-            function_epilogue( node.symbolinfo->stack_size_words );
-
-            throw PruneTraversalException();
-        } break;
         case AST_BREAK:
         {
             emitinstruction( "j " + break_to_labels.back() );
-        } break;
-        case AST_LOGIC_AND:
-        case AST_LOGIC_OR:
-        {
-            node.reg = allocreg();
-
-            std::string bottom     = getlabel( "L", generic_labels++ ),
-                        // on &&, jump to bottom if false
-                        skip_instr = node.type == AST_LOGIC_AND ? "beqz" : "bnez",
-                        // on || jump to bottom if true
-                        oper_instr = node.type == AST_LOGIC_AND ? "and"  : "or";
-
-            prepost( node[ 0 ], pass_1_pre, pass_1_post );
-
-            emitinstruction( skip_instr + " " + node[ 0 ].reg + ", " + bottom );
-
-            prepost( node[ 1 ], pass_1_pre, pass_1_post );
-
-            emitlabel( bottom );
-
-            emitinstruction( oper_instr + " " + node.reg + ", " + node[ 0 ].reg + ", " + node[ 1 ].reg );
-
-            // result = result & 1
-            // TODO: comment about garbage in second operand's reg if we skip evaluating second operand
-            emitinstruction( "andi " + node.reg + ", " + node.reg + ", 1" );
-
-            freereg( node[ 0 ].reg );
-            freereg( node[ 1 ].reg );
-
-            throw PruneTraversalException();
         } break;
         default:
         {
