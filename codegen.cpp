@@ -31,7 +31,7 @@ static STabRecord * current_func = nullptr;
 
 std::string allocreg()
 {
-    if ( register_pool.size() == 0 ) error( -1, "Ran out of registers!" );
+    if ( register_pool.size() == 0 ) error( -1, "error: expression too complicated" );
 
     std::string reg = register_pool.back();
     register_pool.pop_back();
