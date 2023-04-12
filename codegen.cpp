@@ -273,6 +273,11 @@ void pass_1_pre( ASTNode & node )
 
             throw PruneTraversalException();
         } break;
+        case AST_GLOBVAR:
+        {
+            std::string label = "G_" + node[ 0 ].lexeme;
+            node.symbolinfo->label = label;
+        } break;
         case AST_FUNC:
         {
             {
@@ -472,14 +477,15 @@ void pass_2_cb( ASTNode & node )
 
     if ( node.type == AST_GLOBVAR )
     {
-        std::string type = node.symbolinfo->signature;
+        auto sym = node.symbolinfo;
 
-        std::string label = "G_" + node[ 0 ].lexeme;
-        node.symbolinfo->label = label;
-        emitlabel( label );
-
+        std::string type = sym->signature;
         std::string instruction = type == "string" ? ".word S0" : ".word 0" ;
+
+        emitlabel( sym->label );
         emitinstruction( instruction );
+
+        return;
     }
     else
     {
