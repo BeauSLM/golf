@@ -612,44 +612,47 @@ void pass_1_post( ASTNode & node )
 
 void pass_2_cb( ASTNode & node )
 {
-    if ( node.type != AST_GLOBVAR && node.type != AST_STRING ) return;
-
-    if ( node.type == AST_GLOBVAR )
+    switch ( node.type )
     {
-        auto sym = node.symbolinfo;
-
-        std::string type = sym->signature;
-        std::string instruction = type == "string" ? ".word S0" : ".word 0" ;
-
-        emitlabel( sym->label );
-        emitinstruction( instruction );
-
-        return;
-    }
-
-    emitlabel( node.stringlabel );
-    for ( size_t i = 0; i < node.lexeme.size(); i++ )
-    {
-        char charcode = node.lexeme[ i ];
-        if ( charcode == '\\' )
+        case AST_GLOBVAR:
         {
-            switch ( node.lexeme[ ++i ] )
-            {
-                case 'b':  charcode = '\b'; break;
-                case 'f':  charcode = '\f'; break;
-                case 'n':  charcode = '\n'; break;
-                case 'r':  charcode = '\r'; break;
-                case 't':  charcode = '\t'; break;
-                case '\\': charcode = '\\'; break;
-                case '"':  charcode = '"'; break;
-            }
-        }
+            auto sym = node.symbolinfo;
 
-        emitinstruction( ".byte " + std::to_string( charcode ) );
+            std::string type = sym->signature;
+            std::string instruction = type == "string" ? ".word S0" : ".word 0" ;
+
+            emitlabel( sym->label );
+            emitinstruction( instruction );
+        } break;
+        case AST_STRING:
+        {
+            emitlabel( node.stringlabel );
+            for ( size_t i = 0; i < node.lexeme.size(); i++ )
+            {
+                char charcode = node.lexeme[ i ];
+                if ( charcode == '\\' )
+                {
+                    switch ( node.lexeme[ ++i ] )
+                    {
+                        case 'b':  charcode = '\b'; break;
+                        case 'f':  charcode = '\f'; break;
+                        case 'n':  charcode = '\n'; break;
+                        case 'r':  charcode = '\r'; break;
+                        case 't':  charcode = '\t'; break;
+                        case '\\': charcode = '\\'; break;
+                        case '"':  charcode = '"'; break;
+                    }
+                }
+
+                emitinstruction( ".byte " + std::to_string( charcode ) );
+            }
+
+            emitinstruction( ".byte 0" );
+            emitinstruction( ".align 2" ); // REVIEW: is it okay to do this for every string?
+        } break;
+        default: break;
     }
 
-    emitinstruction( ".byte 0" );
-    emitinstruction( ".align 2" ); // REVIEW: is it okay to do this for every string?
 }
 
 void gen_code( ASTNode & root )
