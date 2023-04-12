@@ -386,6 +386,10 @@ void pass_4_post
             if ( need_return && node.children.size() == 0 )
                 error( node.linenum, "this function must return a value" );
 
+            // an early return
+            if ( !need_return && node.children.size() == 0 )
+                return;
+
             std::string returnvaltype = node[ 0 ].expressiontype;
             std::string returntype    = current_function->symbolinfo->returnsignature;
             if ( need_return && node.children.size() > 0 && returnvaltype != returntype )
