@@ -76,8 +76,6 @@ const static struct
         // AST_LOGIC_OR,
 };
 
-static std::string output;
-
 // label counters
 static int generic_labels = 0,
            string_labels  = 1; // S0 is reserved for included null string
@@ -85,7 +83,7 @@ static int generic_labels = 0,
 // TODO: cite shankar's thing
 inline void asm_prologue()
 {
-    output +=
+    printf(
 R"(
 .text
 # RTS FUNCTIONS
@@ -201,12 +199,12 @@ divmoderror:
         j error
 
 # begin generated code
-)";
+)");
 }
 
 inline void asm_epilogue()
 {
-    output +=
+    printf(
 R"(
 .data
 getcharbuf:
@@ -225,19 +223,21 @@ returnerror:
         .asciiz "error: failed to return from function that needed a return"
 divbyzeromsg:
         .asciiz "error: division by zero"
-)";
+)");
 }
 
 inline void emitlabel
 ( std::string code )
 {
-    output += code + ":\n";
+    std::string output = code + ":\n";
+    printf( "%s", output.c_str() );
 }
 
 inline void emitinstruction
 ( std::string instruction )
 {
-    output += "\t\t" + instruction + '\n';
+    std::string output = "\t\t" + instruction + '\n';
+    printf( "%s", output.c_str() );
 }
 
 inline std::string getlabel
@@ -689,6 +689,4 @@ void gen_code( ASTNode & root )
     asm_epilogue();
 
     preorder( root, pass_2_cb );
-
-    printf( "%s", output.data() );
 }
