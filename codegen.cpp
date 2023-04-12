@@ -399,9 +399,7 @@ void pass_1_pre( ASTNode & node )
         {
             // XXX: dear god I am sorry
             {
-                std::string label = "F_" + node[ 0 ].lexeme;
-                node.symbolinfo->label = label;
-                emitlabel( label );
+                emitlabel( node.symbolinfo->label );
 
                 static std::vector<ASTNode *> local_vars;
                 local_vars.clear();
@@ -453,6 +451,7 @@ void pass_1_pre( ASTNode & node )
 
             auto sym = node[ 0 ].symbolinfo;
 
+            assert( sym->label.size() > 0 );
             emitinstruction( "jal " + sym->label );
 
             if ( sym->returnsignature != "void" && sym->returnsignature != "$void" )
@@ -669,6 +668,15 @@ void pass_2_cb( ASTNode & node )
 void gen_code( ASTNode & root )
 {
     asm_prologue();
+
+    preorder( root, +[]( ASTNode & node )
+            {
+                if ( node.type != AST_FUNC ) return;
+
+                std::string label = "F_" + node[ 0 ].lexeme;
+                node.symbolinfo->label = label;
+            }
+            );
 
     // pass 1 - code generation
     // prepost for everything else
