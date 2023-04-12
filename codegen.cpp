@@ -249,6 +249,20 @@ inline std::string getlabel
 void pass_1_pre( ASTNode & node );
 void pass_1_post( ASTNode & node );
 
+void emit_var_reset( STabRecord * sym )
+{
+        std::string stack_ref = std::to_string( sym->stack_offset_bytes ) + "($sp)" ;
+        // if local var is a string, point it at empty string in runtime
+        // else, set it to 0
+        if ( sym->signature == "string" )
+        {
+            emitinstruction( "la $a0, S0" );
+            emitinstruction( "sw $a0, " + stack_ref );
+        }
+        else
+            emitinstruction( "sw $zero, " + stack_ref );
+}
+
 static std::vector<std::string> break_to_labels;
 
 // XXX: this sucks and needs to be better
@@ -277,17 +291,7 @@ int function_prologue
         auto sym = local_vars[ i ]->symbolinfo;
         sym->stack_offset_bytes = offset_bytes;
 
-
-        std::string stack_ref = std::to_string( offset_bytes ) + "($sp)" ;
-        // if local var is a string, point it at empty string in runtime
-        // else, set it to 0
-        if ( sym->signature == "string" )
-        {
-            emitinstruction( "la $a0, S0" );
-            emitinstruction( "sw $a0, " + stack_ref );
-        }
-        else
-            emitinstruction( "sw $zero, " + stack_ref );
+        emit_var_reset( sym );
     }
 
     return stack_words;
@@ -531,8 +535,13 @@ void pass_1_post( ASTNode & node )
     {
         case AST_EXPRSTMT:
         {
-            assert( node[ 0 ].reg.size() > 0 );
-            freereg( node[ 0 ].reg );
+            // TODO: find where register isn't being allocated
+            // assert( node[ 0 ].reg.size() > 0 );
+            // freereg( node[ 0 ].reg );
+        } break;
+        case AST_VAR:
+        {
+            emit_var_reset( node.symbolinfo );
         } break;
         case AST_STRING:
         {
