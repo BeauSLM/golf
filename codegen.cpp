@@ -476,8 +476,7 @@ void pass_1_post( ASTNode & node )
                 freereg( node[ 0 ].reg );
             }
 
-            // TODO: jump to epilogue which will return instead
-            emitinstruction( "jr $ra" );
+            function_epilogue( node.symbolinfo->stack_size_words );
 
             throw PruneTraversalException();
         } break;
