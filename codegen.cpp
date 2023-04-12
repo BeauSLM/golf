@@ -390,11 +390,6 @@ void pass_1_pre( ASTNode & node )
 
             throw PruneTraversalException();
         } break;
-        case AST_GLOBVAR:
-        {
-            std::string label = "G_" + node[ 0 ].lexeme;
-            node.symbolinfo->label = label;
-        } break;
         case AST_FUNC:
         {
             // XXX: dear god I am sorry
@@ -671,10 +666,16 @@ void gen_code( ASTNode & root )
 
     preorder( root, +[]( ASTNode & node )
             {
-                if ( node.type != AST_FUNC ) return;
-
-                std::string label = "F_" + node[ 0 ].lexeme;
-                node.symbolinfo->label = label;
+                if ( node.type == AST_FUNC )
+                {
+                    std::string label = "F_" + node[ 0 ].lexeme;
+                    node.symbolinfo->label = label;
+                }
+                if ( node.type == AST_GLOBVAR )
+                {
+                    std::string label = "G_" + node[ 0 ].lexeme;
+                    node.symbolinfo->label = label;
+                }
             }
             );
 
