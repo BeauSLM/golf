@@ -664,7 +664,33 @@ void gen_code( ASTNode & root )
                     } break;
                     case AST_STRING:
                     {
-                        string_literals [ node.lexeme ].push_back( &node );
+                        std::string escaped;
+                        for ( size_t i = 0; i < node.lexeme.size(); i++ )
+                        {
+                            char c = node.lexeme[ i ];
+                            if ( c == '\\' )
+                            {
+                                switch ( node.lexeme[ ++i ] )
+                                {
+                                    case 'b':  c = '\b'; break;
+                                    case 'f':  c = '\f'; break;
+                                    case 'n':  c = '\n'; break;
+                                    case 'r':  c = '\r'; break;
+                                    case 't':  c = '\t'; break;
+                                    case '\\': c = '\\'; break;
+                                    case '"':  c = '"'; break;
+                                    default:
+                                    {
+                                        error( -1, "should be unrechable cause lexer" );
+                                        break;
+                                    }
+                                }
+                            }
+
+                            escaped += c;
+                        }
+                        string_literals [ escaped ].push_back( &node );
+
                     } break;
                     default: break;
                 }
@@ -700,24 +726,9 @@ void gen_code( ASTNode & root )
         if ( value.size() == 0 ) continue;
 
         emitlabel( lit.second[ 0 ]->stringlabel );
-        for ( size_t i = 0; i < value.size(); i++ )
+        for ( char c : lit.first )
         {
-            char charcode = value[ i ];
-            if ( charcode == '\\' )
-            {
-                switch ( value[ ++i ] )
-                {
-                    case 'b':  charcode = '\b'; break;
-                    case 'f':  charcode = '\f'; break;
-                    case 'n':  charcode = '\n'; break;
-                    case 'r':  charcode = '\r'; break;
-                    case 't':  charcode = '\t'; break;
-                    case '\\': charcode = '\\'; break;
-                    case '"':  charcode = '"'; break;
-                }
-            }
-
-            emitinstruction( ".byte " + std::to_string( charcode ) );
+            emitinstruction( ".byte " + std::to_string( c ) );
         }
 
         emitinstruction( ".byte 0" );
