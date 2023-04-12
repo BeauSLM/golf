@@ -1,5 +1,6 @@
 #include "codegen.hpp"
 #include "error.hpp"
+#include "operator_rules.hpp"
 #include <cassert>
 
 std::string registers[] =
@@ -27,6 +28,7 @@ std::string registers[] =
 static std::vector<std::string> register_pool(registers, registers + sizeof(registers) / sizeof(std::string));
 
 static STabRecord * current_func = nullptr;
+
 std::string allocreg()
 {
     if ( register_pool.size() == 0 ) error( -1, "Ran out of registers!" );
@@ -37,7 +39,7 @@ std::string allocreg()
     return reg;
 }
 
-inline void freereg
+void freereg
 ( std::string reg )
 {
     assert( reg.size() > 0 );
@@ -48,37 +50,6 @@ inline void freereg
 
     register_pool.push_back( reg );
 }
-
-const static struct
-{
-    ASTNodeID operatorid;
-
-    std::string instr,
-    // if this is "r", then the corresponding argument is a register
-                arg2 = "r";
-} op_instr_mapping[] =
-{
-
-        { AST_PLUS,      "addu",     },
-        { AST_MINUS,     "subu",     },
-        { AST_MUL,       "mul",      },
-
-        { AST_DIV,       "div",      },
-        { AST_MOD,       "div",      },
-
-        { AST_EQ,        "seq",      },
-        { AST_NEQ,       "sne",      },
-        { AST_LT,        "slt",      },
-        { AST_LEQ,       "sle",      },
-        { AST_GT,        "sgt",      },
-        { AST_GEQ,       "sge",      },
-
-        { AST_LOGIC_NOT, "xori", "1" },
-        { AST_UMINUS,    "negu", ""  },
-
-        // AST_LOGIC_AND,
-        // AST_LOGIC_OR,
-};
 
 // label counters
 static int generic_labels = 0,
@@ -230,14 +201,14 @@ divbyzeromsg:
 )");
 }
 
-inline void emitlabel
+void emitlabel
 ( std::string code )
 {
     std::string output = code + ":\n";
     printf( "%s", output.c_str() );
 }
 
-inline void emitinstruction
+void emitinstruction
 ( std::string instruction )
 {
     std::string output = "\t\t" + instruction + '\n';
@@ -585,36 +556,27 @@ void pass_1_post( ASTNode & node )
         } break;
         default:
         {
-            for ( auto & mapping : op_instr_mapping )
+
+            extern OpRule operator_rules[ NUM_OPS ];
+            for ( auto & mapping : operator_rules )
             {
                 if ( mapping.operatorid != node.type ) continue;
+                auto & lhs = node[ 0 ].expressiontype;
+                if ( mapping.geninstruction == nullptr || lhs != mapping.lhs )
+                    continue;
 
-                std::string instruction;
-                std::string reg1 = node[ 0 ].reg,
-                            dest = allocreg();
-                node.reg = dest;
+                node.reg = allocreg();
+                std::string instruction,
+                            reg1 = node[ 0 ].reg;
 
-                // REVIEW: is this ordering valid for all the operators??
-
-                // instr dest, $reg1
-                instruction = mapping.instr + " " + dest + ", " + reg1;
-                assert( reg1.size() > 0 );
-                freereg( reg1 );
-
-                std::string maparg2 = mapping.arg2;
-                if ( maparg2 == "r" )
+                if ( node.children.size() == 1 )
+                    instruction = mapping.geninstruction( mapping.instr, node.reg, reg1, "" );
+                else
                 {
-                    // instr dest, $reg1, $reg2
+                    assert( node.children.size() == 2 );
                     std::string reg2 = node[ 1 ].reg;
-                    instruction += ", " + reg2;
-                    assert( reg2.size() > 0 );
-                    freereg( reg2 );
+                    instruction = mapping.geninstruction( mapping.instr, node.reg, reg1, reg2 );
                 }
-                else if ( !maparg2.empty() )
-                    // instr dest, $reg1, hardcoded value
-                    instruction += ", " + maparg2;
-
-                // TODO: handle div/mod by zero
 
                 emitinstruction( instruction );
                 break;
