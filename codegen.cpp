@@ -251,6 +251,16 @@ void function_epilogue
     emitinstruction( "jr $ra" );
 }
 
+inline std::string ident_location
+( ASTNode & node )
+{
+    auto sym = node.symbolinfo;
+    // if the identifier doesn't have a label, it's on the stack
+    return sym->label.empty()
+        ? std::to_string( sym->stack_offset_bytes ) + "($sp)"
+        : sym->label;
+}
+
 void pass_1_pre( ASTNode & node )
 {
     switch ( node.type )
@@ -383,6 +393,15 @@ void pass_1_pre( ASTNode & node )
             }
 
             emitinstruction( "jal " + node[ 0 ].symbolinfo->label );
+        case AST_ASSIGN:
+        {
+            std::string location = ident_location( node[ 0 ] );
+
+            prepost( node[ 1 ], pass_1_pre, pass_1_post );
+
+            emitinstruction( "sw " + node[ 1 ].reg + ", " + location );
+
+            freereg( node[ 1 ].reg );
 
             throw PruneTraversalException();
         } break;
