@@ -222,8 +222,6 @@ Strue:
 Sfalse:
         .asciiz "false"
         .align 2
-returnerror:
-        .asciiz "error: failed to return from function that needed a return"
 divbyzeromsg:
         .asciiz "error: division by zero"
 )");
@@ -422,7 +420,7 @@ void pass_1_pre( ASTNode & node )
             auto returnsignature = node.symbolinfo->returnsignature;
             if ( returnsignature != "void" && returnsignature != "$void" )
             {
-                emitinstruction( "la $a0, returnerror" );
+                emitinstruction( "la $a0, " + node[ 0 ].lexeme + "_reerr" );
                 emitinstruction( "j error" );
             }
             // otherwise, just return when we reach the end of execution
