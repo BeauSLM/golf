@@ -429,38 +429,6 @@ void pass_1_pre( ASTNode & node )
 
             throw PruneTraversalException();
         } break;
-        case AST_FUNCCALL:
-        {
-            auto &arguments = node[ 1 ].children;
-            // REVIEW: should I do this here or at the function definition?
-            if ( arguments.size() > 4 )
-                error ( -1, 0, "error: too many arguments to function '%s'", node.lexeme.c_str() );
-
-            for ( size_t i = 0; i < arguments.size(); i++ )
-            {
-                prepost( arguments[ i ], pass_1_pre, pass_1_post );
-
-                emitinstruction( "move $a" + std::to_string( i ) + ", " + arguments[ i ].reg );
-
-                assert( arguments[ i ].reg.size() > 0 );
-                freereg( arguments[ i ].reg );
-            }
-
-
-            auto sym = node[ 0 ].symbolinfo;
-
-            assert( sym->label.size() > 0 );
-            emitinstruction( "jal " + sym->label );
-
-            if ( sym->returnsignature != "void" && sym->returnsignature != "$void" )
-            {
-                std::string reg = allocreg();
-                node.reg = reg;
-                emitinstruction( "move " + reg + ", $v0" );
-            }
-
-            throw PruneTraversalException();
-        } break;
         case AST_ASSIGN:
         {
             std::string location = ident_location( node[ 0 ] );
@@ -583,6 +551,34 @@ void pass_1_post( ASTNode & node )
         case AST_BREAK:
         {
             emitinstruction( "j " + break_to_labels.back() );
+        } break;
+        case AST_FUNCCALL:
+        {
+            auto &arguments = node[ 1 ].children;
+            // REVIEW: should I do this here or at the function definition?
+            if ( arguments.size() > 4 )
+                error ( -1, 0, "error: too many arguments to function '%s'", node.lexeme.c_str() );
+
+            for ( size_t i = 0; i < arguments.size(); i++ )
+            {
+                emitinstruction( "move $a" + std::to_string( i ) + ", " + arguments[ i ].reg );
+
+                assert( arguments[ i ].reg.size() > 0 );
+                freereg( arguments[ i ].reg );
+            }
+
+
+            auto sym = node[ 0 ].symbolinfo;
+
+            assert( sym->label.size() > 0 );
+            emitinstruction( "jal " + sym->label );
+
+            if ( sym->returnsignature != "void" && sym->returnsignature != "$void" )
+            {
+                std::string reg = allocreg();
+                node.reg = reg;
+                emitinstruction( "move " + reg + ", $v0" );
+            }
         } break;
         default:
         {
