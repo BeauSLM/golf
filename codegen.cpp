@@ -164,6 +164,19 @@ divmodcheck:
         # if divisor is zero, error
         beqz $a1, divmoderror
 
+        seq $v1, $a0, -2147483648 # is dividend minint?
+        seq $v0, $a1, -1          # is divisor  -1?
+        and $v1, $v1, $v0
+
+        # if minint / -1, make divisor 1 to follow spec
+        bnez $v1, divthing
+
+        move $v0, $a1
+        j divend
+divthing:
+
+        li $v0, 1
+divend:
         lw $ra, 0($sp)
         addi $sp, $sp, 4
         jr $ra

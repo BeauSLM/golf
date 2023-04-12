@@ -25,6 +25,7 @@ inline void divmodprologue( std::string reg1, std::string reg2 )
     emitinstruction( "move $a0, " + reg1 );
     emitinstruction( "move $a1, " + reg2 );
     emitinstruction( "jal divmodcheck" );
+    emitinstruction( "move " + reg2 + ", $v0" );
     emitinstruction( "div " + reg1 + ", " + reg2 );
 }
 
