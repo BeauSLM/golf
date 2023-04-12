@@ -392,7 +392,20 @@ void pass_1_pre( ASTNode & node )
                 freereg( arguments[ i ].reg );
             }
 
-            emitinstruction( "jal " + node[ 0 ].symbolinfo->label );
+
+            auto sym = node[ 0 ].symbolinfo;
+
+            emitinstruction( "jal " + sym->label );
+
+            if ( sym->returnsignature != "void" && sym->returnsignature != "$void" )
+            {
+                std::string reg = allocreg();
+                node.reg = reg;
+                emitinstruction( "move " + reg + ", $v0" );
+            }
+
+            throw PruneTraversalException();
+        } break;
         case AST_ASSIGN:
         {
             std::string location = ident_location( node[ 0 ] );
