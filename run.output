@@ -1,4 +1,4 @@
-Run started on Wed Apr 12 15:49:40 2023
+Run started on Wed Apr 12 22:23:28 2023
 
 Hostname: csx2.cs.ucalgary.ca
 
@@ -9,8 +9,16 @@ Running make |
 % /usr/bin/make
 
 STDOUT:
-clang++ -o codegen.o -c codegen.cpp -Wall -Wextra -std=c++17 -DMILESTONE=4 -g -MMD -MF codegen.d
-clang++ -Wall -Wextra -std=c++17 -DMILESTONE=4 -g -o golf main.o error.o lex.o parse.o ast.o symboltable.o semantics.o codegen.o operator_rules.o
+clang++ -o main.o -c main.cpp -Wall -Wextra -std=c++17 -O3 -DMILESTONE=4 -MMD -MF main.d
+clang++ -o error.o -c error.cpp -Wall -Wextra -std=c++17 -O3 -DMILESTONE=4 -MMD -MF error.d
+clang++ -o lex.o -c lex.cpp -Wall -Wextra -std=c++17 -O3 -DMILESTONE=4 -MMD -MF lex.d
+clang++ -o parse.o -c parse.cpp -Wall -Wextra -std=c++17 -O3 -DMILESTONE=4 -MMD -MF parse.d
+clang++ -o ast.o -c ast.cpp -Wall -Wextra -std=c++17 -O3 -DMILESTONE=4 -MMD -MF ast.d
+clang++ -o symboltable.o -c symboltable.cpp -Wall -Wextra -std=c++17 -O3 -DMILESTONE=4 -MMD -MF symboltable.d
+clang++ -o semantics.o -c semantics.cpp -Wall -Wextra -std=c++17 -O3 -DMILESTONE=4 -MMD -MF semantics.d
+clang++ -o codegen.o -c codegen.cpp -Wall -Wextra -std=c++17 -O3 -DMILESTONE=4 -MMD -MF codegen.d
+clang++ -o operator_rules.o -c operator_rules.cpp -Wall -Wextra -std=c++17 -O3 -DMILESTONE=4 -MMD -MF operator_rules.d
+clang++ -Wall -Wextra -std=c++17 -O3 -DMILESTONE=4 -o golf main.o error.o lex.o parse.o ast.o symboltable.o semantics.o codegen.o operator_rules.o
 
 
 STDERR:
@@ -721,18 +729,18 @@ string with \n: len("Hello, world!
 silly string: len("\"escape th	n(") = 16, correct answer is 16
 EarthEarth
 Hello, world!
-incorrect
-incorrect
-correct
-correct
-incorrect
-incorrect
 correct
 correct
 correct
 correct
-incorrect
-incorrect
+correct
+correct
+correct
+correct
+correct
+correct
+correct
+correct
 
 
 STDERR:
@@ -1016,5 +1024,5 @@ STDERR:
 
 RETURN CODE: 0
 
-Run ended on Wed Apr 12 15:49:43 2023
+Run ended on Wed Apr 12 22:23:37 2023
 
