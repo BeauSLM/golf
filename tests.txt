@@ -1,32 +1,29 @@
 - [x] 1
 - [x] 2
-- [ ] 3
+- [x] 3
 - [ ] 4 // kinda short i guess
 - [ ] 5 // the fib example, maybe a decent candidate
 - [x] 6
 - [x] 7
-- [x] 8
+- [ ] 8 // finding minint
 - [x] 9
-- [ ] 10 // promising - just do div and mod stuff
-- [ ] 11 // also division by zero - should be easy
+- [x] 10
+- [x] 11
 - [x] 12
 - [x] 13
 - [x] 14
-- [ ] 15
-- [ ] 16 // function didn't return right - can fix up easily
-- [ ] 17 // another division by zero
-- [ ] 18
-- [ ] 19
-- [ ] 20
-- [ ] 21
+- [x] 15
+- [x] 16
+- [x] 17
+- [x] 18
+- [x] 19
+- [x] 20
+- [x] 21
 - [x] 22
 - [x] 23
-- [ ] 24
-- [ ] 25 // close - just adjusting div / mod stuff
-- [ ] 26
-- [ ] 27
-- [ ] 28
-- [ ] 29
-
-// are there string < or > comparisons?
-// i'm running out of registers - gonna have to look into that
+- [x] 24
+- [x] 25
+- [ ] gen.entombed
+- [ ] gen.life
+- [ ] gen.select
+- [x] gen.sieve
